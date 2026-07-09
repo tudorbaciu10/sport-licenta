@@ -24,7 +24,7 @@
                 ] as $stat)
                     <div class="bg-white shadow-sm rounded-lg p-4">
                         <div class="text-3xl font-bold text-gray-900">{{ $stat['value'] }}</div>
-                        <div class="text-sm text-gray-500">{{ __($stat['label']) }}</div>
+                        <div class="text-sm text-gray-500">{{ $stat['label'] }}</div>
                     </div>
                 @endforeach
             </div>
@@ -53,6 +53,42 @@
                                 </span>
                                 <form method="POST" action="{{ route('admin.sports.destroy', $sport) }}"
                                       onsubmit="return confirm('{{ __('Delete this sport and all its events?') }}');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-600 hover:text-red-500 text-sm">{{ __('Delete') }}</button>
+                                </form>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+
+                {{-- Manage facility categories --}}
+                <div class="bg-white shadow-sm sm:rounded-lg p-6">
+                    <h3 class="text-lg font-semibold mb-4">{{ __('Facility categories') }}</h3>
+
+                    <form method="POST" action="{{ route('admin.venue-categories.store') }}" class="flex items-end gap-2 mb-4">
+                        @csrf
+                        <div class="flex-1">
+                            <x-input-label for="cat_name" :value="__('New category')" />
+                            <x-text-input id="cat_name" name="name" type="text" class="mt-1 block w-full"
+                                          :value="old('name')" required />
+                            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+                        </div>
+                        <div class="w-20">
+                            <x-input-label for="cat_icon" :value="__('Icon')" />
+                            <x-text-input id="cat_icon" name="icon" type="text" class="mt-1 block w-full" :value="old('icon')" placeholder="🏟️" />
+                        </div>
+                        <x-primary-button>{{ __('Add') }}</x-primary-button>
+                    </form>
+
+                    <ul class="divide-y divide-gray-100">
+                        @foreach ($venueCategories as $category)
+                            <li class="flex items-center justify-between py-2">
+                                <span class="text-gray-800">{{ $category->icon }} {{ $category->name }}
+                                    <span class="text-gray-400 text-sm">({{ $category->venues_count }})</span>
+                                </span>
+                                <form method="POST" action="{{ route('admin.venue-categories.destroy', $category) }}"
+                                      onsubmit="return confirm('{{ __('Delete this category?') }}');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="text-red-600 hover:text-red-500 text-sm">{{ __('Delete') }}</button>

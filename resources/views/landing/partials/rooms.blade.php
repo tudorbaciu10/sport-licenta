@@ -8,6 +8,12 @@
         };
     @endphp
     <article class="room-card" id="room-{{ $event->id }}" data-room-id="{{ $event->id }}">
+        <div class="room-card__media">
+            <img src="{{ $event->sport?->imageUrl() ?? asset('assets/images/sports/default.svg') }}"
+                 alt="{{ $event->sport?->name }}" loading="lazy">
+        </div>
+
+        <div class="room-card__body">
         <div class="room-card__top">
             <span class="room-card__sport">{{ $event->sport?->name }}</span>
             <span class="room-card__badge {{ $badge }}">{{ ucfirst($event->status) }}</span>
@@ -40,6 +46,7 @@
             </span>
             <a id="btn-join-room-{{ $event->id }}" class="btn btn--red" href="{{ route('login') }}">{{ __('landing.card_cta') }}</a>
         </div>
+        </div>{{-- /.room-card__body --}}
     </article>
 @empty
     <div class="rooms-empty" id="rooms-empty">

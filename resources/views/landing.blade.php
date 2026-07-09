@@ -126,6 +126,88 @@
         </div>
     </section>
 
+    {{-- ===== Section: Facilities selector (horizontal scroll of categories) ===== --}}
+    <nav id="venue-selector" class="sport-selector venue-selector" aria-label="{{ __('venues.categories_heading') }}">
+        <div class="landing-container sport-selector__inner">
+            <span class="sport-selector__label">🏟️ {{ __('venues.categories_heading') }}:</span>
+            <div id="venue-track" class="sport-selector__track">
+                <a id="chip-venue-all" href="{{ route('landing') }}" data-category=""
+                   class="sport-chip {{ $selectedCategory ? '' : 'is-active' }}">
+                    {{ __('venues.categories_all') }}
+                </a>
+                @foreach ($categories as $category)
+                    <a id="chip-venue-{{ $category->id }}" href="{{ route('landing', ['category' => $category->id]) }}" data-category="{{ $category->id }}"
+                       class="sport-chip {{ $selectedCategory === $category->id ? 'is-active' : '' }}">
+                        {{ $category->icon }} {{ $category->name }}
+                        <span class="sport-chip__count">{{ $category->venues_count }}</span>
+                    </a>
+                @endforeach
+            </div>
+        </div>
+    </nav>
+
+    {{-- ===== Section: Facility filters (city / country / surface) ===== --}}
+    <section id="venue-filters" class="room-filters" aria-label="{{ __('venues.section_heading') }}">
+        <div class="landing-container">
+            <form id="venue-filters-form" class="room-filters__form" method="GET" action="{{ route('landing') }}">
+                <input type="hidden" id="filter-category" name="category" value="{{ $selectedCategory }}">
+
+                <span class="room-filters__title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                    {{ __('venues.filter_city') }}
+                </span>
+
+                <div class="filter-field">
+                    <label for="filter-venue-city">{{ __('venues.filter_city') }}</label>
+                    <input type="text" id="filter-venue-city" name="venue_city" value="{{ $venueFilters['venue_city'] ?? '' }}"
+                           placeholder="Chișinău / Bălți">
+                </div>
+                <div class="filter-field">
+                    <label for="filter-venue-country">{{ __('venues.filter_country') }}</label>
+                    <input type="text" id="filter-venue-country" name="venue_country" value="{{ $venueFilters['venue_country'] ?? '' }}">
+                </div>
+                <div class="filter-field">
+                    <label for="filter-surface">{{ __('venues.filter_surface') }}</label>
+                    <select id="filter-surface" name="surface"
+                            class="filter-select">
+                        <option value="">{{ __('venues.filter_surface_any') }}</option>
+                        @foreach (['synthetic', 'grass', 'hard', 'parquet'] as $surface)
+                            <option value="{{ $surface }}" @selected(($venueFilters['surface'] ?? '') === $surface)>
+                                {{ __('venues.surface_'.$surface) }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="room-filters__actions">
+                    <button type="submit" id="btn-venue-filter-apply" class="btn btn--primary">{{ __('venues.filter_apply') }}</button>
+                    <button type="button" id="btn-venue-filter-reset" class="btn btn--red">{{ __('venues.filter_reset') }}</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    {{-- ===== Section: Facilities grid (rentable venues from the database) ===== --}}
+    <section id="venues" class="rooms-section">
+        <div class="landing-container">
+            <div class="rooms-section__head">
+                <div>
+                    <h2>{{ __('venues.section_heading') }}</h2>
+                    <p class="venues-subtitle">{{ __('venues.section_subtitle') }}</p>
+                </div>
+                <span class="rooms-section__count">
+                    <span id="venues-count">{{ $venues->count() }}</span> {{ __('venues.count_word') }}
+                </span>
+            </div>
+
+            <div id="venues-list" class="rooms-grid" data-venues-url="{{ route('landing.venues') }}">
+                @include('landing.partials.venues')
+            </div>
+        </div>
+    </section>
+
     {{-- ===== Section: Footer ===== --}}
     <footer id="site-footer" class="landing-footer">
         <div class="landing-container">
@@ -134,5 +216,6 @@
     </footer>
 
     <script src="{{ asset('assets/js/landing.js') }}"></script>
+    <script src="{{ asset('assets/js/venues.js') }}"></script>
 </body>
 </html>

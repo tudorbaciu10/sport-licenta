@@ -7,6 +7,7 @@ use App\Models\Event;
 use App\Models\Sport;
 use App\Models\User;
 use App\Models\Venue;
+use App\Models\VenueCategory;
 use Illuminate\View\View;
 
 class AdminDashboardController extends Controller
@@ -26,6 +27,7 @@ class AdminDashboardController extends Controller
                 'venues' => Venue::count(),
             ],
             'sports' => Sport::withCount('events')->orderBy('name')->get(),
+            'venueCategories' => VenueCategory::withCount('venues')->orderBy('name')->get(),
             'recentEvents' => Event::with(['sport', 'creator'])->latest()->take(5)->get(),
         ]);
     }

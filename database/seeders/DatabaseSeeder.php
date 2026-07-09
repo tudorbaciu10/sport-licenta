@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Models\Sport;
 use App\Models\User;
 use App\Models\Venue;
+use App\Models\VenueCategory;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -20,11 +21,11 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             SportSeeder::class,
+            VenueCategorySeeder::class,
             VenueSeeder::class,
         ]);
 
         $sports = Sport::all();
-        $venues = Venue::all();
 
         // A platform administrator.
         User::factory()->create([
@@ -60,8 +61,26 @@ class DatabaseSeeder extends Seeder
             );
         });
 
+        // Owner-listed rentable facilities across Chișinău / Bălți.
+        $categories = VenueCategory::all();
+        $owners = $players->concat([$test]);
+
+        Venue::factory(8)
+            ->recycle($categories)
+            ->recycle($owners)
+            ->create([
+                'country' => 'Moldova',
+            ])
+            ->each(function (Venue $venue) use ($owners) {
+                $venue->update([
+                    'user_id' => $owners->random()->id,
+                    'city' => fake()->randomElement(['Chișinău', 'Bălți']),
+                ]);
+            });
+
         // Demo events created by random players, some with participants.
         $organizers = $players->push($test);
+        $venues = Venue::all();
 
         Event::factory(12)
             ->recycle($organizers)

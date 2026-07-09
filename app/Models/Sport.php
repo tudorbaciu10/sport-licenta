@@ -31,4 +31,25 @@ class Sport extends Model
     {
         return $this->hasMany(Event::class);
     }
+
+    /**
+     * Resolve the cover image for this sport.
+     *
+     * Looks inside public/assets/images/sports/{slug}/ for a file named
+     * cover.(jpg|jpeg|png|webp|svg) so a user can drop their own photo in the
+     * sport's folder; falls back to the shared default cover otherwise.
+     */
+    public function imageUrl(): string
+    {
+        $dir = "assets/images/sports/{$this->slug}";
+
+        foreach (['cover.jpg', 'cover.jpeg', 'cover.png', 'cover.webp', 'cover.svg'] as $file) {
+            if (is_file(public_path("{$dir}/{$file}"))) {
+                return asset("{$dir}/{$file}");
+            }
+        }
+
+        return asset('assets/images/sports/default.svg');
+    }
 }
+

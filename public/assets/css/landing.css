@@ -265,7 +265,8 @@ img { max-width: 100%; display: block; }
     letter-spacing: .3px;
     color: var(--muted);
 }
-.filter-field input {
+.filter-field input,
+.filter-field select {
     padding: .45rem .6rem;
     border: 2px solid var(--line);
     border-radius: 10px;
@@ -275,7 +276,8 @@ img { max-width: 100%; display: block; }
     color: var(--ink);
     min-width: 140px;
 }
-.filter-field input:focus {
+.filter-field input:focus,
+.filter-field select:focus {
     outline: none;
     border-color: var(--md-blue);
     box-shadow: 0 0 0 3px rgba(0, 70, 174, .12);
@@ -308,16 +310,38 @@ img { max-width: 100%; display: block; }
 .room-card {
     background: var(--card);
     border: 1px solid var(--line);
-    border-top: 4px solid var(--md-blue);
     border-radius: var(--radius);
-    padding: 1.1rem;
+    overflow: hidden;
     box-shadow: var(--shadow);
     display: flex;
     flex-direction: column;
-    gap: .7rem;
     transition: transform .15s ease, box-shadow .15s ease;
 }
 .room-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+
+/* cover image (per-sport, from assets/images/sports/<slug>/) */
+.room-card__media {
+    aspect-ratio: 20 / 9;
+    background: var(--line);
+    overflow: hidden;
+}
+.room-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .3s ease;
+}
+.room-card:hover .room-card__media img { transform: scale(1.04); }
+
+.room-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: .7rem;
+    padding: 1.1rem;
+    border-top: 4px solid var(--md-blue);
+    flex: 1;
+}
 .room-card__top {
     display: flex;
     align-items: center;
@@ -388,6 +412,85 @@ img { max-width: 100%; display: block; }
     border-radius: var(--radius);
     background: #fff;
 }
+
+/* ============================================================
+   #venue-selector / #venues — facilities marketplace
+   ============================================================ */
+.venue-selector { position: static; border-top: 1px solid var(--line); }
+.venues-subtitle { margin: .2rem 0 0; color: var(--muted); font-size: .95rem; }
+
+.venue-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+.venue-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+
+.venue-card__media { position: relative; aspect-ratio: 20 / 9; background: var(--line); overflow: hidden; }
+.venue-card__media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .3s ease; }
+.venue-card:hover .venue-card__media img { transform: scale(1.04); }
+.venue-card__surface {
+    position: absolute;
+    top: .55rem;
+    left: .55rem;
+    background: var(--md-yellow);
+    color: var(--md-blue-dark);
+    font-size: .72rem;
+    font-weight: 800;
+    padding: .2rem .55rem;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+}
+
+.venue-card__body { display: flex; flex-direction: column; gap: .6rem; padding: 1.1rem; border-top: 4px solid var(--md-red); flex: 1; }
+.venue-card__top { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
+.venue-card__category {
+    font-size: .78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    color: var(--md-red);
+    background: rgba(204, 9, 47, .08);
+    padding: .2rem .55rem;
+    border-radius: 999px;
+}
+.venue-card__inout { font-size: .78rem; color: var(--muted); font-weight: 600; }
+.venue-card__title { margin: 0; font-size: 1.15rem; font-weight: 700; }
+.venue-card__meta { font-size: .88rem; color: var(--muted); }
+.venue-card__footer {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: .6rem;
+    padding-top: .7rem;
+    border-top: 1px dashed var(--line);
+}
+.venue-card__price { font-weight: 800; color: var(--md-blue); font-size: 1.1rem; }
+.venue-card__price small { color: var(--muted); font-weight: 500; font-size: .78rem; }
+.venue-card__footer .btn { width: 100%; justify-content: center; padding-block: .55rem; font-size: .88rem; }
+
+/* ---------- Facility detail page ---------- */
+.venue-back { display: inline-block; margin-bottom: 1rem; color: var(--md-blue); font-weight: 700; }
+.landing-flash { background: #e9f7ee; border: 1px solid #b7e2c6; color: #1a7f37; border-radius: 12px; padding: .8rem 1rem; margin-bottom: 1rem; }
+.venue-detail__card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+.venue-detail__media { position: relative; aspect-ratio: 21 / 9; background: var(--line); }
+.venue-detail__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.venue-detail__body { padding: 1.4rem; display: flex; flex-direction: column; gap: .8rem; }
+.venue-detail__title { margin: 0; font-size: 1.8rem; }
+.venue-detail__desc { color: #333; }
+.venue-detail__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: .8rem; margin: .4rem 0; }
+.venue-detail__grid dt { font-size: .75rem; text-transform: uppercase; letter-spacing: .3px; color: var(--muted); font-weight: 700; }
+.venue-detail__grid dd { margin: .1rem 0 0; font-weight: 600; color: var(--ink); }
+.venue-detail__contact { border-top: 1px dashed var(--line); padding-top: 1rem; }
+.venue-detail__contact h2 { margin: 0 0 .4rem; font-size: 1.15rem; }
+.venue-detail__hint { display: flex; align-items: center; flex-wrap: wrap; gap: .3rem; color: var(--muted); }
 
 /* ============================================================
    #site-footer

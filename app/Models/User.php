@@ -88,4 +88,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(AvailabilitySchedule::class);
     }
+
+    /**
+     * Facilities (venues) this user has listed for rent.
+     */
+    public function venues(): HasMany
+    {
+        return $this->hasMany(Venue::class);
+    }
 }

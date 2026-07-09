@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\Sport;
+use App\Models\Venue;
+use App\Models\VenueCategory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -17,11 +19,17 @@ class LandingController extends Controller
     {
         $selectedSport = $request->integer('sport') ?: null;
 
+        $selectedCategory = $request->integer('category') ?: null;
+
         return view('landing', [
             'sports' => $this->sports(),
             'selectedSport' => $selectedSport,
             'events' => $this->rooms($request, $selectedSport),
             'filters' => $this->filterValues($request),
+            'categories' => $this->categories(),
+            'selectedCategory' => $selectedCategory,
+            'venues' => $this->venues($request, $selectedCategory),
+            'venueFilters' => $this->venueFilterValues($request),
         ]);
     }
 
@@ -35,6 +43,19 @@ class LandingController extends Controller
         return view('landing.partials.rooms', [
             'events' => $this->rooms($request, $selectedSport),
             'selectedSport' => $selectedSport,
+        ]);
+    }
+
+    /**
+     * Venues partial only — used for AJAX filtering (category + city/country/surface).
+     */
+    public function venuesPartial(Request $request): View
+    {
+        $selectedCategory = $request->integer('category') ?: null;
+
+        return view('landing.partials.venues', [
+            'venues' => $this->venues($request, $selectedCategory),
+            'selectedCategory' => $selectedCategory,
         ]);
     }
 
@@ -82,5 +103,50 @@ class LandingController extends Controller
             ->withCount('participants')
             ->orderBy('start_time')
             ->get();
+    }
+
+    /**
+     * Facility categories with a count of published venues, for the header selector.
+     */
+    private function categories()
+    {
+        return VenueCategory::query()
+            ->withCount(['venues' => fn (Builder $q) => $q->where('is_published', true)])
+            ->orderBy('name')
+            ->get();
+    }
+
+    /**
+     * Published rentable facilities, filtered by category + city / country / surface.
+     */
+    private function venues(Request $request, ?int $categoryId)
+    {
+        $city = trim((string) $request->input('venue_city'));
+        $country = trim((string) $request->input('venue_country'));
+        $surface = trim((string) $request->input('surface'));
+
+        return Venue::query()
+            ->published()
+            ->forCategory($categoryId)
+            ->inCity($city !== '' ? $city : null)
+            ->inCountry($country !== '' ? $country : null)
+            ->withSurface($surface !== '' ? $surface : null)
+            ->with(['category', 'owner'])
+            ->orderByDesc('id')
+            ->get();
+    }
+
+    /**
+     * The current venue filter values, echoed back into the form.
+     *
+     * @return array<string, string|null>
+     */
+    private function venueFilterValues(Request $request): array
+    {
+        return [
+            'venue_city' => $request->input('venue_city'),
+            'venue_country' => $request->input('venue_country'),
+            'surface' => $request->input('surface'),
+        ];
     }
 }

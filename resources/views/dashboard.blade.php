@@ -1,13 +1,19 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between gap-2 flex-wrap">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Dashboard') }}
             </h2>
-            <a href="{{ route('events.create') }}"
-               class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700">
-                {{ __('Create event') }}
-            </a>
+            <div class="flex items-center gap-2">
+                <a href="{{ route('events.create') }}"
+                   class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700">
+                    {{ __('Create event') }}
+                </a>
+                <a href="{{ route('venues.create') }}"
+                   class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500">
+                    {{ __('venues.add') }}
+                </a>
+            </div>
         </div>
     </x-slot>
 
@@ -43,6 +49,31 @@
                         <p class="text-gray-500">
                             {{ __('You have not joined any events yet.') }}
                             <a href="{{ route('events.index') }}" class="text-indigo-600 hover:underline">{{ __('Browse events') }}</a>.
+                        </p>
+                    @endforelse
+                </div>
+            </div>
+
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold">{{ __('venues.my_heading') }}</h3>
+                        <a href="{{ route('venues.mine') }}" class="text-indigo-600 hover:underline text-sm">{{ __('venues.my_heading') }} →</a>
+                    </div>
+                    @forelse ($myVenues as $venue)
+                        <a href="{{ route('venues.show', $venue) }}" class="flex items-center justify-between py-3 border-b border-gray-100 last:border-0 hover:bg-gray-50 -mx-2 px-2 rounded">
+                            <div>
+                                <div class="font-medium text-gray-900">{{ $venue->name }}</div>
+                                <div class="text-sm text-gray-500">{{ $venue->category?->name }} · {{ $venue->city }}</div>
+                            </div>
+                            @if ($venue->price_per_hour)
+                                <span class="text-sm font-semibold text-gray-700">{{ (int) $venue->price_per_hour }} {{ __('venues.card_price') }}</span>
+                            @endif
+                        </a>
+                    @empty
+                        <p class="text-gray-500">
+                            {{ __('venues.empty') }}
+                            <a href="{{ route('venues.create') }}" class="text-indigo-600 hover:underline">{{ __('venues.add') }}</a>.
                         </p>
                     @endforelse
                 </div>
