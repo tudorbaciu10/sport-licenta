@@ -1,0 +1,409 @@
+/* ============================================================
+   Sport.md — Landing styles
+   Palette: flag of the Republic of Moldova (blue / yellow / red)
+   ============================================================ */
+
+:root {
+    --md-blue: #0046AE;
+    --md-blue-dark: #003684;
+    --md-yellow: #FFD200;
+    --md-red: #CC092F;
+
+    --ink: #14213d;
+    --muted: #5b6472;
+    --line: #e6e8ee;
+    --bg: #f6f7fb;
+    --card: #ffffff;
+
+    --radius: 14px;
+    --shadow: 0 8px 24px rgba(20, 33, 61, .08);
+    --shadow-hover: 0 14px 36px rgba(0, 70, 174, .18);
+    --font: 'Segoe UI', system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font);
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.5;
+}
+
+a { text-decoration: none; color: inherit; }
+img { max-width: 100%; display: block; }
+
+.landing-container {
+    width: min(1180px, 92%);
+    margin-inline: auto;
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    padding: .6rem 1.15rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: .95rem;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+    white-space: nowrap;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn--primary { background: var(--md-yellow); color: var(--md-blue-dark); }
+.btn--primary:hover { box-shadow: 0 8px 20px rgba(255, 210, 0, .45); }
+.btn--ghost { background: transparent; color: #fff; border-color: rgba(255, 255, 255, .6); }
+.btn--ghost:hover { background: rgba(255, 255, 255, .12); }
+.btn--red { background: var(--md-red); color: #fff; }
+.btn--red:hover { box-shadow: 0 8px 20px rgba(204, 9, 47, .4); }
+
+/* ============================================================
+   #site-header — top navbar
+   ============================================================ */
+.landing-header {
+    background: var(--md-blue);
+    background: linear-gradient(90deg, var(--md-blue) 0%, var(--md-blue-dark) 100%);
+    color: #fff;
+    border-bottom: 4px solid var(--md-yellow);
+    position: sticky;
+    top: 0;
+    z-index: 30;
+}
+.landing-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: .8rem 0;
+}
+.landing-header__brand {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: .3px;
+}
+.landing-header__brand small {
+    display: block;
+    font-size: .7rem;
+    font-weight: 500;
+    opacity: .85;
+    letter-spacing: 0;
+}
+.landing-header__actions {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+/* language switcher */
+.lang-switch {
+    display: inline-flex;
+    background: rgba(255, 255, 255, .12);
+    border-radius: 999px;
+    padding: 3px;
+}
+.lang-switch a {
+    padding: .25rem .55rem;
+    border-radius: 999px;
+    font-size: .8rem;
+    font-weight: 700;
+    color: #fff;
+    opacity: .8;
+}
+.lang-switch a.is-active {
+    background: var(--md-yellow);
+    color: var(--md-blue-dark);
+    opacity: 1;
+}
+
+/* ============================================================
+   #hero — headline
+   ============================================================ */
+.landing-hero {
+    position: relative;
+    color: #fff;
+    background:
+        radial-gradient(1200px 300px at 80% -10%, rgba(255, 210, 0, .25), transparent 60%),
+        linear-gradient(120deg, var(--md-blue) 0%, var(--md-blue-dark) 55%, var(--md-red) 160%);
+    overflow: hidden;
+}
+.landing-hero__inner {
+    padding: 3.4rem 0 3.8rem;
+    max-width: 640px;
+}
+.landing-hero__title {
+    font-size: clamp(1.9rem, 4vw, 3rem);
+    line-height: 1.1;
+    margin: 0 0 .8rem;
+    font-weight: 800;
+}
+.landing-hero__subtitle {
+    font-size: 1.1rem;
+    opacity: .92;
+    margin: 0 0 1.5rem;
+}
+.landing-hero__stripes {
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 6px;
+    display: flex;
+}
+.landing-hero__stripes span { flex: 1; }
+.landing-hero__stripes span:nth-child(1) { background: var(--md-blue); }
+.landing-hero__stripes span:nth-child(2) { background: var(--md-yellow); }
+.landing-hero__stripes span:nth-child(3) { background: var(--md-red); }
+
+/* ============================================================
+   #sport-selector — horizontally scrollable sport chips
+   ============================================================ */
+.sport-selector {
+    background: var(--card);
+    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top: 64px;
+    z-index: 20;
+}
+.sport-selector__inner {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: .8rem 0;
+}
+.sport-selector__label {
+    font-weight: 700;
+    color: var(--muted);
+    font-size: .9rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.sport-selector__track {
+    display: flex;
+    gap: .5rem;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+    cursor: grab;
+}
+.sport-selector__track.is-dragging { cursor: grabbing; scroll-behavior: auto; }
+.sport-selector__track::-webkit-scrollbar { height: 6px; }
+.sport-selector__track::-webkit-scrollbar-thumb { background: var(--line); border-radius: 999px; }
+.sport-selector__track { scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+
+.sport-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .5rem .95rem;
+    border-radius: 999px;
+    border: 2px solid var(--line);
+    background: #fff;
+    color: var(--ink);
+    font-weight: 600;
+    font-size: .9rem;
+    white-space: nowrap;
+    user-select: none;
+    transition: border-color .15s, background .15s, color .15s;
+}
+.sport-chip:hover { border-color: var(--md-blue); }
+.sport-chip .sport-chip__count {
+    font-size: .75rem;
+    background: var(--line);
+    color: var(--muted);
+    border-radius: 999px;
+    padding: .05rem .4rem;
+}
+.sport-chip.is-active {
+    background: var(--md-blue);
+    border-color: var(--md-blue);
+    color: #fff;
+}
+.sport-chip.is-active .sport-chip__count { background: var(--md-yellow); color: var(--md-blue-dark); }
+
+/* ============================================================
+   #room-filters — date range / time / city filter bar
+   ============================================================ */
+.room-filters {
+    background: linear-gradient(90deg, rgba(0, 70, 174, .04), rgba(204, 9, 47, .04));
+    border-bottom: 1px solid var(--line);
+}
+.room-filters__form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: .8rem;
+    padding: .9rem 0;
+}
+.room-filters__title {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    font-weight: 700;
+    color: var(--md-blue);
+    white-space: nowrap;
+    align-self: center;
+}
+.room-filters__title svg { width: 20px; height: 20px; }
+.filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: .2rem;
+}
+.filter-field label {
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+    color: var(--muted);
+}
+.filter-field input {
+    padding: .45rem .6rem;
+    border: 2px solid var(--line);
+    border-radius: 10px;
+    font: inherit;
+    font-size: .9rem;
+    background: #fff;
+    color: var(--ink);
+    min-width: 140px;
+}
+.filter-field input:focus {
+    outline: none;
+    border-color: var(--md-blue);
+    box-shadow: 0 0 0 3px rgba(0, 70, 174, .12);
+}
+.room-filters__actions { display: flex; gap: .5rem; align-items: flex-end; }
+
+/* ============================================================
+   #rooms — grid of created rooms (events)
+   ============================================================ */
+.rooms-section { padding: 2rem 0 3rem; }
+.rooms-section__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+.rooms-section__head h2 { margin: 0; font-size: 1.5rem; }
+.rooms-section__count { color: var(--muted); font-weight: 600; }
+
+.rooms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.1rem;
+    position: relative;
+}
+.rooms-grid.is-loading { opacity: .5; pointer-events: none; }
+
+/* room card */
+.room-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--md-blue);
+    border-radius: var(--radius);
+    padding: 1.1rem;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: .7rem;
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+.room-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+.room-card__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+}
+.room-card__sport {
+    font-size: .78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    color: var(--md-blue);
+    background: rgba(0, 70, 174, .08);
+    padding: .2rem .55rem;
+    border-radius: 999px;
+}
+.room-card__badge {
+    font-size: .72rem;
+    font-weight: 700;
+    padding: .2rem .55rem;
+    border-radius: 999px;
+    text-transform: capitalize;
+}
+.badge--open { background: rgba(46, 160, 67, .14); color: #1a7f37; }
+.badge--full { background: rgba(204, 9, 47, .12); color: var(--md-red); }
+.badge--other { background: var(--line); color: var(--muted); }
+
+.room-card__title {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+.room-card__meta { list-style: none; margin: 0; padding: 0; display: grid; gap: .3rem; }
+.room-card__meta li { font-size: .88rem; color: var(--muted); display: flex; gap: .4rem; }
+.room-card__meta li b { color: var(--ink); font-weight: 600; }
+
+.room-card__footer {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: .6rem;
+    padding-top: .7rem;
+    border-top: 1px dashed var(--line);
+}
+.room-card__players {
+    display: flex;
+    align-items: baseline;
+    gap: .3rem;
+    font-weight: 700;
+    color: var(--md-red);
+    font-size: 1rem;
+}
+.room-card__players small { color: var(--muted); font-weight: 500; font-size: .8rem; }
+.room-card__footer .btn {
+    width: 100%;
+    justify-content: center;
+    padding-block: .55rem;
+    font-size: .88rem;
+}
+
+.rooms-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--muted);
+    border: 2px dashed var(--line);
+    border-radius: var(--radius);
+    background: #fff;
+}
+
+/* ============================================================
+   #site-footer
+   ============================================================ */
+.landing-footer {
+    background: var(--md-blue-dark);
+    color: rgba(255, 255, 255, .85);
+    border-top: 4px solid var(--md-yellow);
+    padding: 1.5rem 0;
+    text-align: center;
+    font-size: .9rem;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 640px) {
+    .landing-header__brand small { display: none; }
+    .sport-selector { top: 60px; }
+    .rooms-section__head { flex-direction: column; align-items: flex-start; gap: .3rem; }
+}
