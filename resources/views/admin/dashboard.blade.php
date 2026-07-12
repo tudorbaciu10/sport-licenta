@@ -20,11 +20,11 @@
                     ['label' => 'Events', 'value' => $stats['events']],
                     ['label' => 'Upcoming', 'value' => $stats['upcomingEvents']],
                     ['label' => 'Sports', 'value' => $stats['sports']],
-                    ['label' => 'Venues', 'value' => $stats['venues']],
+                    ['label' => 'Facilities', 'value' => $stats['facilities']],
                 ] as $stat)
                     <div class="bg-white shadow-sm rounded-lg p-4">
                         <div class="text-3xl font-bold text-gray-900">{{ $stat['value'] }}</div>
-                        <div class="text-sm text-gray-500">{{ $stat['label'] }}</div>
+                        <div class="text-sm text-gray-500">{{ __($stat['label']) }}</div>
                     </div>
                 @endforeach
             </div>

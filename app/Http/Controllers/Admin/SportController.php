@@ -25,7 +25,7 @@ class SportController extends Controller
             'slug' => Str::slug($validated['name']),
         ]);
 
-        return back()->with('status', 'Sport added.');
+        return back()->with('status', __('Sport added.'));
     }
 
     /**
@@ -35,6 +35,6 @@ class SportController extends Controller
     {
         $sport->delete();
 
-        return back()->with('status', 'Sport removed.');
+        return back()->with('status', __('Sport removed.'));
     }
 }

@@ -120,6 +120,9 @@
         }
     }
 
+    // Allow other scripts (app-shell.js) to refresh the grid after in-place actions.
+    window.addEventListener('rooms:refresh', function () { loadRooms(false); });
+
     // Browser back/forward.
     window.addEventListener('popstate', function () {
         const sp = new URLSearchParams(window.location.search);

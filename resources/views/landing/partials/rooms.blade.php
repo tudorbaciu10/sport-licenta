@@ -7,7 +7,8 @@
             default => 'badge--other',
         };
     @endphp
-    <article class="room-card" id="room-{{ $event->id }}" data-room-id="{{ $event->id }}">
+    <article class="room-card is-clickable" id="room-{{ $event->id }}" data-room-id="{{ $event->id }}"
+             data-detail-url="{{ route('landing.room', $event) }}" role="button" tabindex="0">
         <div class="room-card__media">
             <img src="{{ $event->sport?->imageUrl() ?? asset('assets/images/sports/default.svg') }}"
                  alt="{{ $event->sport?->name }}" loading="lazy">
@@ -16,7 +17,7 @@
         <div class="room-card__body">
         <div class="room-card__top">
             <span class="room-card__sport">{{ $event->sport?->name }}</span>
-            <span class="room-card__badge {{ $badge }}">{{ ucfirst($event->status) }}</span>
+            <span class="room-card__badge {{ $badge }}">{{ __(ucfirst($event->status)) }}</span>
         </div>
 
         <h3 class="room-card__title">{{ $event->title }}</h3>
@@ -44,7 +45,7 @@
                 {{ $event->participants_count }}@if ($event->max_participants)/{{ $event->max_participants }}@endif
                 <small>{{ __('landing.card_players') }}</small>
             </span>
-            <a id="btn-join-room-{{ $event->id }}" class="btn btn--red" href="{{ route('login') }}">{{ __('landing.card_cta') }}</a>
+            <span class="btn btn--red room-card__open" id="btn-open-room-{{ $event->id }}">{{ __('venues.card_view') }}</span>
         </div>
         </div>{{-- /.room-card__body --}}
     </article>

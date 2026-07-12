@@ -23,7 +23,7 @@
                     </div>
                     <span class="inline-block px-3 py-1 text-sm rounded-full
                         {{ $event->status === 'open' ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-600' }}">
-                        {{ ucfirst($event->status) }}
+                        {{ __(ucfirst($event->status)) }}
                     </span>
                 </div>
 

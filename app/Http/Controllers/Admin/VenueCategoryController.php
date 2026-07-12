@@ -24,13 +24,13 @@ class VenueCategoryController extends Controller
             'icon' => $validated['icon'] ?? null,
         ]);
 
-        return back()->with('status', 'Category added.');
+        return back()->with('status', __('Category added.'));
     }
 
     public function destroy(VenueCategory $venueCategory): RedirectResponse
     {
         $venueCategory->delete();
 
-        return back()->with('status', 'Category removed.');
+        return back()->with('status', __('Category removed.'));
     }
 }

@@ -7,6 +7,7 @@ use App\Models\Event;
 use App\Models\Sport;
 use App\Models\Venue;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 
 class EventController extends Controller
@@ -46,15 +47,52 @@ class EventController extends Controller
     }
 
     /**
-     * Store a new event created by the current user.
+     * Event creation form as a slide-over partial (unified landing surface).
      */
-    public function store(StoreEventRequest $request)
+    public function createForm(): View
     {
-        $event = $request->user()->createdEvents()->create($request->validated());
+        return view('landing.partials.room-form', [
+            'sports' => Sport::orderBy('name')->get(),
+            'venues' => Venue::orderBy('name')->get(),
+        ]);
+    }
+
+    /**
+     * Store a new event created by the current user.
+     *
+     * Handles both the classic Breeze page (redirect) and the slide-over
+     * panel (AJAX: HTML partial back — the form with errors, or a success marker).
+     */
+    public function store(Request $request)
+    {
+        $rules = (new StoreEventRequest())->rules();
+
+        if ($request->ajax()) {
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) {
+                return response()->view('landing.partials.room-form', [
+                    'sports' => Sport::orderBy('name')->get(),
+                    'venues' => Venue::orderBy('name')->get(),
+                    'errorsBag' => $validator->errors(),
+                    'values' => $request->all(),
+                ], 422);
+            }
+
+            $request->user()->createdEvents()->create($validator->validated());
+
+            return view('landing.partials.form-success', [
+                'message' => __('landing.panel_event_created'),
+                'refresh' => 'rooms',
+            ]);
+        }
+
+        $data = $request->validate($rules);
+        $event = $request->user()->createdEvents()->create($data);
 
         return redirect()
             ->route('events.show', $event)
-            ->with('status', 'Event created.');
+            ->with('status', __('Event created.'));
     }
 
     /**

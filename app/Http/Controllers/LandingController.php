@@ -17,20 +17,7 @@ class LandingController extends Controller
      */
     public function index(Request $request): View
     {
-        $selectedSport = $request->integer('sport') ?: null;
-
-        $selectedCategory = $request->integer('category') ?: null;
-
-        return view('landing', [
-            'sports' => $this->sports(),
-            'selectedSport' => $selectedSport,
-            'events' => $this->rooms($request, $selectedSport),
-            'filters' => $this->filterValues($request),
-            'categories' => $this->categories(),
-            'selectedCategory' => $selectedCategory,
-            'venues' => $this->venues($request, $selectedCategory),
-            'venueFilters' => $this->venueFilterValues($request),
-        ]);
+        return view('landing', $this->landingData($request));
     }
 
     /**
@@ -44,6 +31,46 @@ class LandingController extends Controller
             'events' => $this->rooms($request, $selectedSport),
             'selectedSport' => $selectedSport,
         ]);
+    }
+
+    /**
+     * Event detail. AJAX → the bare slide-over partial (fetched by app-shell.js);
+     * a direct visit / shared link → the full landing page with the panel pre-opened.
+     */
+    public function roomDetail(Request $request, Event $event): View
+    {
+        $event->load(['sport', 'venue', 'creator', 'participants']);
+
+        if ($request->ajax()) {
+            return view('landing.partials.room-detail', ['event' => $event]);
+        }
+
+        return view('landing', array_merge(
+            $this->landingData($request),
+            ['openEvent' => $event],
+        ));
+    }
+
+    /**
+     * Shared data for the full landing page (home + deep-linked room).
+     *
+     * @return array<string, mixed>
+     */
+    private function landingData(Request $request): array
+    {
+        $selectedSport = $request->integer('sport') ?: null;
+        $selectedCategory = $request->integer('category') ?: null;
+
+        return [
+            'sports' => $this->sports(),
+            'selectedSport' => $selectedSport,
+            'events' => $this->rooms($request, $selectedSport),
+            'filters' => $this->filterValues($request),
+            'categories' => $this->categories(),
+            'selectedCategory' => $selectedCategory,
+            'venues' => $this->venues($request, $selectedCategory),
+            'venueFilters' => $this->venueFilterValues($request),
+        ];
     }
 
     /**

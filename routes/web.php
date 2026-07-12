@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 // Public landing page with the sport selector, rooms, and the facilities marketplace.
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 Route::get('/rooms', [LandingController::class, 'roomsPartial'])->name('landing.rooms');
+Route::get('/rooms/{event}', [LandingController::class, 'roomDetail'])->name('landing.room');
 Route::get('/facilities', [LandingController::class, 'venuesPartial'])->name('landing.venues');
 
 // Switch the interface language (ro / en / ru).
@@ -53,6 +54,10 @@ Route::middleware('auth')->group(function () {
     // Player profile (bio / city / skill / sports played).
     Route::get('/profile/details', [PlayerProfileController::class, 'edit'])->name('profile.details.edit');
     Route::patch('/profile/details', [PlayerProfileController::class, 'update'])->name('profile.details.update');
+
+    // Slide-over form partials for the unified landing surface.
+    Route::get('/app/create-event', [EventController::class, 'createForm'])->name('events.create-form');
+    Route::get('/app/edit-profile', [PlayerProfileController::class, 'editForm'])->name('profile.details.form');
 
     // Events.
     Route::resource('events', EventController::class)->only(['index', 'create', 'store', 'show']);

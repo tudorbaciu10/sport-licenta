@@ -18,8 +18,13 @@ class RegisteredUserController extends Controller
     /**
      * Display the registration view.
      */
-    public function create(): View
+    public function create(Request $request): View
     {
+        $next = (string) $request->input('next', '');
+        if ($next !== '' && str_starts_with($next, '/') && ! str_starts_with($next, '//')) {
+            $request->session()->put('url.intended', $next);
+        }
+
         return view('auth.register');
     }
 
@@ -46,6 +51,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect()->intended(route('dashboard', absolute: false));
     }
 }

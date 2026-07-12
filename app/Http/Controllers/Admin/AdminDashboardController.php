@@ -24,7 +24,7 @@ class AdminDashboardController extends Controller
                 'events' => Event::count(),
                 'upcomingEvents' => Event::upcoming()->count(),
                 'sports' => Sport::count(),
-                'venues' => Venue::count(),
+                'facilities' => Venue::count(),
             ],
             'sports' => Sport::withCount('events')->orderBy('name')->get(),
             'venueCategories' => VenueCategory::withCount('venues')->orderBy('name')->get(),

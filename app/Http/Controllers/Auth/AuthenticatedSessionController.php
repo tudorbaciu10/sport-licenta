@@ -14,9 +14,23 @@ class AuthenticatedSessionController extends Controller
     /**
      * Display the login view.
      */
-    public function create(): View
+    public function create(Request $request): View
     {
+        $this->rememberIntended($request);
+
         return view('auth.login');
+    }
+
+    /**
+     * Remember a safe local ?next= URL so the user returns there after auth.
+     */
+    protected function rememberIntended(Request $request): void
+    {
+        $next = (string) $request->input('next', '');
+
+        if ($next !== '' && str_starts_with($next, '/') && ! str_starts_with($next, '//')) {
+            $request->session()->put('url.intended', $next);
+        }
     }
 
     /**

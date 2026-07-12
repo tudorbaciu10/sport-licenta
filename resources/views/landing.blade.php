@@ -7,7 +7,8 @@
     <link rel="icon" type="image/svg+xml" href="{{ asset('assets/images/logo.svg') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/landing.css') }}">
 </head>
-<body>
+@php($openEvent = $openEvent ?? null)
+<body class="{{ $openEvent ? 'has-panel' : '' }}">
 
     {{-- ===== Section: Site header / navbar ===== --}}
     <header id="site-header" class="landing-header">
@@ -30,7 +31,29 @@
                 </nav>
 
                 @auth
-                    <a id="btn-dashboard" href="{{ route('dashboard') }}" class="btn btn--primary">{{ __('landing.nav_dashboard') }}</a>
+                    <button type="button" id="btn-create-event" class="btn btn--primary"
+                            data-panel-url="{{ route('events.create-form') }}">{{ __('landing.nav_create') }}</button>
+
+                    <div class="user-menu" id="user-menu">
+                        <button type="button" class="user-menu__trigger" id="user-menu-trigger" aria-haspopup="true" aria-expanded="false">
+                            <span class="user-menu__avatar">{{ mb_strtoupper(mb_substr(auth()->user()->name, 0, 1)) }}</span>
+                            <span class="user-menu__name">{{ auth()->user()->name }}</span>
+                            <span class="user-menu__caret">▾</span>
+                        </button>
+                        <div class="user-menu__dropdown" id="user-menu-dropdown">
+                            <button type="button" class="user-menu__item" data-panel-url="{{ route('profile.details.form') }}">{{ __('landing.menu_edit_profile') }}</button>
+                            <a class="user-menu__item" href="{{ route('dashboard') }}">{{ __('landing.menu_my_events') }}</a>
+                            <a class="user-menu__item" href="{{ route('venues.mine') }}">{{ __('landing.menu_my_facilities') }}</a>
+                            <a class="user-menu__item" href="{{ route('profile.edit') }}">{{ __('landing.menu_account') }}</a>
+                            @if (auth()->user()->isAdmin())
+                                <a class="user-menu__item" href="{{ route('admin.dashboard') }}">Admin</a>
+                            @endif
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="user-menu__item user-menu__item--danger">{{ __('landing.menu_logout') }}</button>
+                            </form>
+                        </div>
+                    </div>
                 @else
                     <a id="btn-login" href="{{ route('login') }}" class="btn btn--ghost">{{ __('landing.nav_login') }}</a>
                     <a id="btn-register" href="{{ route('register') }}" class="btn btn--primary">{{ __('landing.nav_register') }}</a>
@@ -215,7 +238,19 @@
         </div>
     </footer>
 
+    {{-- ===== Slide-over panel (event detail / create event / edit profile) ===== --}}
+    <div id="slideover-overlay" class="slideover-overlay {{ $openEvent ? 'is-open' : '' }}" @unless($openEvent) hidden @endunless></div>
+    <aside id="slideover" class="slideover {{ $openEvent ? 'is-open' : '' }}"
+           @unless($openEvent) hidden @endunless
+           aria-hidden="{{ $openEvent ? 'false' : 'true' }}"
+           @if($openEvent) data-open-room="{{ route('landing.room', $openEvent) }}" @endif>
+        <div class="slideover__grabber" data-panel-close aria-hidden="true"></div>
+        <div id="slideover-body" class="slideover__body">@if($openEvent)@include('landing.partials.room-detail', ['event' => $openEvent])@endif</div>
+    </aside>
+    <div id="toast" class="toast" hidden></div>
+
     <script src="{{ asset('assets/js/landing.js') }}"></script>
     <script src="{{ asset('assets/js/venues.js') }}"></script>
+    <script src="{{ asset('assets/js/app-shell.js') }}"></script>
 </body>
 </html>
