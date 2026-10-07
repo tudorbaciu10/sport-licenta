@@ -59,11 +59,11 @@ Surse analizate: Spond, GoodRec, Sportly, Joaka, Kickr, Courtica.md, FTogether (
 
 | # | Întrebare | Recomandare | Decizie |
 |---|---|---|---|
-| D1 | Ce facem cu pagina principală actuală (temă închisă, minge 3D, GSAP)? | Redesenăm întâi aplicația (`/rooms` etc.), pagina principală la urmă. Mingea 3D rămâne doar dacă se potrivește cu stilul deschis; altfel, o secțiune simplă. | _în așteptare_ |
-| D2 | Tailwind/Vite sunt instalate dar nefolosite. Le folosim? | CSS simplu cu variabile (tokens), fără pas de build. Scoatem Tailwind/Vite din `package.json` dacă nu le folosim. | _în așteptare_ |
-| D3 | Temă închisă? | Tokens pregătite acum, implementare în faza finală. | _în așteptare_ |
-| D4 | Limbi | RO + RU prin fișiere de traducere Laravel (`lang/`), de la început. | _în așteptare_ |
-| D5 | Fotografii sau doar pictograme? | Pictograme pe fundal pastel. Fotografiile slabe strică tot aspectul. | _în așteptare_ |
+| D1 | Ce facem cu pagina principală actuală (temă închisă, minge 3D, GSAP)? | Redesenăm întâi aplicația (`/rooms` etc.), pagina principală la urmă. Mingea 3D rămâne doar dacă se potrivește cu stilul deschis; altfel, o secțiune simplă. | **Aplicația întâi.** Pagina principală rămâne neschimbată până în Faza 6; atunci decidem soarta mingii 3D. |
+| D2 | Tailwind/Vite sunt instalate dar nefolosite. Le folosim? | CSS simplu cu variabile (tokens), fără pas de build. Scoatem Tailwind/Vite din `package.json` dacă nu le folosim. | **Le scoatem.** CSS simplu cu tokens, fără build; Tailwind/Vite se elimină din proiect. |
+| D3 | Temă închisă? | Tokens pregătite acum, implementare în faza finală. | **Tokens acum, implementare la final** (Faza 7). |
+| D4 | Limbi | RO + RU prin fișiere de traducere Laravel (`lang/`), de la început. | **RO + RU de la început**, prin `lang/ro` și `lang/ru`, cu selector de limbă. |
+| D5 | Fotografii sau doar pictograme? | Pictograme pe fundal pastel. Fotografiile slabe strică tot aspectul. | **Doar pictograme** pe fundal tint; fotografii doar dacă apar poze proprii bune. |
 
 ## 3. Principii de design
 
@@ -291,7 +291,7 @@ Fiecare fază se termină cu commit și cu verificare în browser (telefon real 
 - [x] Acest fișier în `docs/DESIGN.md`
 - [x] `CLAUDE.md` și skill-ul `sportmd-design`
 - [x] `frontend-design` instalat (disponibil ca `frontend-design:frontend-design`)
-- [ ] Deciziile D1–D5 completate în 2.2
+- [x] Deciziile D1–D5 completate în 2.2
 - [ ] Inter (`.woff2`) și pictogramele Lucide descărcate
 
 **Faza 1: fundația.** `tokens.css`, `base.css` (reset, tipografie, butoane, câmpuri), Inter local, `layouts/app` nou cu bară jos (telefon) și sus (laptop), aliniere `sports.color` cu 4.3, pagină `/styleguide`.
