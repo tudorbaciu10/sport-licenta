@@ -251,6 +251,14 @@ Aplicație mobile-first. Pe telefon: bară de navigare jos cu 4–5 destinații.
 - „Meciurile mele”: Viitoare / Trecute.
 - Scor de fiabilitate (versiunea 2).
 
+### 6.8 Calendarul meciurilor
+
+- **Public**, pe pagina principală (dreapta titlului, ≥1024px; sub el pe telefon). **Personal**, în „Meciurile mele”.
+- Lunar, săptămâna începe luni, navigare de la luna curentă până la +6 luni, „Azi”. Puncte pe sport (max 3, al treilea devine „+”), ziua de azi cu contur, ziua aleasă cu fundal `--text`, zilele trecute estompate și neselectabile.
+- Personal: „Toate meciurile / Doar ale mele”, inel `--brand` pe zilele mele, rolul, plata, echipamentul, jucătorii și acțiunile „Ocupă un loc / Mă interesează / Ies”.
+- Cod: `components/calendar.blade.php`, `assets/css/calendar.css`, `assets/js/calendar.js` (constantele `WEEK_STARTS_ON`, `MAX_DOTS`, `LOOKAHEAD_MONTHS`, `ANIMATION_MS`), date din `CalendarController` (`/calendar/days`, `/calendar/day`).
+- Fus orar: `Europe/Chisinau` (`APP_TIMEZONE`).
+
 ### 6.7 Pagina principală de prezentare (faza finală)
 
 Un singur mesaj clar + căutarea + „Cum funcționează” în 3 pași + meciuri reale din DB (nu date inventate) + apel la acțiune.
