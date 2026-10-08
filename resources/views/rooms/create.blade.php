@@ -6,7 +6,8 @@
     $init = [
         'sport' => (string) old('sport_id', $selectedSport),
         'title' => old('title', ''),
-        'when' => old('match_date_time', ''),
+        // ?date=YYYY-MM-DD from the calendar pre-fills the day (18:00, change as needed)
+        'when' => old('match_date_time', preg_match('/^\d{4}-\d{2}-\d{2}$/', (string) request('date')) && request('date') >= today()->toDateString() ? request('date').'T18:00' : ''),
         'location' => old('location_name', ''),
         'city' => (string) old('city_id', ''),
         'venue' => old('venue_type', ''),

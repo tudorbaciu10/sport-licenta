@@ -14,7 +14,8 @@
 <style>
     /* Home only. Tokens only. */
     .home { display: grid; gap: var(--space-8); }
-    .hero { display: grid; gap: var(--space-4); padding-top: var(--space-4); }
+    .hero-row { display: grid; gap: var(--space-6); }
+    .hero { display: grid; gap: var(--space-4); padding-top: var(--space-4); align-content: start; }
     .hero h1 { max-width: 18ch; }
     .hero__today { display: inline-flex; align-items: center; gap: var(--space-2); color: var(--text-2); font-size: var(--fs-callout); }
     .hero__today::before { content: ""; width: 8px; height: 8px; border-radius: var(--radius-pill); background: var(--success); }
@@ -50,13 +51,16 @@
     }
     @media (min-width: 1024px) {
         .hero { padding-top: var(--space-7); }
+        .hero-row { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: center; }
+        .hero-row__calendar { justify-self: end; }
     }
 </style>
 @endpush
 
 @section('content')
 <div class="home">
-    {{-- One clear message + search --}}
+    {{-- First section: message + search on the left, public calendar on the right (≥1024px) --}}
+    <div class="hero-row">
     <section class="hero" aria-labelledby="hero-title">
         <p class="hero__today tabular" aria-live="polite">{{ $today }}</p>
         <h1 id="hero-title" class="t-large">{{ __('home.hero_title') }}</h1>
@@ -71,6 +75,8 @@
             <x-button type="submit">{{ __('home.search') }}</x-button>
         </form>
     </section>
+    <x-calendar :city="$city" class="hero-row__calendar" />
+    </div>
 
     {{-- "Ce joci azi?" — the colourful sport cards are the one big idea --}}
     <section aria-labelledby="pick-title">

@@ -5,6 +5,9 @@
 @section('content')
     <h1 class="t-large">{{ __('profile.matches.title') }}</h1>
 
+    {{-- Personal calendar: my days ringed, my role, money, equipment, players, quick actions --}}
+    <x-calendar :city="auth()->user()->city" personal mine class="my-calendar" />
+
     <nav class="segmented segmented--tabs" aria-label="{{ __('profile.matches.title') }}">
         @foreach (['upcoming', 'past'] as $key)
             <a href="{{ route('my-matches', $key === 'past' ? ['tab' => 'past'] : []) }}" @if ($tab === $key) aria-current="page" @endif>
