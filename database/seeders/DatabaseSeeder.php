@@ -23,6 +23,10 @@ class DatabaseSeeder extends Seeder
         $sports = collect([
             ['Fotbal', 'fotbal'], ['Baschet', 'baschet'], ['Tenis', 'tenis'], ['Volei', 'volei'],
             ['Handbal', 'handbal'], ['Alergare', 'alergare'], ['Tenis de masă', 'tenis-de-masa'], ['Padel', 'padel'],
+            // Added later: sports played in Moldova and Romania
+            ['Futsal', 'futsal'], ['Badminton', 'badminton'], ['Squash', 'squash'], ['Rugby', 'rugby'],
+            ['Hochei', 'hochei'], ['Volei pe plajă', 'volei-pe-plaja'], ['Ciclism', 'ciclism'], ['Înot', 'inot'],
+            ['Escaladă', 'escalada'], ['Box', 'box'], ['Șah', 'sah'], ['Oină', 'oina'],
         ])->map(fn ($s) => Sport::updateOrCreate(['slug' => $s[1]], ['name' => $s[0], 'color' => Sport::COLORS[$s[1]]]));
 
         User::factory()->create(['name' => 'Demo', 'email' => 'demo@sport.md']);

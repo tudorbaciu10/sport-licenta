@@ -32,7 +32,7 @@ it('shows real open-match counts per sport for Chișinău by default', function 
     $page = $this->get('/')->assertOk();
 
     expect($page->viewData('city')->slug)->toBe('chisinau');
-    $counts = $page->viewData('sports')->pluck('open_count', 'slug')->all();
+    $counts = $page->viewData('sports')->pluck('open_count', 'slug')->only(['fotbal', 'tenis'])->all();
     expect($counts)->toBe(['fotbal' => 2, 'tenis' => 1]);
 
     $page->assertSee('Ce joci azi?')
@@ -49,8 +49,9 @@ it('switches city from the selector and uses the player\'s own city', function (
     homeRoom('chisinau', 'fotbal');
     homeRoom('balti', 'tenis');
 
-    expect($this->get('/?city=balti')->viewData('sports')->pluck('open_count', 'slug')->all())
-        ->toBe(['fotbal' => 0, 'tenis' => 1]);
+    // Busiest sport first
+    expect($this->get('/?city=balti')->viewData('sports')->pluck('open_count', 'slug')->only(['fotbal', 'tenis'])->all())
+        ->toBe(['tenis' => 1, 'fotbal' => 0]);
 
     $user = User::factory()->create(['city_id' => City::where('slug', 'balti')->value('id')]);
     expect($this->actingAs($user)->get('/')->viewData('city')->slug)->toBe('balti');

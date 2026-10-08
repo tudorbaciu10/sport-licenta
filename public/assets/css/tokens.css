@@ -30,6 +30,20 @@
     --sport-alergare: #007AFF;    --on-sport-alergare: var(--text);    /* 4.19, large only */
     --sport-tenis-masa: #AF52DE;  --on-sport-tenis-masa: #FFFFFF;      /* 4.13, large only */
     --sport-padel: #30B0C7;       --on-sport-padel: var(--text);       /* 6.54 */
+    /* Added sports (Moldova / Romania). Palette has no 20 distinct hues: some share a family
+       with an older sport, so a sport is always shown with its icon and name too. All ≥ 4.5:1 with --text. */
+    --sport-futsal: #00C7BE;        --on-sport-futsal: var(--text);      
+    --sport-badminton: #32ADE6;     --on-sport-badminton: var(--text);   
+    --sport-squash: #63E6E2;        --on-sport-squash: var(--text);      
+    --sport-rugby: #AC8E68;         --on-sport-rugby: var(--text);       
+    --sport-hochei: #0A84FF;        --on-sport-hochei: var(--text);      
+    --sport-volei-pe-plaja: #FFD60A; --on-sport-volei-pe-plaja: var(--text);
+    --sport-ciclism: #30D158;       --on-sport-ciclism: var(--text);     
+    --sport-inot: #40C8E0;          --on-sport-inot: var(--text);        
+    --sport-escalada: #FF9F0A;      --on-sport-escalada: var(--text);    
+    --sport-box: #FF375F;           --on-sport-box: var(--text);         
+    --sport-sah: #BF5AF2;           --on-sport-sah: var(--text);         
+    --sport-oina: #64D2FF;          --on-sport-oina: var(--text);        
     --tint: 14%;                  /* sport tint = color-mix(in srgb, var(--sport-x) var(--tint), transparent) */
 
     /* 4.4 Typography */

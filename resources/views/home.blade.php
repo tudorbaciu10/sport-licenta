@@ -46,7 +46,7 @@
 
         /* Sports as one horizontal row, edge to edge, snapping tile by tile */
         .sport-rail {
-            grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 112px; gap: var(--space-2);
+            grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 124px; gap: var(--space-2);
             overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory;
             margin-inline: calc(-1 * var(--gutter)); padding: var(--space-1) var(--gutter);
             scroll-padding-inline: var(--gutter); scrollbar-width: none;
@@ -54,6 +54,7 @@
         .sport-rail::-webkit-scrollbar { display: none; }
         .sport-rail > .sport-card { scroll-snap-align: start; flex-direction: column; align-items: flex-start; justify-content: space-between; gap: var(--space-2); min-height: 116px; }
         .sport-rail .sport-card--all { display: flex; }
+        .sport-rail .t-headline { overflow-wrap: normal; hyphens: manual; }   /* "Badminton" stays whole; "Tenis de masă" wraps at spaces */
     }
     @media (min-width: 768px) {
         .steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -65,6 +66,14 @@
         .pick-row { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: var(--space-6); }
         .pick-row .pick-row__calendar { justify-self: stretch; max-width: none; }   /* fills the right column, aligned with the search button */
         .sport-grid--compact { grid-template-columns: repeat(2, minmax(0, 1fr)); }   /* half width next to the calendar */
+
+        /* 20 sports: scroll inside a box as tall as the calendar; the faded bottom edge says there is more */
+        .sport-rail {
+            max-height: 381px; overflow-y: auto; overscroll-behavior: contain;   /* bottom lines up with the calendar */
+            padding: var(--space-1) var(--space-2) var(--space-7) 0; scrollbar-width: thin;
+            -webkit-mask-image: linear-gradient(to bottom, #000 80%, transparent);
+            mask-image: linear-gradient(to bottom, #000 80%, transparent);
+        }
     }
 </style>
 @endpush

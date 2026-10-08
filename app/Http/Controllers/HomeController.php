@@ -25,7 +25,8 @@ class HomeController extends Controller
         return view('home', [
             'cities' => $cities,
             'city' => $city,
-            'sports' => Sport::withCount(['rooms as open_count' => $inCity])->orderBy('name')->get(),
+            // Busiest sports first, so with 20 sports the useful ones need no scrolling.
+            'sports' => Sport::withCount(['rooms as open_count' => $inCity])->orderByDesc('open_count')->orderBy('name')->get(),
             'upcoming' => Room::query()->tap($inCity)->where('status', 'open')
                 ->with(['sport', 'city'])->orderBy('match_date_time')->limit(6)->get()
         ]);

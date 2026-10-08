@@ -22,6 +22,18 @@ class Sport extends Model
         'alergare' => '#007AFF',
         'tenis-de-masa' => '#AF52DE',
         'padel' => '#30B0C7',
+        'futsal' => '#00C7BE',
+        'badminton' => '#32ADE6',
+        'squash' => '#63E6E2',
+        'rugby' => '#AC8E68',
+        'hochei' => '#0A84FF',
+        'volei-pe-plaja' => '#FFD60A',
+        'ciclism' => '#30D158',
+        'inot' => '#40C8E0',
+        'escalada' => '#FF9F0A',
+        'box' => '#FF375F',
+        'sah' => '#BF5AF2',
+        'oina' => '#64D2FF',
     ];
 
     /** Name in the current language (lang/{ro,ru}/sports.php), falling back to the stored name. */
