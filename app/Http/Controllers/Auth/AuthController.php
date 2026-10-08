@@ -51,7 +51,8 @@ class AuthController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
-        return redirect()->intended(route('rooms.index'));
+        // New players pick their city and sports first, unless they came here to join a specific match.
+        return redirect()->intended(route('profile.edit'))->with('status', __('profile.flash.welcome'));
     }
 
     public function logout(Request $request): RedirectResponse

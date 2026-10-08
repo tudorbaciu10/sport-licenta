@@ -12,9 +12,9 @@ class Navigation
             ['key' => 'home', 'url' => url('/'), 'icon' => 'house', 'active' => request()->is('/')],
             ['key' => 'search', 'url' => route('rooms.index'), 'icon' => 'search', 'active' => request()->routeIs('rooms.index', 'rooms.show')],
             ['key' => 'create', 'url' => route('rooms.create'), 'icon' => 'circle-plus', 'active' => request()->routeIs('rooms.create')],
-            ['key' => 'my_matches', 'url' => route('dashboard'), 'icon' => 'calendar-days', 'active' => request()->routeIs('dashboard')],
-            // Profile page arrives in Faza 5; until then guests go to login, members to the dashboard.
-            ['key' => 'profile', 'url' => auth()->check() ? route('dashboard') : route('login'), 'icon' => 'user-round', 'active' => request()->routeIs('login', 'register')],
+            ['key' => 'my_matches', 'url' => route('my-matches'), 'icon' => 'calendar-days', 'active' => request()->routeIs('my-matches')],
+            // Guests land on login (and come back to their profile after signing in).
+            ['key' => 'profile', 'url' => route('profile'), 'icon' => 'user-round', 'active' => request()->routeIs('profile', 'profile.*', 'login', 'register')],
         ];
     }
 }

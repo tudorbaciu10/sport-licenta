@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\MyMatchesController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoomController;
 use App\Http\Middleware\SetLocale;
 use Illuminate\Support\Facades\Route;
@@ -29,7 +31,11 @@ Route::get('/rooms', [RoomController::class, 'index'])->name('rooms.index');
 
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-    Route::redirect('/dashboard', '/rooms')->name('dashboard');
+    Route::redirect('/dashboard', '/my-matches')->name('dashboard');
+    Route::get('/my-matches', [MyMatchesController::class, 'index'])->name('my-matches');
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
     Route::get('/rooms/create', [RoomController::class, 'create'])->name('rooms.create');
     Route::post('/rooms', [RoomController::class, 'store'])->name('rooms.store');
