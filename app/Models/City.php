@@ -17,6 +17,14 @@ class City extends Model
         return $this->hasMany(Room::class);
     }
 
+    /** Name in the current language (lang/{ro,ru}/cities.php), falling back to the stored name. */
+    public function label(): string
+    {
+        $key = 'cities.'.$this->slug;
+
+        return __($key) === $key ? $this->name : __($key);
+    }
+
     public function getRouteKeyName(): string
     {
         return 'slug';

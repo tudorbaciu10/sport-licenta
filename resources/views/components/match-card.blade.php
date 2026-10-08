@@ -20,7 +20,7 @@
         <h3 class="t-headline match-card__title">{{ $room->title }}</h3>
         <p class="t-callout t-secondary match-card__meta">
             <x-icon.map-pin class="icon icon--xs" />
-            <span>{{ $room->location_name }}, {{ $room->city->name }}@if ($room->venueLabel()) · {{ $room->venueLabel() }}@endif</span>
+            <span>{{ $room->location_name }}, {{ $room->city->label() }}@if ($room->venue_type) · {{ __('rooms.index.'.$room->venue_type) }}@endif</span>
         </p>
     </div>
 
