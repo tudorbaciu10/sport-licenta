@@ -16,6 +16,7 @@
 </head>
 <body>
 <a class="skip-link" href="#main">{{ __('ui.skip_to_content') }}</a>
+<x-cookie-consent />
 
 <header class="app-header">
     <div class="container app-header__inner">
@@ -60,6 +61,17 @@
         @yield('content')
     </div>
 </main>
+
+<footer class="app-footer">
+    <div class="container app-footer__inner">
+        <span>{{ __('legal.footer_rights', ['year' => date('Y')]) }}</span>
+        <nav class="app-footer__links" aria-label="{{ __('consent.settings_title') }}">
+            <a href="{{ route('legal.cookies') }}">{{ __('consent.cookie_policy') }}</a>
+            <a href="{{ route('legal.privacy') }}">{{ __('consent.privacy_policy') }}</a>
+            <button type="button" class="app-footer__btn" onclick="window.dispatchEvent(new CustomEvent('open-cookie-settings'))">{{ __('consent.footer_settings') }}</button>
+        </nav>
+    </div>
+</footer>
 
 <x-bottom-nav />
 @stack('scripts')

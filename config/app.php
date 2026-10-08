@@ -65,6 +65,9 @@ return [
     |
     */
 
+    // Shown in the privacy policy as the contact for data requests.
+    'contact_email' => env('CONTACT_EMAIL', 'contact@sport.md'),
+
     'timezone' => env('APP_TIMEZONE', 'Europe/Chisinau'),
 
     /*

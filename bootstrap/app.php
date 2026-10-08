@@ -12,6 +12,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [\App\Http\Middleware\SetLocale::class]);
+        // Written by the cookie banner in the browser (consent) or holding just "ro"/"ru": not encrypted.
+        $middleware->encryptCookies(except: [\App\Support\Consent::COOKIE, \App\Support\Consent::LOCALE_COOKIE]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

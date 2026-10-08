@@ -141,6 +141,13 @@ textarea.input { min-height: calc(var(--tap) * 3); resize: vertical; }
 .check input { width: 20px; height: 20px; accent-color: var(--brand); }
 
 /* ---------- App shell ---------- */
+.app-footer { border-top: 1px solid var(--separator); padding: var(--space-5) 0 calc(var(--space-6) + 64px); color: var(--text-2); font-size: var(--fs-footnote); line-height: var(--lh-footnote); }   /* phones: clears the bottom nav */
+.app-footer__inner { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--space-2) var(--space-4); }
+.app-footer__links { display: flex; flex-wrap: wrap; gap: 0 var(--space-4); }
+.app-footer__links a, .app-footer__btn { display: inline-flex; align-items: center; min-height: var(--tap); color: var(--text-2); }
+.app-footer__btn { background: none; border: 0; padding: 0; font: inherit; }
+.app-footer__links a:hover, .app-footer__btn:hover { color: var(--text); text-decoration: underline; text-underline-offset: 3px; }
+
 .app-header {
     position: sticky; top: 0; z-index: 40;
     background: color-mix(in srgb, var(--bg) 85%, transparent);
@@ -166,7 +173,7 @@ textarea.input { min-height: calc(var(--tap) * 3); resize: vertical; }
 .locale-switch a:hover { text-decoration: none; color: var(--text); }
 .locale-switch a[aria-current="true"] { background: var(--bg); color: var(--text); box-shadow: var(--shadow-1); }
 
-.app-main { padding-block: var(--space-5) calc(var(--space-8) + 64px); }  /* room for the bottom nav */
+.app-main { padding-block: var(--space-5) var(--space-7); }
 
 .bottom-nav {
     position: fixed; inset: auto 0 0; z-index: 40;
@@ -208,6 +215,7 @@ textarea.input { min-height: calc(var(--tap) * 3); resize: vertical; }
     .top-nav a[aria-current="page"] { color: var(--text); }
     .bottom-nav { display: none; }
     .app-main { padding-block: var(--space-7) var(--space-8); }
+    .app-footer { padding-bottom: var(--space-6); }
 }
 
 @media (prefers-reduced-motion: reduce) {

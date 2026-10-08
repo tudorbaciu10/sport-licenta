@@ -259,6 +259,13 @@ Aplicație mobile-first. Pe telefon: bară de navigare jos cu 4–5 destinații.
 - Cod: `components/calendar.blade.php`, `assets/css/calendar.css`, `assets/js/calendar.js` (constantele `WEEK_STARTS_ON`, `MAX_DOTS`, `LOOKAHEAD_MONTHS`, `ANIMATION_MS`), date din `CalendarController` (`/calendar/days`, `/calendar/day`).
 - Fus orar: `Europe/Chisinau` (`APP_TIMEZONE`).
 
+### 6.9 Cookie-uri și confidențialitate
+
+- Banner la prima vizită (`components/cookie-consent.blade.php`): „Acceptă toate” și „Respinge toate” cu aceeași greutate vizuală, „Personalizează” cu comutatoare. Pe telefon: foaie de jos; pe laptop: card în stânga jos. Redeschis din subsol („Setări cookie”).
+- Categorii reale: **Necesare** (sesiune, CSRF, „Ține-mă minte”, alegerea privind cookie-urile) și **Preferințe** (limba ținută minte 1 an în `sportmd_locale`, doar cu acord). Fără cookie-uri de reclamă sau analiză.
+- Alegerea: cookie `sportmd_consent` (JSON, 180 de zile, cu versiune; la o versiune nouă bannerul întreabă din nou). Server: `App\Support\Consent`.
+- Pagini: `/cookies` (tabel cu numele și duratele reale din configurare) și `/confidentialitate`. Emailul de contact: `CONTACT_EMAIL` în `.env`.
+
 ### 6.7 Pagina principală de prezentare (faza finală)
 
 Un singur mesaj clar + căutarea + „Cum funcționează” în 3 pași + meciuri reale din DB (nu date inventate) + apel la acțiune.

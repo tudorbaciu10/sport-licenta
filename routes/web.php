@@ -7,15 +7,28 @@ use App\Http\Controllers\MyMatchesController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoomController;
 use App\Http\Middleware\SetLocale;
+use App\Support\Consent;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
 
-Route::get('/locale/{locale}', function (string $locale) {
+Route::get('/locale/{locale}', function (Request $request, string $locale) {
     session(['locale' => $locale]);
+
+    // Remember the language beyond this session only if the visitor accepted preference cookies.
+    if (Consent::preferences($request)) {
+        // Not httpOnly: the cookie banner must be able to delete it when consent is withdrawn.
+        Cookie::queue(Cookie::make(Consent::LOCALE_COOKIE, $locale, 60 * 24 * 365, httpOnly: false));
+    }
 
     return back();
 })->whereIn('locale', SetLocale::SUPPORTED)->name('locale');
+
+// Legal pages linked from the cookie banner and the footer.
+Route::view('/cookies', 'legal.cookies')->name('legal.cookies');
+Route::view('/confidentialitate', 'legal.privacy')->name('legal.privacy');
 
 // Living design-system reference (tokens + components); also an annex for the thesis.
 Route::view('/styleguide', 'styleguide')->name('styleguide');
