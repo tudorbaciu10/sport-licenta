@@ -11,7 +11,8 @@ Citește docs/DESIGN.md înainte de orice modificare de interfață.
 Folosește skill-ul `sportmd-design`. Dacă intră în conflict cu `frontend-design`, câștigă `sportmd-design` și docs/DESIGN.md.
 - Stil: inspirat de Apple (alb, spațiu, text clar, accent colorat). Mobile-first.
 - Folosește DOAR variabilele din public/assets/css/tokens.css. Nu inventa culori sau fonturi.
-- Font: Inter. Pictograme: Lucide (SVG în componente Blade).
+- Font: Inter. Pictograme: Lucide (SVG în componente Blade, `resources/views/components/icon/`).
+- Layout: `layouts/app`. Componentele din `resources/views/components/` (vezi `/styleguide`) se folosesc înainte de a scrie markup nou.
 - Culoarea sportului apare doar ca fundal/bandă/pictogramă, niciodată ca text mic.
 - Ținte tactile minim 44px. Respectă prefers-reduced-motion.
 - Toate textele vizibile în fișiere lang/ (RO și RU), nu hardcodate.

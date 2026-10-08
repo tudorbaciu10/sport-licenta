@@ -342,6 +342,15 @@ Fiecare fază se termină cu commit și cu verificare în browser (telefon real 
 
 **Faza 5: autentificare și profil.** `/login`, `/register` redesenate; profil + „Meciurile mele” în locul `/dashboard`.
 
+> **Făcut (Faza 5):**
+> - **Layout:** noul layout a devenit `layouts/app`; layoutul vechi și `app.css` au fost șterse. Toate paginile aplicației (în afară de pagina principală, Faza 6) folosesc design-ul nou.
+> - **`/login`, `/register`:** un singur formular, tastatura potrivită pe telefon (`type=email`, `autocomplete`), erori în RO/RU. După înregistrare, jucătorul ajunge la „Editează profilul” (sau înapoi la meciul de la care venea).
+> - **`/profile`:** poză, nume, oraș, statistici (viitoare, jucate, organizate), sporturile cu nivelul în cuvinte („Mediu · Joc constant”) și poziția.
+> - **`/profile/edit`:** poză cu previzualizare (JPG, PNG, WebP, max 2 MB, în `public/uploads/avatars`), nume, oraș, nivel pe sport prin control segmentat (Nu joc / Începător / Mediu / Avansat) + poziție.
+> - **`/my-matches`:** filele Viitoare / Trecute, cu rolul la fiecare meci (Organizezi / Joci / Interesat). `/dashboard` redirecționează aici.
+> - **Bază de date:** `users.city_id`, `users.avatar_path`, tabel `sport_user` (nivel + poziție), pregătit și pentru statisticile din v3.
+> - `APP_NAME` = „Sport.md” (titlurile paginilor afișau „Laravel”).
+
 **Faza 6: pagina principală.** Redesign conform D1; secțiunile demonstrative conectate la date reale.
 
 **Faza 7: finisare și calitate.** Lighthouse (Performance și Accessibility peste 90 pe mobil), test pe un Android de gamă medie, tastatură și contrast, traduceri RU complete, temă închisă (D3) dacă rămâne timp.
