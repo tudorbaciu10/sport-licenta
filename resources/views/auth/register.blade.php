@@ -1,34 +1,27 @@
 @extends('layouts.app')
 
-@section('title', 'Creează cont')
+@section('title', __('auth.register_title'))
 
 @section('content')
-    <div class="auth">
-        <h1 class="display">Creează cont</h1>
-        <p class="muted" style="margin-bottom:24px">Ai deja cont? <a href="{{ route('login') }}">Intră în cont</a>.</p>
+    <div class="auth-card">
+        <header class="auth-card__head">
+            <h1 class="t-large">{{ __('auth.register_title') }}</h1>
+            <p class="t-callout t-secondary">{{ __('auth.register_intro') }}</p>
+        </header>
 
-        <form method="POST" action="{{ route('register') }}" class="panel form-stack">
+        <form method="POST" action="{{ route('register') }}" class="auth-card__form" novalidate>
             @csrf
-            <div class="field">
-                <label for="name">Nume</label>
-                <input id="name" name="name" class="input" value="{{ old('name') }}" required autofocus autocomplete="name" maxlength="80">
-                @error('name') <span class="error">{{ $message }}</span> @enderror
-            </div>
-            <div class="field">
-                <label for="email">Email</label>
-                <input id="email" type="email" name="email" class="input" value="{{ old('email') }}" required autocomplete="email">
-                @error('email') <span class="error">{{ $message }}</span> @enderror
-            </div>
-            <div class="field">
-                <label for="password">Parolă, minim 8 caractere</label>
-                <input id="password" type="password" name="password" class="input" required autocomplete="new-password">
-                @error('password') <span class="error">{{ $message }}</span> @enderror
-            </div>
-            <div class="field">
-                <label for="password_confirmation">Repetă parola</label>
-                <input id="password_confirmation" type="password" name="password_confirmation" class="input" required autocomplete="new-password">
-            </div>
-            <button type="submit" class="btn btn-ball">Creează cont</button>
+            <x-field name="name" :label="__('auth.name')" :placeholder="__('auth.name_ph')" autocomplete="name" maxlength="80" required autofocus />
+            <x-field name="email" type="email" :label="__('auth.email')" autocomplete="email" inputmode="email"
+                     autocapitalize="none" spellcheck="false" required />
+            <x-field name="password" type="password" :label="__('auth.password')" :hint="__('auth.password_hint')"
+                     autocomplete="new-password" minlength="8" required />
+            <x-field name="password_confirmation" type="password" :label="__('auth.password_confirm')" autocomplete="new-password" required />
+            <x-button type="submit" block>{{ __('auth.register') }}</x-button>
         </form>
+
+        <p class="auth-card__switch t-callout t-secondary">
+            {{ __('auth.have_account') }} <a href="{{ route('login') }}">{{ __('auth.login_link') }}</a>
+        </p>
     </div>
 @endsection

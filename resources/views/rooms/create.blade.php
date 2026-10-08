@@ -1,4 +1,4 @@
-@extends('layouts.shell')
+@extends('layouts.app')
 
 @section('title', __('match.create.title'))
 

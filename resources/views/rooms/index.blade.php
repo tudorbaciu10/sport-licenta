@@ -1,4 +1,4 @@
-@extends('layouts.shell')
+@extends('layouts.app')
 
 @section('title', __('rooms.index.title'))
 
@@ -60,7 +60,6 @@
     .rooms-results { margin-top: var(--space-5); }
     .day-group + .day-group { margin-top: var(--space-6); }
     .day-group > h2 { margin-bottom: var(--space-3); }
-    .pager-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); margin-top: var(--space-6); }
 
     @media (min-width: 1024px) {
         .rooms-head__create { display: inline-flex; }

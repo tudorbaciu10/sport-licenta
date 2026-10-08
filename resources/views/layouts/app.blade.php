@@ -1,5 +1,4 @@
-{{-- New app layout (redesign). Pages move here one by one; layouts/app stays for
-     the not-yet-redesigned pages until Faza 5, then this replaces it. --}}
+{{-- App layout: header (top nav on laptops), content, bottom tab bar on phones. --}}
 @php($nav = \App\Support\Navigation::items())
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">

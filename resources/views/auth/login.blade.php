@@ -1,25 +1,25 @@
 @extends('layouts.app')
 
-@section('title', 'Intră în cont')
+@section('title', __('auth.login_title'))
 
 @section('content')
-    <div class="auth">
-        <h1 class="display">Intră în cont</h1>
-        <p class="muted" style="margin-bottom:24px">Nu ai cont? <a href="{{ route('register') }}">Creează unul gratuit</a>.</p>
+    <div class="auth-card">
+        <header class="auth-card__head">
+            <h1 class="t-large">{{ __('auth.login_title') }}</h1>
+            <p class="t-callout t-secondary">{{ __('auth.login_intro') }}</p>
+        </header>
 
-        <form method="POST" action="{{ route('login') }}" class="panel form-stack">
+        <form method="POST" action="{{ route('login') }}" class="auth-card__form" novalidate>
             @csrf
-            <div class="field">
-                <label for="email">Email</label>
-                <input id="email" type="email" name="email" class="input" value="{{ old('email') }}" required autofocus autocomplete="email">
-                @error('email') <span class="error">{{ $message }}</span> @enderror
-            </div>
-            <div class="field">
-                <label for="password">Parolă</label>
-                <input id="password" type="password" name="password" class="input" required autocomplete="current-password">
-            </div>
-            <label class="check"><input type="checkbox" name="remember"> Ține-mă minte</label>
-            <button type="submit" class="btn btn-ball">Intră în cont</button>
+            <x-field name="email" type="email" :label="__('auth.email')" autocomplete="email" inputmode="email"
+                     autocapitalize="none" spellcheck="false" required autofocus />
+            <x-field name="password" type="password" :label="__('auth.password')" autocomplete="current-password" required />
+            <label class="check"><input type="checkbox" name="remember" value="1" @checked(old('remember'))> {{ __('auth.remember') }}</label>
+            <x-button type="submit" block>{{ __('auth.login') }}</x-button>
         </form>
+
+        <p class="auth-card__switch t-callout t-secondary">
+            {{ __('auth.no_account') }} <a href="{{ route('register') }}">{{ __('auth.register_link') }}</a>
+        </p>
     </div>
 @endsection
