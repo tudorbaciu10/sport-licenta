@@ -26,7 +26,7 @@ class AuthController extends Controller
         ]);
 
         if (! Auth::attempt($credentials, $request->boolean('remember'))) {
-            throw ValidationException::withMessages(['email' => 'Email sau parolă greșită.']);
+            throw ValidationException::withMessages(['email' => __('auth.failed')]);
         }
 
         $request->session()->regenerate();

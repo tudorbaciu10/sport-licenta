@@ -26,6 +26,8 @@ class RoomController extends Controller
             'venue' => ['nullable', Rule::in(array_keys(Room::VENUE_TYPES))],
             'free' => ['nullable', 'boolean'],
             'q' => ['nullable', 'string', 'max:80'],
+            'when' => ['nullable', Rule::in(['weekend'])],
+            'price' => ['nullable', Rule::in(['free'])],
         ]);
 
         // Sport cards show how many upcoming rooms each sport has in the chosen city.
@@ -64,11 +66,16 @@ class RoomController extends Controller
     {
         $room = $this->membership->create($request->user(), $request->validated());
 
-        return redirect()->route('rooms.show', $room)->with('status', 'Meciul a fost creat. Ești primul jucător din listă.');
+        return redirect()->route('rooms.show', $room)->with('status', __('match.flash.created'));
     }
 
-    public function show(Room $room): View
+    public function show(Request $request, Room $room): View
     {
+        // A guest who taps "Ocupă un loc" logs in and comes straight back to this match.
+        if (! $request->user()) {
+            $request->session()->put('url.intended', $request->fullUrl());
+        }
+
         $room->load(['sport', 'city', 'creator', 'participants']);
 
         return view('rooms.show', [
@@ -81,20 +88,20 @@ class RoomController extends Controller
     {
         $this->membership->join($room, $request->user());
 
-        return back()->with('status', 'Ți-ai ocupat locul. Ne vedem pe teren!');
+        return back()->with('status', __('match.flash.joined'));
     }
 
     public function interest(Request $request, Room $room): RedirectResponse
     {
         $this->membership->markInterested($room, $request->user());
 
-        return back()->with('status', 'Te-am trecut la interesați.');
+        return back()->with('status', __('match.flash.interested'));
     }
 
     public function leave(Request $request, Room $room): RedirectResponse
     {
         $this->membership->leave($room, $request->user());
 
-        return back()->with('status', 'Ai ieșit din meci.');
+        return back()->with('status', __('match.flash.left'));
     }
 }

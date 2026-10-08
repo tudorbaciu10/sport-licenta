@@ -11,10 +11,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Carbon;
 
 #[Fillable([
     'sport_id', 'city_id', 'title', 'description', 'location_name', 'venue_type',
     'match_date_time', 'max_players', 'rules',
+    'price', 'price_collector', 'equipment_by',
 ])]
 class Room extends Model
 {
@@ -22,6 +24,10 @@ class Room extends Model
     use HasFactory;
 
     public const VENUE_TYPES = ['indoor' => 'Acoperit', 'outdoor' => 'În aer liber'];
+
+    public const PRICE_COLLECTORS = ['organizer', 'venue'];
+
+    public const EQUIPMENT_BY = ['organizer', 'players', 'venue'];
 
     protected function casts(): array
     {
@@ -31,6 +37,7 @@ class Room extends Model
             'status' => RoomStatus::class,
             'max_players' => 'integer',
             'current_players_count' => 'integer',
+            'price' => 'integer',
         ];
     }
 
@@ -83,6 +90,12 @@ class Room extends Model
             ->when($filters['time'] ?? null, fn ($q, $time) => $q->whereTime('match_date_time', '>=', $time))
             ->when($filters['venue'] ?? null, fn ($q, $venue) => $q->where('venue_type', $venue))
             ->when($filters['free'] ?? null, fn ($q) => $q->where('status', RoomStatus::Open))
+            ->when(($filters['price'] ?? null) === 'free', fn ($q) => $q->where('price', 0))
+            ->when(($filters['when'] ?? null) === 'weekend', function ($q) {
+                // The coming weekend: today if it is already Saturday/Sunday, otherwise next Saturday, until Sunday night.
+                $start = today()->isWeekend() ? today() : today()->next(Carbon::SATURDAY);
+                $q->whereBetween('match_date_time', [$start, $start->copy()->endOfWeek(Carbon::SUNDAY)]);
+            })
             ->when($filters['q'] ?? null, function ($q, $term) {
                 $like = '%'.str_replace(['\\', '%', '_'], ['\\\\', '\%', '\_'], $term).'%';
                 $q->where(fn ($w) => $w

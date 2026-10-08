@@ -36,7 +36,7 @@ class RoomMembership
                 return;
             }
             if (! $room->isJoinable() || $room->spotsLeft() === 0) {
-                throw ValidationException::withMessages(['room' => 'Nu mai sunt locuri libere în acest meci.']);
+                throw ValidationException::withMessages(['room' => __('match.flash.full')]);
             }
 
             $room->participants()->syncWithoutDetaching([$user->id => ['status' => ParticipationStatus::Joined->value]]);
@@ -55,7 +55,7 @@ class RoomMembership
                 return;
             }
             if (! in_array($room->status, [RoomStatus::Open, RoomStatus::Full], true)) {
-                throw ValidationException::withMessages(['room' => 'Meciul nu mai este activ.']);
+                throw ValidationException::withMessages(['room' => __('match.flash.inactive')]);
             }
 
             $room->participants()->attach($user->id, ['status' => ParticipationStatus::Interested->value]);
@@ -65,7 +65,7 @@ class RoomMembership
     public function leave(Room $room, User $user): void
     {
         if ($room->user_id === $user->id) {
-            throw ValidationException::withMessages(['room' => 'Organizatorul nu poate părăsi propriul meci.']);
+            throw ValidationException::withMessages(['room' => __('match.flash.organizer_leave')]);
         }
 
         DB::transaction(function () use ($room, $user) {
