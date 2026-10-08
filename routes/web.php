@@ -2,11 +2,21 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\RoomController;
+use App\Http\Middleware\SetLocale;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/locale/{locale}', function (string $locale) {
+    session(['locale' => $locale]);
+
+    return back();
+})->whereIn('locale', SetLocale::SUPPORTED)->name('locale');
+
+// Living design-system reference (tokens + components); also an annex for the thesis.
+Route::view('/styleguide', 'styleguide')->name('styleguide');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
