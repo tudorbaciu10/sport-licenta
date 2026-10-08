@@ -36,7 +36,7 @@ it('shows real open-match counts per sport for Chișinău by default', function 
     expect($counts)->toBe(['fotbal' => 2, 'tenis' => 1]);
 
     $page->assertSee('Ce joci azi?')
-        ->assertSee('2 meciuri deschise')
+        ->assertSee('2 meciuri')
         ->assertSee('Urmează în Chișinău')
         ->assertSee('Meci chisinau')
         ->assertDontSee('Meci balti')

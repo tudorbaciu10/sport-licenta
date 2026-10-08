@@ -49,6 +49,9 @@
 .sport-card__text { display: grid; gap: 2px; }
 .sport-card__count { color: var(--text-2); }
 .sport-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+.sport-card--compact { flex-direction: row; align-items: center; justify-content: flex-start; gap: var(--space-3); min-height: 72px; padding: var(--space-3); }
+.sport-card--compact .sport-card__text { min-width: 0; }
+.sport-card--compact .t-headline { overflow-wrap: anywhere; }
 
 /* ---------- Badge ---------- */
 .badge {

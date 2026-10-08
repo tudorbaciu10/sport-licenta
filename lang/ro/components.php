@@ -13,6 +13,8 @@ return [
     ],
     'sport_card' => [
         'open_matches' => '{0} Niciun meci deschis|{1} :count meci deschis|[2,19] :count meciuri deschise|[20,*] :count de meciuri deschise',
+        // Compact card (home, next to the calendar): only open matches are counted anyway.
+        'open_matches_short' => '{0} Niciun meci|{1} :count meci|[2,19] :count meciuri|[20,*] :count de meciuri',
     ],
     'field' => [
         'optional' => 'opțional',
