@@ -15,6 +15,8 @@ return [
         'indoor' => 'В зале',
         'outdoor' => 'На улице',
         'free_spots' => 'Есть места',
+        'weekend' => 'Выходные',
+        'gratis' => 'Бесплатно',
         'sports' => 'Виды спорта',
         'all_sports' => 'Все виды',
         'more_filters' => 'Ещё фильтры',

@@ -11,7 +11,7 @@
         <x-sport-icon :sport="$room->sport" size="md" />
         <div class="match-card__when">
             <time class="t-title2 tabular" datetime="{{ $room->match_date_time->toIso8601String() }}">{{ $when->format('H:i') }}</time>
-            <span class="t-footnote t-secondary">{{ $when->isoFormat('ddd, D MMM') }} · {{ $room->sport->label() }}</span>
+            <span class="t-footnote t-secondary">{{ $when->isoFormat('ddd, D MMM') }} · {{ $room->sport->label() }} · {{ $room->price ? __('match.price.amount', ['price' => $room->price]) : __('match.price.free') }}</span>
         </div>
         <x-badge :status="$room->availability()" class="match-card__badge" />
     </div>

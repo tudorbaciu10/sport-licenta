@@ -15,6 +15,8 @@ return [
         'indoor' => 'Interior',
         'outdoor' => 'Exterior',
         'free_spots' => 'Cu locuri libere',
+        'weekend' => 'Weekend',
+        'gratis' => 'Gratuit',
         'sports' => 'Sporturi',
         'all_sports' => 'Toate sporturile',
         'more_filters' => 'Mai multe filtre',

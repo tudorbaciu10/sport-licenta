@@ -14,6 +14,8 @@
     $date = $filters['date'] ?? null;
     $venue = $filters['venue'] ?? null;
     $free = ! empty($filters['free']);
+    $weekend = ($filters['when'] ?? null) === 'weekend';
+    $gratis = ($filters['price'] ?? null) === 'free';
     $sportSlug = $filters['sport'] ?? null;
 
     $dayLabel = fn (string $day) => match ($day) {
@@ -72,7 +74,7 @@
 <div x-data="{ loading: false }" x-on:pageshow.window="loading = false">
     <form method="GET" action="{{ route('rooms.index') }}" role="search" x-on:submit="loading = true">
         {{-- Keep the quick filters when searching or changing city --}}
-        @foreach (['sport', 'date', 'time', 'venue', 'free'] as $keep)
+        @foreach (['sport', 'date', 'time', 'venue', 'free', 'when', 'price'] as $keep)
             @if (! empty($filters[$keep]))
                 <input type="hidden" name="{{ $keep }}" value="{{ $filters[$keep] }}">
             @endif
@@ -109,14 +111,17 @@
 
     <div class="rooms-filters">
         <nav class="chips" aria-label="{{ __('rooms.index.filters') }}">
-            <x-chip :href="$url(['date' => null, 'venue' => null, 'free' => null])" :active="! $date && ! $venue && ! $free" x-on:click="loading = true">
+            <x-chip :href="$url(['date' => null, 'venue' => null, 'free' => null, 'when' => null, 'price' => null])" :active="! $date && ! $venue && ! $free && ! $weekend && ! $gratis" x-on:click="loading = true">
                 {{ __('rooms.index.all') }}
             </x-chip>
-            <x-chip :href="$url(['date' => $date === $today ? null : $today])" :active="$date === $today" x-on:click="loading = true">
+            <x-chip :href="$url(['date' => $date === $today ? null : $today, 'when' => null])" :active="$date === $today" x-on:click="loading = true">
                 {{ __('rooms.index.today') }}
             </x-chip>
-            <x-chip :href="$url(['date' => $date === $tomorrow ? null : $tomorrow])" :active="$date === $tomorrow" x-on:click="loading = true">
+            <x-chip :href="$url(['date' => $date === $tomorrow ? null : $tomorrow, 'when' => null])" :active="$date === $tomorrow" x-on:click="loading = true">
                 {{ __('rooms.index.tomorrow') }}
+            </x-chip>
+            <x-chip :href="$url(['when' => $weekend ? null : 'weekend', 'date' => null])" :active="$weekend" x-on:click="loading = true">
+                {{ __('rooms.index.weekend') }}
             </x-chip>
             <x-chip :href="$url(['venue' => $venue === 'indoor' ? null : 'indoor'])" :active="$venue === 'indoor'" x-on:click="loading = true">
                 {{ __('rooms.index.indoor') }}
@@ -126,6 +131,9 @@
             </x-chip>
             <x-chip :href="$url(['free' => $free ? null : 1])" :active="$free" x-on:click="loading = true">
                 {{ __('rooms.index.free_spots') }}
+            </x-chip>
+            <x-chip :href="$url(['price' => $gratis ? null : 'free'])" :active="$gratis" x-on:click="loading = true">
+                {{ __('rooms.index.gratis') }}
             </x-chip>
         </nav>
 
@@ -143,7 +151,7 @@
         <details class="more-filters" @if (! empty($filters['time']) || ($date && ! in_array($date, [$today, $tomorrow], true))) open @endif>
             <summary><x-icon.chevron-right /> {{ __('rooms.index.more_filters') }}</summary>
             <form method="GET" action="{{ route('rooms.index') }}" class="more-filters__body" x-on:submit="loading = true">
-                @foreach (['city', 'sport', 'venue', 'free', 'q'] as $keep)
+                @foreach (['city', 'sport', 'venue', 'free', 'q', 'price'] as $keep)
                     @if (! empty($filters[$keep]))
                         <input type="hidden" name="{{ $keep }}" value="{{ $filters[$keep] }}">
                     @endif

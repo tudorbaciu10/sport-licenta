@@ -50,6 +50,9 @@
         @if (session('status'))
             <div class="flash" role="status"><x-icon.check /> <span>{{ session('status') }}</span></div>
         @endif
+        @error('room')
+            <div class="flash flash--error" role="alert"><x-icon.circle-alert /> <span>{{ $message }}</span></div>
+        @enderror
         @yield('content')
     </div>
 </main>
