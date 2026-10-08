@@ -323,6 +323,12 @@ Fiecare fază se termină cu commit și cu verificare în browser (telefon real 
 
 **Faza 3: lista de meciuri.** Redesign `/rooms`: chips, carduri grupate pe zile, skeleton, stare goală. Filtrele existente rămân funcționale.
 
+> **Făcut (Faza 3):** `/rooms` pe layoutul nou: titlu + număr de meciuri, selector de oraș, căutare, chips (Toate · Astăzi · Mâine · Interior · Exterior · Cu locuri libere) și chips de sport, „Mai multe filtre” (zi, oră), meciuri grupate pe zile, `<x-match-card>`, skeleton la schimbarea filtrelor, stare goală cu acțiune, paginare. Controllerul și filtrarea nu s-au schimbat. Orașele și tipul terenului au traducere RU.
+>
+> **De decis (cer modificări în backend):**
+> - Chip **Weekend**: filtrul actual acceptă o singură zi; „weekend” are nevoie de un parametru nou (sâmbătă + duminică).
+> - Chip **Gratuit**: nu există încă preț în baza de date (vine cu câmpurile din Faza 4).
+
 **Faza 4: detalii și creare meci.** `/rooms/{id}` cu buton fix jos; `/rooms/create` pe pași, cu previzualizare; câmpuri noi (taxă, echipament) dacă se decide.
 
 **Faza 5: autentificare și profil.** `/login`, `/register` redesenate; profil + „Meciurile mele” în locul `/dashboard`.
