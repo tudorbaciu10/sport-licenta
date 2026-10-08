@@ -40,4 +40,5 @@ return array (
   'cta_guest' => 'Creează cont gratuit',
   'cta_login' => 'Am deja cont',
   'cta_member' => 'Organizează un meci',
+  'all_sports' => 'Toate',
 );

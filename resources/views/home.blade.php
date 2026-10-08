@@ -13,6 +13,7 @@
     .home { display: grid; gap: var(--space-8); }
     .first { display: grid; gap: var(--space-5); }
     .pick-row { display: grid; gap: var(--space-6); }
+    .pick-row > * { min-width: 0; }   /* lets the phone sports rail scroll instead of widening the page */
     .pick-row__calendar { justify-self: center; }   /* under 1024px the calendar sits alone below the sports */
     .hero-search { display: flex; gap: var(--space-2); }   /* the search bar alone, full width */
     .hero-search .search { position: relative; flex: 1; }
@@ -35,9 +36,24 @@
     .cta { display: grid; justify-items: center; gap: var(--space-3); padding: var(--space-7) var(--space-5); border-radius: var(--radius-card); background: var(--bg-subtle); text-align: center; }
     .cta__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-3); margin-top: var(--space-2); }
 
+    /* "Toate" tile: neutral, only in the phone rail */
+    .sport-card--all { display: none; --c: var(--text-2); }
+    .sport-card--all .sport-icon { --c: var(--bg); --on: var(--text); }
+
     /* Phones: three upcoming matches are enough; "Vezi toate" leads to the rest */
     @media (max-width: 767px) {
         .home .match-list > :nth-child(n+4) { display: none; }
+
+        /* Sports as one horizontal row, edge to edge, snapping tile by tile */
+        .sport-rail {
+            grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 112px; gap: var(--space-2);
+            overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory;
+            margin-inline: calc(-1 * var(--gutter)); padding: var(--space-1) var(--gutter);
+            scroll-padding-inline: var(--gutter); scrollbar-width: none;
+        }
+        .sport-rail::-webkit-scrollbar { display: none; }
+        .sport-rail > .sport-card { scroll-snap-align: start; flex-direction: column; align-items: flex-start; justify-content: space-between; gap: var(--space-2); min-height: 116px; }
+        .sport-rail .sport-card--all { display: flex; }
     }
     @media (min-width: 768px) {
         .steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -86,7 +102,15 @@
                         <noscript><x-button variant="secondary" size="sm" type="submit">{{ __('rooms.index.apply') }}</x-button></noscript>
                     </form>
                 </div>
-                <div class="sport-grid sport-grid--compact">
+                {{-- Phones: one row you swipe sideways ("Toate" first), like 999.md. Wider screens: 2-column grid next to the calendar. --}}
+                <div class="sport-grid sport-grid--compact sport-rail">
+                    <a href="{{ $roomsUrl() }}" class="sport-card sport-card--compact sport-card--all">
+                        <span class="sport-icon sport-icon--md" aria-hidden="true"><x-icon.ellipsis class="icon" /></span>
+                        <span class="sport-card__text">
+                            <span class="t-headline">{{ __('home.all_sports') }}</span>
+                            <span class="t-footnote sport-card__count">{{ trans_choice('components.sport_card.open_matches_short', $sports->sum('open_count'), ['count' => $sports->sum('open_count')]) }}</span>
+                        </span>
+                    </a>
                     @foreach ($sports as $sport)
                         <x-sport-card :sport="$sport" :count="$sport->open_count" :href="$roomsUrl(['sport' => $sport->slug])" compact />
                     @endforeach
