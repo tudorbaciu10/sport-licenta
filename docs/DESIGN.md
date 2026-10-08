@@ -331,6 +331,15 @@ Fiecare fază se termină cu commit și cu verificare în browser (telefon real 
 
 **Faza 4: detalii și creare meci.** `/rooms/{id}` cu buton fix jos; `/rooms/create` pe pași, cu previzualizare; câmpuri noi (taxă, echipament) dacă se decide.
 
+> **Făcut (Faza 4):**
+> - **Câmpuri noi** (decizie: da): `price` (lei de persoană, 0 = gratuit), `price_collector` (organizator / la teren, obligatoriu doar dacă e cu plată), `equipment_by` (organizator / fiecare jucător / la teren).
+> - **Filtre noi în `/rooms`:** chips „Weekend” (`when=weekend`, sâmbăta și duminica ce urmează) și „Gratuit” (`price=free`).
+> - **`/rooms/{id}`:** antet cu sportul și starea, grilă de informații (când, unde, teren, preț, echipament, locuri), nota organizatorului, reguli, jucători, interesați. Acțiunea principală e fixă deasupra barei de jos pe telefon și card lipicios în dreapta pe laptop.
+> - **Acțiunea, după utilizator:** pentru vizitator, intră în cont și revine pe același meci; pentru jucător, ies din meci; pentru interesat, ocupă un loc sau nu mă mai interesează; pentru organizator, distribuie pe toată lățimea.
+> - **„Distribuie”:** meniul de partajare al telefonului, sau linkul copiat, cu mesajul „Link copiat”.
+> - **`/rooms/create`:** 4 pași (Sport și oraș · Când și unde · Jucători și preț · Reguli și notă), cu previzualizarea cardului în timp real.
+> - **Texte:** mesajele după acțiuni, erorile și validarea sunt în `lang/ro` și `lang/ru` (`match.php`, `validation.php`, `auth.php`), nu mai sunt scrise direct în cod.
+
 **Faza 5: autentificare și profil.** `/login`, `/register` redesenate; profil + „Meciurile mele” în locul `/dashboard`.
 
 **Faza 6: pagina principală.** Redesign conform D1; secțiunile demonstrative conectate la date reale.
