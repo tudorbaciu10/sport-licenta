@@ -24,11 +24,11 @@
 
 @once
     @push('styles')
-        <link rel="stylesheet" href="{{ asset('assets/css/calendar.css') }}">
+        <link rel="stylesheet" href="{{ \App\Support\Asset::url('assets/css/calendar.css') }}">
     @endpush
     @push('scripts')
         {{-- Before Alpine starts: registers Alpine.data('sportCalendar') on alpine:init --}}
-        <script src="{{ asset('assets/js/calendar.js') }}"></script>
+        <script src="{{ \App\Support\Asset::url('assets/js/calendar.js') }}"></script>
     @endpush
 @endonce
 

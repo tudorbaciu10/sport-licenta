@@ -8,9 +8,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@hasSection('title')@yield('title') – @endif{{ config('app.name', 'Sport.md') }}</title>
     <link rel="preload" href="{{ asset('assets/fonts/inter-latin.woff2') }}" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="{{ asset('assets/css/tokens.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/base.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/components.css') }}">
+    <link rel="stylesheet" href="{{ \App\Support\Asset::url('assets/css/tokens.css') }}">
+    <link rel="stylesheet" href="{{ \App\Support\Asset::url('assets/css/base.css') }}">
+    <link rel="stylesheet" href="{{ \App\Support\Asset::url('assets/css/components.css') }}">
     @stack('styles')
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
 </head>

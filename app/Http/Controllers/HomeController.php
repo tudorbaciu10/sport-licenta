@@ -27,8 +27,7 @@ class HomeController extends Controller
             'city' => $city,
             'sports' => Sport::withCount(['rooms as open_count' => $inCity])->orderBy('name')->get(),
             'upcoming' => Room::query()->tap($inCity)->where('status', 'open')
-                ->with(['sport', 'city'])->orderBy('match_date_time')->limit(6)->get(),
-            'todayCount' => Room::query()->tap($inCity)->whereDate('match_date_time', today())->count(),
+                ->with(['sport', 'city'])->orderBy('match_date_time')->limit(6)->get()
         ]);
     }
 }

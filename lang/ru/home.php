@@ -1,15 +1,12 @@
 <?php
 
-// Home page (docs/DESIGN.md §6.1, §6.7). RU avoids "в :city" because city names would need the locative case.
+// Home page (docs/DESIGN.md §6.1, §6.7).
 return array (
   'title' => 'Любительские матчи в вашем городе',
   'hero_title' => 'Найдите матч в своём городе за 30 секунд.',
-  'hero_text' => 'Футбол, баскетбол, теннис и другие виды спорта. Без потерянных чатов в WhatsApp: видите, кто придёт, занимаете место и приходите играть.',
   'search_label' => 'Найти матч',
   'search_ph' => 'Футбол, Ботаника, вечер…',
   'search' => 'Найти',
-  'today' => '{0} :city: сегодня матчей нет|{1} :city: сегодня :count матч|[2,4] :city: сегодня :count матча|[5,*] :city: сегодня :count матчей',
-  'today_all' => '{0} Сегодня матчей нет|{1} Сегодня :count матч|[2,4] Сегодня :count матча|[5,*] Сегодня :count матчей',
   'pick_title' => 'Во что играем сегодня?',
   'city' => 'Город',
   'all_cities' => 'Все города',

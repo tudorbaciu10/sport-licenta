@@ -4,9 +4,6 @@
 
 @php
     $cityName = $city?->label();
-    $today = $cityName
-        ? trans_choice('home.today', $todayCount, ['count' => $todayCount, 'city' => $cityName])
-        : trans_choice('home.today_all', $todayCount, ['count' => $todayCount]);
     $roomsUrl = fn (array $q = []) => route('rooms.index', array_filter(array_merge(['city' => $city?->slug], $q)));
 @endphp
 
@@ -14,19 +11,15 @@
 <style>
     /* Home only. Tokens only. */
     .home { display: grid; gap: var(--space-8); }
-    .first { display: grid; gap: var(--space-6); }
+    .first { display: grid; gap: var(--space-5); }
     .pick-row { display: grid; gap: var(--space-6); }
     .pick-row__calendar { justify-self: center; }   /* under 1024px the calendar sits alone below the sports */
-    .hero { display: grid; gap: var(--space-4); padding-top: var(--space-4); align-content: start; }
-    .hero h1 { max-width: 18ch; }
-    .hero__today { display: inline-flex; align-items: center; gap: var(--space-2); color: var(--text-2); font-size: var(--fs-callout); }
-    .hero__today::before { content: ""; width: 8px; height: 8px; border-radius: var(--radius-pill); background: var(--success); }
-    .hero-search { display: flex; gap: var(--space-2); max-width: 720px; }
+    .hero-search { display: flex; gap: var(--space-2); }   /* the search bar alone, full width */
     .hero-search .search { position: relative; flex: 1; }
     .hero-search .search .icon { position: absolute; left: var(--space-3); top: 50%; transform: translateY(-50%); width: 20px; height: 20px; color: var(--text-2); pointer-events: none; }
     .hero-search .input { padding-left: calc(var(--space-3) + 20px + var(--space-2)); }
 
-    .section-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); margin-bottom: var(--space-4); flex-wrap: wrap; }
+    .section-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); margin-bottom: var(--space-3); flex-wrap: wrap; }
     .section-head .select .input { min-height: var(--tap); border-radius: var(--radius-pill); font-size: var(--fs-callout); font-weight: var(--fw-semibold); }
     .see-all { display: inline-flex; align-items: center; gap: var(--space-1); min-height: var(--tap); font-weight: var(--fw-medium); }
     .see-all .icon { width: 18px; height: 18px; }
@@ -52,9 +45,9 @@
         .step__num { grid-row: auto; margin-bottom: var(--space-2); }
     }
     @media (min-width: 1024px) {
-        .hero { padding-top: var(--space-7); }
-        .pick-row { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: center; gap: var(--space-7); }
-        .pick-row__calendar { justify-self: end; }
+        /* Sports and calendar side by side, top-aligned, so both fit in the first screen */
+        .pick-row { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: var(--space-6); }
+        .pick-row .pick-row__calendar { justify-self: stretch; max-width: none; }   /* fills the right column, aligned with the search button */
         .sport-grid--compact { grid-template-columns: repeat(2, minmax(0, 1fr)); }   /* half width next to the calendar */
     }
 </style>
@@ -62,12 +55,10 @@
 
 @section('content')
 <div class="home">
-    {{-- First section: search on top; below it the sports (left) and the calendar (right) from 1024px --}}
+    {{-- First screen: search bar alone on top; below it the sports (left) and the calendar (right) from 1024px --}}
     <div class="first">
-        <section class="hero" aria-labelledby="hero-title">
-            <p class="hero__today tabular" aria-live="polite">{{ $today }}</p>
-            <h1 id="hero-title" class="t-large">{{ __('home.hero_title') }}</h1>
-            <p class="t-body t-secondary measure">{{ __('home.hero_text') }}</p>
+        {{-- Only the search bar is visible; the page title stays for screen readers --}}
+        <h1 class="sr-only">{{ __('home.hero_title') }}</h1>
             <form method="GET" action="{{ route('rooms.index') }}" class="hero-search" role="search">
                 @if ($city)<input type="hidden" name="city" value="{{ $city->slug }}">@endif
                 <div class="search">
@@ -77,13 +68,12 @@
                 </div>
                 <x-button type="submit">{{ __('home.search') }}</x-button>
             </form>
-        </section>
 
         <div class="pick-row">
             {{-- "Ce joci azi?" — compact sport cards, real counts for the chosen city --}}
             <section class="pick" aria-labelledby="pick-title">
                 <div class="section-head">
-                    <h2 id="pick-title" class="t-title1">{{ __('home.pick_title') }}</h2>
+                    <h2 id="pick-title" class="t-title2">{{ __('home.pick_title') }}</h2>
                 <form method="GET" action="{{ route('home') }}">
                         <label class="sr-only" for="home-city">{{ __('home.city') }}</label>
                         <div class="select">

@@ -4,12 +4,9 @@
 return array (
   'title' => 'Meciuri de amatori în orașul tău',
   'hero_title' => 'Găsești un meci în orașul tău în 30 de secunde.',
-  'hero_text' => 'Fotbal, baschet, tenis și alte sporturi. Fără grupuri pierdute pe WhatsApp: vezi cine vine, ocupi un loc și vii să joci.',
   'search_label' => 'Caută un meci',
   'search_ph' => 'Fotbal, Botanica, seara…',
   'search' => 'Caută',
-  'today' => '{0} Azi nu e niciun meci în :city|{1} Azi e :count meci în :city|[2,19] Azi sunt :count meciuri în :city|[20,*] Azi sunt :count de meciuri în :city',
-  'today_all' => '{0} Azi nu e niciun meci|{1} Azi e :count meci|[2,19] Azi sunt :count meciuri|[20,*] Azi sunt :count de meciuri',
   'pick_title' => 'Ce joci azi?',
   'city' => 'Oraș',
   'all_cities' => 'Toate orașele',

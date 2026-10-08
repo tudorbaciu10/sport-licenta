@@ -56,7 +56,7 @@ it('switches city from the selector and uses the player\'s own city', function (
 
 it('invites guests to sign up and members to organise', function () {
     $this->get('/')->assertOk()
-        ->assertSee('Azi nu e niciun meci')   // no cities yet: still renders
+        ->assertSee('Ce joci azi?')   // no cities yet: still renders
         ->assertSee('Creează cont gratuit')
         ->assertSee('Fii primul care organizează');
 
