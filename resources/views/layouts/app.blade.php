@@ -22,7 +22,9 @@
         <a href="{{ url('/') }}" class="logo">Sport<b>.md</b></a>
 
         <nav class="top-nav" aria-label="{{ __('ui.main_nav') }}">
+            {{-- Guests log in from the buttons on the right, so "Intră" is not repeated here --}}
             @foreach ($nav as $item)
+                @continue($item['key'] === 'login')
                 <a href="{{ $item['url'] }}" @if ($item['active']) aria-current="page" @endif>{{ __('ui.nav.'.$item['key']) }}</a>
             @endforeach
         </nav>
@@ -39,6 +41,9 @@
                     @csrf
                     <button type="submit" class="btn btn--ghost btn--sm">{{ __('ui.auth.logout') }}</button>
                 </form>
+            @else
+                <a href="{{ route('login') }}" class="btn btn--ghost btn--sm header-auth">{{ __('ui.auth.login') }}</a>
+                <a href="{{ route('register') }}" class="btn btn--primary btn--sm header-auth">{{ __('ui.auth.register') }}</a>
             @endauth
         </div>
     </div>

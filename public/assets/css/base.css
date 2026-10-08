@@ -153,6 +153,7 @@ textarea.input { min-height: calc(var(--tap) * 3); resize: vertical; }
 .logo b { color: var(--brand); font-weight: inherit; }
 
 .top-nav { display: none; }
+.header-auth { display: none; }   /* phones: guests log in from the bottom tab bar */
 .header-actions { display: flex; align-items: center; gap: var(--space-2); }
 
 .locale-switch { display: inline-flex; padding: 2px; border-radius: var(--radius-pill); background: var(--bg-subtle); }
@@ -169,7 +170,7 @@ textarea.input { min-height: calc(var(--tap) * 3); resize: vertical; }
 
 .bottom-nav {
     position: fixed; inset: auto 0 0; z-index: 40;
-    display: grid; grid-template-columns: repeat(5, 1fr);
+    display: grid; grid-auto-flow: column; grid-auto-columns: 1fr;   /* 5 tabs logged in, 4 for guests */
     padding: var(--space-1) var(--space-2) calc(var(--space-1) + env(safe-area-inset-bottom));
     background: color-mix(in srgb, var(--bg) 85%, transparent);
     backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px);
@@ -197,6 +198,7 @@ textarea.input { min-height: calc(var(--tap) * 3); resize: vertical; }
 @media (min-width: 1024px) {
     .app-header__inner { min-height: 64px; }
     .top-nav { display: flex; align-items: center; gap: var(--space-1); }
+    .header-auth { display: inline-flex; }
     .top-nav a {
         display: inline-flex; align-items: center; min-height: var(--tap); padding: 0 var(--space-3);
         border-radius: var(--radius-control); color: var(--text-2);

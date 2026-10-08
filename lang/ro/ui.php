@@ -10,6 +10,7 @@ return [
         'create' => 'Creează',
         'my_matches' => 'Meciurile mele',
         'profile' => 'Profil',
+        'login' => 'Intră',
     ],
     // Bottom tab bar: one line at 1/5 of a 360px screen. Full label stays as aria-label.
     'nav_short' => [
