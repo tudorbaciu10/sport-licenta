@@ -5,6 +5,7 @@
 @section('content')
     <div class="auth-card">
         <header class="auth-card__head">
+            <span class="auth-card__mark" aria-hidden="true"><x-icon.circle-plus /></span>
             <h1 class="t-large">{{ __('auth.register_title') }}</h1>
             <p class="t-callout t-secondary">{{ __('auth.register_intro') }}</p>
         </header>
