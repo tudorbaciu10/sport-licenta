@@ -292,9 +292,23 @@ Fiecare fază se termină cu commit și cu verificare în browser (telefon real 
 - [x] `CLAUDE.md` și skill-ul `sportmd-design`
 - [x] `frontend-design` instalat (disponibil ca `frontend-design:frontend-design`)
 - [x] Deciziile D1–D5 completate în 2.2
-- [ ] Inter (`.woff2`) și pictogramele Lucide descărcate
+- [x] Inter (`.woff2`) și pictogramele Lucide descărcate
 
 **Faza 1: fundația.** `tokens.css`, `base.css` (reset, tipografie, butoane, câmpuri), Inter local, `layouts/app` nou cu bară jos (telefon) și sus (laptop), aliniere `sports.color` cu 4.3, pagină `/styleguide`.
+
+> **Făcut (Faza 1):**
+> - `public/assets/css/tokens.css` și `base.css`; Inter variabil local (`public/assets/fonts/`, latin, latin-ext, chirilic); pictograme Lucide în `resources/views/components/icon/` (`<x-icon.house />`).
+> - Layout nou `layouts/shell` (nu `layouts/app`, ca paginile încă neredesenate să nu se strice); devine `layouts/app` după Faza 5.
+> - RO + RU: `lang/ro`, `lang/ru`, middleware `SetLocale`, ruta `/locale/{ro|ru}`. Limba implicită `ro`; limba de rezervă rămâne `en`, pentru mesajele de validare standard ale Laravel.
+> - `sports.color` = `Sport::COLORS` = tokens (migrare de date + seeder + test care le compară).
+> - `/styleguide` citește valorile direct din `tokens.css` și calculează contrastul.
+>
+> **De confirmat:**
+> - Token nou propus `--fs-caption` (11/13px, Apple „Caption 2”), doar pentru etichetele barei de jos.
+> - În bara de jos, „Meciurile mele” apare scurtat „Ale mele” (textul complet rămâne pentru cititoarele de ecran și pe laptop).
+> - `--warning` (`#FF9500`) e identic cu baschet și `--success` cu fotbal: de ales alte valori sau de folosit doar cu pictogramă.
+>
+> **Contrast verificat** (text pe culoarea plină, țintă 4.5:1): fotbal 7.58, baschet 7.65, tenis 11.13, volei 4.81, handbal 4.62, padel 6.54 (toate cu text închis); alergare 4.19 și tenis de masă 4.13: doar text mare sau pictograme. `--danger` (3.55) și `--full` (3.26) nu se folosesc ca text mic.
 
 **Faza 2: componente.** Componentele din secțiunea 7, în ordine, toate afișate pe `/styleguide`.
 

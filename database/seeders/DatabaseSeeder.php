@@ -19,12 +19,11 @@ class DatabaseSeeder extends Seeder
             ['Orhei', 'orhei'], ['Ungheni', 'ungheni'], ['Comrat', 'comrat'], ['Soroca', 'soroca'],
         ])->map(fn ($c) => City::updateOrCreate(['slug' => $c[1]], ['name' => $c[0]]));
 
-        // Colors match the per-sport accents used on the landing page.
+        // Colors come from Sport::COLORS, which mirrors the --sport-* design tokens.
         $sports = collect([
-            ['Fotbal', 'fotbal', '#5BE08F'], ['Baschet', 'baschet', '#FF8A3D'], ['Tenis', 'tenis', '#DCEB4B'],
-            ['Volei', 'volei', '#FFD86B'], ['Handbal', 'handbal', '#9EA8FF'], ['Alergare', 'alergare', '#FF7A6B'],
-            ['Tenis de masă', 'tenis-de-masa', '#7FE3F0'], ['Padel', 'padel', '#6BF2CF'],
-        ])->map(fn ($s) => Sport::updateOrCreate(['slug' => $s[1]], ['name' => $s[0], 'color' => $s[2]]));
+            ['Fotbal', 'fotbal'], ['Baschet', 'baschet'], ['Tenis', 'tenis'], ['Volei', 'volei'],
+            ['Handbal', 'handbal'], ['Alergare', 'alergare'], ['Tenis de masă', 'tenis-de-masa'], ['Padel', 'padel'],
+        ])->map(fn ($s) => Sport::updateOrCreate(['slug' => $s[1]], ['name' => $s[0], 'color' => Sport::COLORS[$s[1]]]));
 
         User::factory()->create(['name' => 'Demo', 'email' => 'demo@sport.md']);
         $players = User::factory(30)->create();
