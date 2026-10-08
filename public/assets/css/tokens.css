@@ -1,0 +1,84 @@
+/* Sport.md design tokens — the only source of colors, type, spacing and radii.
+   Values from docs/DESIGN.md §4. Everything else in the CSS uses var(--…) from here. */
+
+:root {
+    /* 4.1 Base (light theme) */
+    --bg: #FFFFFF;
+    --bg-subtle: #F5F5F7;
+    --text: #1D1D1F;
+    --text-2: #6E6E73;          /* 5.07:1 on --bg, 4.66:1 on --bg-subtle */
+    --separator: #D2D2D7;
+    --brand: #5856D6;           /* white text on it: 5.65:1 */
+    --brand-hover: #4745B8;
+    --on-brand: #FFFFFF;
+
+    /* 4.2 Status. --danger and --full are below 4.5:1 as small text on white:
+       use them for icons, borders and fills; the message text stays --text. */
+    --success: #34C759;
+    --danger: #FF3B30;
+    --warning: #FF9500;
+    --full: #8E8E93;
+
+    /* 4.3 Sport colors. Use as fill, band or icon — never as small text.
+       --on-sport-* is the higher-contrast text/glyph color on the solid fill.
+       Running and table tennis reach ~4.1:1 at best: large text or icons only. */
+    --sport-fotbal: #34C759;      --on-sport-fotbal: var(--text);      /* 7.58 */
+    --sport-baschet: #FF9500;     --on-sport-baschet: var(--text);     /* 7.65 */
+    --sport-tenis: #FFCC00;       --on-sport-tenis: var(--text);       /* 11.13 */
+    --sport-volei: #A2845E;       --on-sport-volei: var(--text);       /* 4.81 */
+    --sport-handbal: #FF2D55;     --on-sport-handbal: var(--text);     /* 4.62 */
+    --sport-alergare: #007AFF;    --on-sport-alergare: var(--text);    /* 4.19, large only */
+    --sport-tenis-masa: #AF52DE;  --on-sport-tenis-masa: #FFFFFF;      /* 4.13, large only */
+    --sport-padel: #30B0C7;       --on-sport-padel: var(--text);       /* 6.54 */
+    --tint: 14%;                  /* sport tint = color-mix(in srgb, var(--sport-x) var(--tint), transparent) */
+
+    /* 4.4 Typography */
+    --font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --fs-large: 34px;    --lh-large: 41px;
+    --fs-title1: 28px;   --lh-title1: 34px;
+    --fs-title2: 22px;   --lh-title2: 28px;
+    --fs-headline: 17px; --lh-headline: 22px;
+    --fs-body: 17px;     --lh-body: 24px;
+    --fs-callout: 15px;  --lh-callout: 20px;
+    --fs-footnote: 13px; --lh-footnote: 18px;
+    --fs-caption: 11px;  --lh-caption: 13px;   /* PROPUNERE (nu e în DESIGN.md §4.4): etichete bară de jos, Apple HIG „Caption 2” */
+    --fw-regular: 400;
+    --fw-medium: 500;
+    --fw-semibold: 600;
+    --fw-bold: 700;
+    --tracking-tight: -0.02em;
+    --measure: 72ch;     /* line length under 80 characters */
+
+    /* 4.5 Spacing (multiples of 4) */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+    --space-7: 48px;
+    --space-8: 64px;
+    --gutter: var(--space-4);
+    --content-max: 1100px;
+    --tap: 44px;
+
+    /* 4.5 Radii */
+    --radius-card: 20px;
+    --radius-control: 12px;
+    --radius-pill: 999px;
+    --radius-icon: 14px;
+
+    /* 4.5 Shadow and motion */
+    --shadow-1: 0 1px 2px rgba(0, 0, 0, .06);
+    --duration: 180ms;
+    --ease: ease-out;
+}
+
+/* 4.6 Dark theme — prepared now, switched on in the final phase (D3). */
+[data-theme="dark"] {
+    --bg: #000000;
+    --bg-subtle: #1C1C1E;
+    --text: #F5F5F7;
+    --text-2: #A1A1A6;
+    --separator: #38383A;
+}
