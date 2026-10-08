@@ -14,6 +14,13 @@
         ['t-headline', '17/22 · 600'], ['t-body', '17/24 · 400'], ['t-callout', '15/20 · 400'],
         ['t-footnote', '13/18 · 400'],
     ];
+    $sportCards = \App\Models\Sport::withCount(['rooms as open_count' => fn ($q) => $q->upcoming()])->orderBy('name')->get();
+    $sample = \App\Models\Room::upcoming()->where('status', 'open')->with(['sport', 'city'])->orderBy('match_date_time')->first();
+    $samples = $sample ? [
+        $sample,
+        (clone $sample)->forceFill(['current_players_count' => max(1, $sample->max_players - 1)]),
+        (clone $sample)->forceFill(['current_players_count' => $sample->max_players, 'status' => \App\Enums\RoomStatus::Full]),
+    ] : [];
     $icons = collect(glob(resource_path('views/components/icon/*.blade.php')))
         ->map(fn ($f) => basename($f, '.blade.php'))->values();
 @endphp
@@ -53,6 +60,7 @@
     .sg-radii div { width: 88px; height: 64px; background: var(--bg-subtle); border: 1px solid var(--separator); display: grid; place-items: center; }
     .sg-row { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
     .sg-form { display: grid; gap: var(--space-5); max-width: 480px; }
+    .sg-contents { display: contents; }
     .sg-icons { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: var(--space-3); }
     .sg-icons div { display: grid; justify-items: center; gap: var(--space-2); padding: var(--space-4) var(--space-2); background: var(--bg-subtle); border-radius: var(--radius-control); }
 
@@ -208,6 +216,148 @@
             </div>
             <label class="check"><input type="checkbox" checked> {{ __('styleguide.field_check') }}</label>
         </form>
+    </section>
+
+    {{-- ======== Components (Faza 2) ======== --}}
+    <section class="sg-section" aria-labelledby="sg-c-button">
+        <p class="t-footnote t-secondary">{{ __('styleguide.components') }}</p>
+        <h2 id="sg-c-button" class="t-title2">{{ __('styleguide.c_button') }} <code class="t-footnote t-secondary">&lt;x-button&gt;</code></h2>
+        <div class="sg-row" style="margin-top: var(--space-4)">
+            <x-button>{{ __('styleguide.primary') }}</x-button>
+            <x-button variant="secondary" icon="share-2">{{ __('styleguide.ghost') }}</x-button>
+            <x-button variant="ghost" icon-right="chevron-right" href="#">{{ __('styleguide.secondary') }}</x-button>
+            <x-button disabled>{{ __('styleguide.disabled') }}</x-button>
+        </div>
+    </section>
+
+    <section class="sg-section" aria-labelledby="sg-c-chip">
+        <h2 id="sg-c-chip" class="t-title2">{{ __('styleguide.c_chip') }} <code class="t-footnote t-secondary">&lt;x-chip&gt;</code></h2>
+        <div class="chips" style="margin-top: var(--space-4)">
+            <x-chip href="#" active>{{ __('styleguide.chip_all') }}</x-chip>
+            <x-chip href="#">{{ __('styleguide.chip_today') }}</x-chip>
+            <x-chip href="#">{{ __('styleguide.chip_tomorrow') }}</x-chip>
+            <x-chip href="#">{{ __('styleguide.chip_weekend') }}</x-chip>
+            <x-chip href="#">{{ __('styleguide.chip_indoor') }}</x-chip>
+            <x-chip href="#">{{ __('styleguide.chip_outdoor') }}</x-chip>
+            <x-chip>{{ __('styleguide.chip_free') }}</x-chip>
+        </div>
+        <div class="chips">
+            @foreach ($sportCards->take(4) as $sport)
+                <x-chip href="#" :sport="$sport" :active="$loop->first">{{ $sport->label() }}</x-chip>
+            @endforeach
+        </div>
+    </section>
+
+    <section class="sg-section" aria-labelledby="sg-c-icon">
+        <h2 id="sg-c-icon" class="t-title2">{{ __('styleguide.c_sport_icon') }} <code class="t-footnote t-secondary">&lt;x-sport-icon&gt;</code></h2>
+        <div class="sg-row" style="margin-top: var(--space-4)">
+            @foreach ($sportCards as $sport)
+                <span class="sg-row" style="gap: var(--space-2)" title="{{ $sport->label() }}">
+                    <x-sport-icon :sport="$sport" size="lg" />
+                </span>
+            @endforeach
+        </div>
+        <div class="sg-row" style="margin-top: var(--space-3)">
+            @foreach ($sportCards as $sport)
+                <x-sport-icon :sport="$sport" size="md" />
+            @endforeach
+            @foreach ($sportCards as $sport)
+                <x-sport-icon :sport="$sport" size="sm" />
+            @endforeach
+        </div>
+    </section>
+
+    <section class="sg-section" aria-labelledby="sg-c-sport-card">
+        <h2 id="sg-c-sport-card" class="t-title2">{{ __('styleguide.c_sport_card') }} <code class="t-footnote t-secondary">&lt;x-sport-card&gt;</code></h2>
+        <div class="sport-grid" style="margin-top: var(--space-4)">
+            @foreach ($sportCards as $sport)
+                <x-sport-card :sport="$sport" :count="$sport->open_count" />
+            @endforeach
+        </div>
+    </section>
+
+    @if ($samples)
+        <section class="sg-section" aria-labelledby="sg-c-match">
+            <h2 id="sg-c-match" class="t-title2">{{ __('styleguide.c_match_card') }} <code class="t-footnote t-secondary">&lt;x-match-card&gt;</code></h2>
+            <div class="match-list" style="margin-top: var(--space-4)">
+                @foreach ($samples as $room)
+                    <x-match-card :room="$room" />
+                @endforeach
+            </div>
+        </section>
+    @endif
+
+    <section class="sg-section" aria-labelledby="sg-c-badge">
+        <h2 id="sg-c-badge" class="t-title2">{{ __('styleguide.c_badge') }} <code class="t-footnote t-secondary">&lt;x-badge&gt;</code></h2>
+        <div class="sg-row" style="margin-top: var(--space-4)">
+            <x-badge status="open" /> <x-badge status="almost" /> <x-badge status="full" />
+        </div>
+    </section>
+
+    <section class="sg-section" aria-labelledby="sg-c-avatar">
+        <h2 id="sg-c-avatar" class="t-title2">{{ __('styleguide.c_avatar') }} <code class="t-footnote t-secondary">&lt;x-avatar&gt;</code></h2>
+        <div class="sg-row" style="margin-top: var(--space-4)">
+            <x-avatar name="Ion Popescu" size="lg" />
+            <x-avatar name="Cristina Munteanu" />
+            <x-avatar name="Victor Rusu" size="sm" />
+            <x-avatar name="Ana Lungu" highlight />
+            <span class="avatar-stack">
+                @foreach (['Ion P', 'Ana L', 'Dan S', 'Elena C'] as $n)<x-avatar :name="$n" size="sm" />@endforeach
+            </span>
+        </div>
+    </section>
+
+    <section class="sg-section" aria-labelledby="sg-c-field">
+        <h2 id="sg-c-field" class="t-title2">{{ __('styleguide.c_field') }} <code class="t-footnote t-secondary">&lt;x-field&gt;</code></h2>
+        <div class="sg-form" style="margin-top: var(--space-4)">
+            <x-field name="sg_name" :label="__('styleguide.field_name')" :placeholder="__('styleguide.field_name_ph')" autocomplete="name" />
+            <x-field name="sg_city" type="select" :label="__('styleguide.field_city')" :placeholder="__('styleguide.f_choose')"
+                     :options="\App\Models\City::orderBy('name')->pluck('name', 'id')->all()" />
+            <x-field name="sg_note" type="textarea" :label="__('styleguide.field_note')" :hint="__('styleguide.field_note_hint')" optional />
+        </div>
+    </section>
+
+    <section class="sg-section" aria-labelledby="sg-c-nav">
+        <h2 id="sg-c-nav" class="t-title2">{{ __('styleguide.c_bottom_nav') }} <code class="t-footnote t-secondary">&lt;x-bottom-nav&gt;</code></h2>
+        <p class="t-callout t-secondary">{{ __('styleguide.c_bottom_nav_note') }}</p>
+    </section>
+
+    <section class="sg-section" aria-labelledby="sg-c-empty">
+        <h2 id="sg-c-empty" class="t-title2">{{ __('styleguide.c_empty') }} <code class="t-footnote t-secondary">&lt;x-empty-state&gt;</code></h2>
+        <x-empty-state :title="__('styleguide.empty_title')" :text="__('styleguide.empty_text')" style="margin-top: var(--space-4)">
+            <x-button icon="circle-plus" href="#">{{ __('styleguide.empty_action') }}</x-button>
+        </x-empty-state>
+    </section>
+
+    <section class="sg-section" aria-labelledby="sg-c-skeleton">
+        <h2 id="sg-c-skeleton" class="t-title2">{{ __('styleguide.c_skeleton') }} <code class="t-footnote t-secondary">&lt;x-skeleton&gt;</code></h2>
+        <div class="stack" style="margin-top: var(--space-4)">
+            <x-skeleton variant="sport-card" :count="4" />
+            <div class="match-list"><x-skeleton variant="match-card" :count="2" class="sg-contents" /></div>
+            <x-skeleton :count="3" style="max-width: 480px" />
+        </div>
+    </section>
+
+    <section class="sg-section" aria-labelledby="sg-c-step">
+        <h2 id="sg-c-step" class="t-title2">{{ __('styleguide.c_step_form') }} <code class="t-footnote t-secondary">&lt;x-step-form&gt;</code></h2>
+        <div style="max-width: 480px; margin-top: var(--space-4)">
+            <x-step-form :steps="[__('styleguide.step_1'), __('styleguide.step_2'), __('styleguide.step_3')]"
+                         action="#" method="GET" :submit="__('styleguide.step_submit')" onsubmit="event.preventDefault()">
+                <x-step-form.step :n="1">
+                    <x-field name="demo_sport" type="select" :label="__('styleguide.f_sport')" :placeholder="__('styleguide.f_choose')" required
+                             :options="$sportCards->mapWithKeys(fn ($s) => [$s->id => $s->label()])->all()" />
+                    <x-field name="demo_city" type="select" :label="__('styleguide.f_city')" :placeholder="__('styleguide.f_choose')" required
+                             :options="\App\Models\City::orderBy('name')->pluck('name', 'id')->all()" />
+                </x-step-form.step>
+                <x-step-form.step :n="2">
+                    <x-field name="demo_when" type="datetime-local" :label="__('styleguide.f_when')" required />
+                    <x-field name="demo_where" :label="__('styleguide.f_where')" :placeholder="__('styleguide.f_where_ph')" required />
+                </x-step-form.step>
+                <x-step-form.step :n="3">
+                    <x-field name="demo_players" type="number" :label="__('styleguide.f_players')" value="10" min="2" max="50" required />
+                </x-step-form.step>
+            </x-step-form>
+        </div>
     </section>
 
     <section class="sg-section" aria-labelledby="sg-icons">

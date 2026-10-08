@@ -1,14 +1,6 @@
 {{-- New app layout (redesign). Pages move here one by one; layouts/app stays for
      the not-yet-redesigned pages until Faza 5, then this replaces it. --}}
-@php
-    $nav = [
-        ['key' => 'home',       'url' => url('/'),                 'icon' => 'house',         'active' => request()->is('/')],
-        ['key' => 'search',     'url' => route('rooms.index'),     'icon' => 'search',        'active' => request()->routeIs('rooms.index', 'rooms.show')],
-        ['key' => 'create',     'url' => route('rooms.create'),    'icon' => 'circle-plus',   'active' => request()->routeIs('rooms.create')],
-        ['key' => 'my_matches', 'url' => route('dashboard'),       'icon' => 'calendar-days', 'active' => request()->routeIs('dashboard')],
-        ['key' => 'profile',    'url' => auth()->check() ? route('dashboard') : route('login'), 'icon' => 'user-round', 'active' => request()->routeIs('login', 'register')],
-    ];
-@endphp
+@php($nav = \App\Support\Navigation::items())
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
@@ -19,6 +11,7 @@
     <link rel="preload" href="{{ asset('assets/fonts/inter-latin.woff2') }}" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="{{ asset('assets/css/tokens.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/base.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/components.css') }}">
     @stack('styles')
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
 </head>
@@ -61,15 +54,7 @@
     </div>
 </main>
 
-<nav class="bottom-nav" aria-label="{{ __('ui.main_nav') }}">
-    @foreach ($nav as $item)
-        <a href="{{ $item['url'] }}" @class(['bottom-nav__create' => $item['key'] === 'create']) @if ($item['active']) aria-current="page" @endif>
-            <x-dynamic-component :component="'icon.'.$item['icon']" />
-            <span @if ($item['key'] === 'my_matches') aria-hidden="true" @endif>{{ __($item['key'] === 'my_matches' ? 'ui.nav_short.my_matches' : 'ui.nav.'.$item['key']) }}</span>
-            @if ($item['key'] === 'my_matches')<span class="sr-only">{{ __('ui.nav.my_matches') }}</span>@endif
-        </a>
-    @endforeach
-</nav>
+<x-bottom-nav />
 @stack('scripts')
 </body>
 </html>

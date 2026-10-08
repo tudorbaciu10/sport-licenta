@@ -93,6 +93,21 @@ class Room extends Model
             });
     }
 
+    /**
+     * Display state for badges: "full" when no spots are left, "almost" when 20% or fewer
+     * remain (at least 1), otherwise "open". Read-only; join rules live in RoomMembership.
+     */
+    public function availability(): string
+    {
+        $left = $this->spotsLeft();
+
+        return match (true) {
+            $left === 0 || $this->status === RoomStatus::Full => 'full',
+            $left <= max(1, (int) floor($this->max_players * .2)) => 'almost',
+            default => 'open',
+        };
+    }
+
     public function venueLabel(): ?string
     {
         return self::VENUE_TYPES[$this->venue_type] ?? null;

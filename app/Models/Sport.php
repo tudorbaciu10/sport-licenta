@@ -24,6 +24,20 @@ class Sport extends Model
         'padel' => '#30B0C7',
     ];
 
+    /** Name in the current language (lang/{ro,ru}/sports.php), falling back to the stored name. */
+    public function label(): string
+    {
+        $key = 'sports.'.$this->slug;
+
+        return __($key) === $key ? $this->name : __($key);
+    }
+
+    /** Blade icon component for <x-dynamic-component>, e.g. "icon.sport-fotbal". */
+    public function icon(): string
+    {
+        return view()->exists('components.icon.sport-'.$this->slug) ? 'icon.sport-'.$this->slug : 'icon.circle-dot';
+    }
+
     /** CSS custom property for this sport, e.g. "--sport-fotbal" (table tennis is "--sport-tenis-masa"). */
     public function cssVar(): string
     {
