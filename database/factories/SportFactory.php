@@ -11,15 +11,10 @@ use Illuminate\Support\Str;
  */
 class SportFactory extends Factory
 {
-    protected $model = Sport::class;
-
     public function definition(): array
     {
         $name = fake()->unique()->word();
 
-        return [
-            'name' => ucfirst($name),
-            'slug' => Str::slug($name),
-        ];
+        return ['name' => ucfirst($name), 'slug' => Str::slug($name), 'color' => fake()->hexColor()];
     }
 }

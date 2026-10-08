@@ -7,22 +7,21 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable(['name', 'email', 'password', 'city_id'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
-    public const ROLE_USER = 'user';
-
-    public const ROLE_ADMIN = 'admin';
+    /** Skill levels, described in words (docs/DESIGN.md §1.2); labels in lang/{ro,ru}/profile.php. */
+    public const LEVELS = ['beginner', 'intermediate', 'advanced'];
 
     /**
      * Get the attributes that should be cast.
@@ -37,63 +36,33 @@ class User extends Authenticatable
         ];
     }
 
-    /**
-     * Whether this user is a platform administrator.
-     */
-    public function isAdmin(): bool
+    public function city(): BelongsTo
     {
-        return $this->role === self::ROLE_ADMIN;
+        return $this->belongsTo(City::class);
     }
 
-    /**
-     * The player profile (one-to-one).
-     */
-    public function profile(): HasOne
-    {
-        return $this->hasOne(UserProfile::class);
-    }
-
-    /**
-     * Sports this user plays, with a per-sport skill level on the pivot.
-     */
+    /** Sports the user plays, with level and preferred position. */
     public function sports(): BelongsToMany
     {
-        return $this->belongsToMany(Sport::class, 'user_sport')
-            ->withPivot('skill_level')
+        return $this->belongsToMany(Sport::class)
+            ->withPivot('level', 'position')
             ->withTimestamps();
     }
 
-    /**
-     * Events created by this user.
-     */
-    public function createdEvents(): HasMany
+    public function avatarUrl(): ?string
     {
-        return $this->hasMany(Event::class);
+        return $this->avatar_path ? asset('uploads/avatars/'.$this->avatar_path) : null;
     }
 
-    /**
-     * Events this user has joined (via the event_participants pivot).
-     */
-    public function events(): BelongsToMany
+    public function createdRooms(): HasMany
     {
-        return $this->belongsToMany(Event::class, 'event_participants')
+        return $this->hasMany(Room::class);
+    }
+
+    public function rooms(): BelongsToMany
+    {
+        return $this->belongsToMany(Room::class)
             ->withPivot('status')
             ->withTimestamps();
-    }
-
-    /**
-     * Recurring availability windows.
-     */
-    public function availabilitySchedules(): HasMany
-    {
-        return $this->hasMany(AvailabilitySchedule::class);
-    }
-
-    /**
-     * Facilities (venues) this user has listed for rent.
-     */
-    public function venues(): HasMany
-    {
-        return $this->hasMany(Venue::class);
     }
 }

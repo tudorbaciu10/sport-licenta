@@ -30,6 +30,16 @@ return [
 
     'disks' => [
 
+        // Profile photos, served straight from public/ (no storage:link needed on Windows).
+        'avatars' => [
+            'driver' => 'local',
+            'root' => public_path('uploads/avatars'),
+            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/uploads/avatars',
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),

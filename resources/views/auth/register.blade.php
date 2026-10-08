@@ -1,52 +1,27 @@
-<x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
+@extends('layouts.app')
 
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
-        </div>
+@section('title', __('auth.register_title'))
 
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+@section('content')
+    <div class="auth-card">
+        <header class="auth-card__head">
+            <h1 class="t-large">{{ __('auth.register_title') }}</h1>
+            <p class="t-callout t-secondary">{{ __('auth.register_intro') }}</p>
+        </header>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+        <form method="POST" action="{{ route('register') }}" class="auth-card__form" novalidate>
+            @csrf
+            <x-field name="name" :label="__('auth.name')" :placeholder="__('auth.name_ph')" autocomplete="name" maxlength="80" required autofocus />
+            <x-field name="email" type="email" :label="__('auth.email')" autocomplete="email" inputmode="email"
+                     autocapitalize="none" spellcheck="false" required />
+            <x-field name="password" type="password" :label="__('auth.password')" :hint="__('auth.password_hint')"
+                     autocomplete="new-password" minlength="8" required />
+            <x-field name="password_confirmation" type="password" :label="__('auth.password_confirm')" autocomplete="new-password" required />
+            <x-button type="submit" block>{{ __('auth.register') }}</x-button>
+        </form>
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
-
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+        <p class="auth-card__switch t-callout t-secondary">
+            {{ __('auth.have_account') }} <a href="{{ route('login') }}">{{ __('auth.login_link') }}</a>
+        </p>
+    </div>
+@endsection

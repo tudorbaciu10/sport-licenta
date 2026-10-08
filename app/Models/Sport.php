@@ -5,51 +5,52 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['name', 'slug'])]
+#[Fillable(['name', 'slug', 'icon', 'color'])]
 class Sport extends Model
 {
-    /** @use HasFactory<\Database\Factories\SportFactory> */
     use HasFactory;
 
-    /**
-     * Users who play this sport (with per-sport skill on the pivot).
-     */
-    public function users(): BelongsToMany
+    /** Must match the --sport-* tokens in public/assets/css/tokens.css (docs/DESIGN.md §4.3). */
+    public const COLORS = [
+        'fotbal' => '#34C759',
+        'baschet' => '#FF9500',
+        'tenis' => '#FFCC00',
+        'volei' => '#A2845E',
+        'handbal' => '#FF2D55',
+        'alergare' => '#007AFF',
+        'tenis-de-masa' => '#AF52DE',
+        'padel' => '#30B0C7',
+    ];
+
+    /** Name in the current language (lang/{ro,ru}/sports.php), falling back to the stored name. */
+    public function label(): string
     {
-        return $this->belongsToMany(User::class, 'user_sport')
-            ->withPivot('skill_level')
-            ->withTimestamps();
+        $key = 'sports.'.$this->slug;
+
+        return __($key) === $key ? $this->name : __($key);
     }
 
-    /**
-     * Events for this sport.
-     */
-    public function events(): HasMany
+    /** Blade icon component for <x-dynamic-component>, e.g. "icon.sport-fotbal". */
+    public function icon(): string
     {
-        return $this->hasMany(Event::class);
+        return view()->exists('components.icon.sport-'.$this->slug) ? 'icon.sport-'.$this->slug : 'icon.circle-dot';
     }
 
-    /**
-     * Resolve the cover image for this sport.
-     *
-     * Looks inside public/assets/images/sports/{slug}/ for a file named
-     * cover.(jpg|jpeg|png|webp|svg) so a user can drop their own photo in the
-     * sport's folder; falls back to the shared default cover otherwise.
-     */
-    public function imageUrl(): string
+    /** CSS custom property for this sport, e.g. "--sport-fotbal" (table tennis is "--sport-tenis-masa"). */
+    public function cssVar(): string
     {
-        $dir = "assets/images/sports/{$this->slug}";
+        return '--sport-'.($this->slug === 'tenis-de-masa' ? 'tenis-masa' : $this->slug);
+    }
 
-        foreach (['cover.jpg', 'cover.jpeg', 'cover.png', 'cover.webp', 'cover.svg'] as $file) {
-            if (is_file(public_path("{$dir}/{$file}"))) {
-                return asset("{$dir}/{$file}");
-            }
-        }
+    public function rooms(): HasMany
+    {
+        return $this->hasMany(Room::class);
+    }
 
-        return asset('assets/images/sports/default.svg');
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
     }
 }
-

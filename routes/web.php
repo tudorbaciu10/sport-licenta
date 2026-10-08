@@ -1,88 +1,54 @@
 <?php
 
-use App\Http\Controllers\Admin\AdminDashboardController;
-use App\Http\Controllers\Admin\SportController as AdminSportController;
-use App\Http\Controllers\Admin\VenueCategoryController as AdminVenueCategoryController;
-use App\Http\Controllers\EventController;
-use App\Http\Controllers\EventParticipationController;
-use App\Http\Controllers\LandingController;
-use App\Http\Controllers\PlayerProfileController;
+use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MyMatchesController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\VenueController;
+use App\Http\Controllers\RoomController;
 use App\Http\Middleware\SetLocale;
 use Illuminate\Support\Facades\Route;
 
-// Public landing page with the sport selector, rooms, and the facilities marketplace.
-Route::get('/', [LandingController::class, 'index'])->name('landing');
-Route::get('/rooms', [LandingController::class, 'roomsPartial'])->name('landing.rooms');
-Route::get('/rooms/{event}', [LandingController::class, 'roomDetail'])->name('landing.room');
-Route::get('/facilities', [LandingController::class, 'venuesPartial'])->name('landing.venues');
+Route::get('/', HomeController::class)->name('home');
 
-// Switch the interface language (ro / en / ru).
-Route::get('/lang/{locale}', function (string $locale) {
-    if (in_array($locale, SetLocale::SUPPORTED, true)) {
-        session(['locale' => $locale]);
-    }
+Route::get('/locale/{locale}', function (string $locale) {
+    session(['locale' => $locale]);
 
     return back();
-})->name('lang.switch');
+})->whereIn('locale', SetLocale::SUPPORTED)->name('locale');
 
-Route::get('/dashboard', function () {
-    $user = request()->user();
+// Living design-system reference (tokens + components); also an annex for the thesis.
+Route::view('/styleguide', 'styleguide')->name('styleguide');
 
-    return view('dashboard', [
-        'createdEvents' => $user->createdEvents()
-            ->with('sport')
-            ->withCount('participants')
-            ->orderBy('start_time')
-            ->get(),
-        'joinedEvents' => $user->events()
-            ->with('sport')
-            ->withCount('participants')
-            ->orderBy('start_time')
-            ->get(),
-        'myVenues' => $user->venues()->with('category')->latest()->get(),
-    ]);
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:10,1');
+    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+    Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:10,1');
+});
+
+Route::get('/rooms', [RoomController::class, 'index'])->name('rooms.index');
+
+// JSON for the calendar (public; logged-in users get personal details too).
+Route::middleware('throttle:60,1')->group(function () {
+    Route::get('/calendar/days', [CalendarController::class, 'days'])->name('calendar.days');
+    Route::get('/calendar/day', [CalendarController::class, 'day'])->name('calendar.day');
+});
 
 Route::middleware('auth')->group(function () {
-    // Account settings (name / email / password / delete) — provided by Breeze.
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::redirect('/dashboard', '/my-matches')->name('dashboard');
+    Route::get('/my-matches', [MyMatchesController::class, 'index'])->name('my-matches');
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
-    // Player profile (bio / city / skill / sports played).
-    Route::get('/profile/details', [PlayerProfileController::class, 'edit'])->name('profile.details.edit');
-    Route::patch('/profile/details', [PlayerProfileController::class, 'update'])->name('profile.details.update');
-
-    // Slide-over form partials for the unified landing surface.
-    Route::get('/app/create-event', [EventController::class, 'createForm'])->name('events.create-form');
-    Route::get('/app/edit-profile', [PlayerProfileController::class, 'editForm'])->name('profile.details.form');
-
-    // Events.
-    Route::resource('events', EventController::class)->only(['index', 'create', 'store', 'show']);
-    Route::post('/events/{event}/join', [EventParticipationController::class, 'store'])->name('events.join');
-    Route::delete('/events/{event}/leave', [EventParticipationController::class, 'destroy'])->name('events.leave');
-
-    // Facility management (owner). "create" is registered before the public {venue} route below.
-    Route::get('/my/facilities', [VenueController::class, 'mine'])->name('venues.mine');
-    Route::get('/facilities/create', [VenueController::class, 'create'])->name('venues.create');
-    Route::post('/facilities', [VenueController::class, 'store'])->name('venues.store');
-    Route::get('/facilities/{venue}/edit', [VenueController::class, 'edit'])->name('venues.edit');
-    Route::patch('/facilities/{venue}', [VenueController::class, 'update'])->name('venues.update');
-    Route::delete('/facilities/{venue}', [VenueController::class, 'destroy'])->name('venues.destroy');
+    Route::get('/rooms/create', [RoomController::class, 'create'])->name('rooms.create');
+    Route::post('/rooms', [RoomController::class, 'store'])->name('rooms.store');
+    Route::post('/rooms/{room}/join', [RoomController::class, 'join'])->name('rooms.join');
+    Route::post('/rooms/{room}/interest', [RoomController::class, 'interest'])->name('rooms.interest');
+    Route::delete('/rooms/{room}/leave', [RoomController::class, 'leave'])->name('rooms.leave');
 });
 
-// Public facility page (registered after /facilities/create so it doesn't swallow it).
-Route::get('/facilities/{venue}', [VenueController::class, 'show'])->name('venues.show');
-
-// Admin area — requires an authenticated administrator.
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
-    Route::post('/sports', [AdminSportController::class, 'store'])->name('sports.store');
-    Route::delete('/sports/{sport}', [AdminSportController::class, 'destroy'])->name('sports.destroy');
-    Route::post('/venue-categories', [AdminVenueCategoryController::class, 'store'])->name('venue-categories.store');
-    Route::delete('/venue-categories/{venueCategory}', [AdminVenueCategoryController::class, 'destroy'])->name('venue-categories.destroy');
-});
-
-require __DIR__.'/auth.php';
+// Declared after /rooms/create so "create" isn't captured as a room id.
+Route::get('/rooms/{room}', [RoomController::class, 'show'])->name('rooms.show')->whereNumber('room');

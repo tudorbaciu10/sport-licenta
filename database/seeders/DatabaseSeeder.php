@@ -2,105 +2,54 @@
 
 namespace Database\Seeders;
 
-use App\Models\Event;
+use App\Enums\ParticipationStatus;
+use App\Enums\RoomStatus;
+use App\Models\City;
+use App\Models\Room;
 use App\Models\Sport;
 use App\Models\User;
-use App\Models\Venue;
-use App\Models\VenueCategory;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        $this->call([
-            SportSeeder::class,
-            VenueCategorySeeder::class,
-            VenueSeeder::class,
-        ]);
+        $cities = collect([
+            ['Chișinău', 'chisinau'], ['Bălți', 'balti'], ['Cahul', 'cahul'],
+            ['Orhei', 'orhei'], ['Ungheni', 'ungheni'], ['Comrat', 'comrat'], ['Soroca', 'soroca'],
+        ])->map(fn ($c) => City::updateOrCreate(['slug' => $c[1]], ['name' => $c[0]]));
 
-        $sports = Sport::all();
+        // Colors come from Sport::COLORS, which mirrors the --sport-* design tokens.
+        $sports = collect([
+            ['Fotbal', 'fotbal'], ['Baschet', 'baschet'], ['Tenis', 'tenis'], ['Volei', 'volei'],
+            ['Handbal', 'handbal'], ['Alergare', 'alergare'], ['Tenis de masă', 'tenis-de-masa'], ['Padel', 'padel'],
+        ])->map(fn ($s) => Sport::updateOrCreate(['slug' => $s[1]], ['name' => $s[0], 'color' => Sport::COLORS[$s[1]]]));
 
-        // A platform administrator.
-        User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'admin@example.com',
-            'role' => User::ROLE_ADMIN,
-        ]);
+        User::factory()->create(['name' => 'Demo', 'email' => 'demo@sport.md']);
+        $players = User::factory(30)->create();
 
-        // A known test account with a profile and a couple of sports.
-        $test = User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
-        $test->profile()->create([
-            'bio' => 'Loves weekend football and tennis.',
-            'city' => 'Chișinău',
-            'skill_level' => 3,
-        ]);
-        $test->sports()->attach(
-            $sports->whereIn('slug', ['football', 'tennis'])->pluck('id'),
-            ['skill_level' => 3],
-        );
+        // Most rooms in Chișinău so the demo city looks busy.
+        foreach (range(1, 40) as $i) {
+            $city = $i <= 24 ? $cities->first() : $cities->random();
+            $room = Room::factory()->create([
+                'user_id' => $players->random()->id,
+                'sport_id' => $sports->random()->id,
+                'city_id' => $city->id,
+            ]);
 
-        // A handful of other players.
-        $players = User::factory(8)
-            ->has(\App\Models\UserProfile::factory(), 'profile')
-            ->create();
+            $joined = $players->except($room->user_id)->random(rand(0, $room->max_players - 1));
+            $attach = [$room->user_id => ['status' => ParticipationStatus::Joined->value]]
+                + $joined->mapWithKeys(fn ($u) => [$u->id => ['status' => ParticipationStatus::Joined->value]])->all();
+            $room->participants()->attach($attach);
 
-        $players->each(function (User $player) use ($sports) {
-            $player->sports()->attach(
-                $sports->random(rand(1, 3))->pluck('id'),
-                ['skill_level' => rand(1, 5)],
-            );
-        });
+            $count = count($attach);
+            $room->forceFill([
+                'current_players_count' => $count,
+                'status' => $count >= $room->max_players ? RoomStatus::Full : RoomStatus::Open,
+            ])->save();
 
-        // Owner-listed rentable facilities across Chișinău / Bălți.
-        $categories = VenueCategory::all();
-        $owners = $players->concat([$test]);
-
-        Venue::factory(8)
-            ->recycle($categories)
-            ->recycle($owners)
-            ->create([
-                'country' => 'Moldova',
-            ])
-            ->each(function (Venue $venue) use ($owners) {
-                $venue->update([
-                    'user_id' => $owners->random()->id,
-                    'city' => fake()->randomElement(['Chișinău', 'Bălți']),
-                ]);
-            });
-
-        // Demo events created by random players, some with participants.
-        $organizers = $players->push($test);
-        $venues = Venue::all();
-
-        Event::factory(12)
-            ->recycle($organizers)
-            ->recycle($sports)
-            ->recycle($venues)
-            ->make()
-            ->each(function (Event $event) use ($organizers, $sports, $venues, $players) {
-                $event->user_id = $organizers->random()->id;
-                $event->sport_id = $sports->random()->id;
-                $event->venue_id = $venues->random()->id;
-                $event->city = $venues->firstWhere('id', $event->venue_id)->city;
-                $event->save();
-
-                // Attach a few participants (excluding the organizer).
-                $joiners = $players->where('id', '!=', $event->user_id)->random(rand(0, 3));
-                foreach ($joiners as $joiner) {
-                    $event->participants()->syncWithoutDetaching([
-                        $joiner->id => ['status' => 'joined'],
-                    ]);
-                }
-            });
+            $interested = $players->diff($joined)->except($room->user_id)->random(rand(0, 4));
+            $room->participants()->attach($interested->pluck('id'), ['status' => ParticipationStatus::Interested->value]);
+        }
     }
 }

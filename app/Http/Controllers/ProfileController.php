@@ -2,59 +2,70 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
+use App\Enums\ParticipationStatus;
+use App\Http\Requests\UpdateProfileRequest;
+use App\Models\City;
+use App\Models\Sport;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
+    public function show(Request $request): View
+    {
+        $user = $request->user()->load(['city', 'sports']);
+        $joined = $user->rooms()->wherePivot('status', ParticipationStatus::Joined->value);
+
+        return view('profile.show', [
+            'user' => $user,
+            'stats' => [
+                'upcoming' => (clone $joined)->where('match_date_time', '>=', now())->count(),
+                'played' => (clone $joined)->where('match_date_time', '<', now())->count(),
+                'organized' => $user->createdRooms()->count(),
+            ],
+        ]);
+    }
+
     public function edit(Request $request): View
     {
+        $user = $request->user()->load('sports');
+
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user' => $user,
+            'cities' => City::orderBy('name')->get(),
+            'sports' => Sport::orderBy('name')->get(),
+            'mine' => $user->sports->keyBy('id'),
         ]);
     }
 
-    /**
-     * Update the user's profile information.
-     */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(UpdateProfileRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
-
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
-
-        $request->user()->save();
-
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
-    }
-
-    /**
-     * Delete the user's account.
-     */
-    public function destroy(Request $request): RedirectResponse
-    {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
-        ]);
-
         $user = $request->user();
+        $data = $request->validated();
 
-        Auth::logout();
+        $user->fill(['name' => $data['name'], 'city_id' => $data['city_id'] ?? null]);
 
-        $user->delete();
+        $disk = Storage::disk('avatars');
+        if ($request->hasFile('avatar') || $request->boolean('remove_avatar')) {
+            if ($user->avatar_path) {
+                $disk->delete($user->avatar_path);
+            }
+            $user->avatar_path = $request->hasFile('avatar') ? $request->file('avatar')->store('', 'avatars') : null;
+        }
+        $user->save();
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        $user->sports()->sync(
+            collect($data['sports'] ?? [])
+                ->filter(fn ($s) => ! empty($s['level']))
+                ->mapWithKeys(fn ($s, $sportId) => [(int) $sportId => [
+                    'level' => $s['level'],
+                    'position' => filled($s['position'] ?? null) ? trim($s['position']) : null,
+                ]])
+                ->all()
+        );
 
-        return Redirect::to('/');
+        return redirect()->route('profile')->with('status', __('profile.flash.saved'));
     }
 }

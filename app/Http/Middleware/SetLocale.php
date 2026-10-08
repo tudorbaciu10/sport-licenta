@@ -6,19 +6,14 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/** Applies the language the visitor picked (stored in the session), RO by default. */
 class SetLocale
 {
-    /**
-     * Supported interface languages.
-     */
-    public const SUPPORTED = ['ro', 'en', 'ru'];
+    public const SUPPORTED = ['ro', 'ru'];
 
-    /**
-     * Apply the locale stored in the session (default: Romanian).
-     */
     public function handle(Request $request, Closure $next): Response
     {
-        $locale = $request->session()->get('locale', 'ro');
+        $locale = $request->session()->get('locale');
 
         if (in_array($locale, self::SUPPORTED, true)) {
             app()->setLocale($locale);
