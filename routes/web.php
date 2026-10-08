@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MyMatchesController;
 use App\Http\Controllers\ProfileController;
@@ -27,6 +28,12 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::get('/rooms', [RoomController::class, 'index'])->name('rooms.index');
+
+// JSON for the calendar (public; logged-in users get personal details too).
+Route::middleware('throttle:60,1')->group(function () {
+    Route::get('/calendar/days', [CalendarController::class, 'days'])->name('calendar.days');
+    Route::get('/calendar/day', [CalendarController::class, 'day'])->name('calendar.day');
+});
 
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
