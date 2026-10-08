@@ -353,6 +353,15 @@ Fiecare fază se termină cu commit și cu verificare în browser (telefon real 
 
 **Faza 6: pagina principală.** Redesign conform D1; secțiunile demonstrative conectate la date reale.
 
+> **Făcut (Faza 6):** decizie D1: mingea 3D și animațiile GSAP au fost **înlocuite** cu o pagină simplă. `/` (`HomeController`):
+> 1. Mesajul principal („Găsești un meci în orașul tău în 30 de secunde.”), numărul real de meciuri de azi și căutarea.
+> 2. „Ce joci azi?”: `<x-sport-card>` cu numărul real de meciuri deschise în orașul ales (din link, din profil sau Chișinău).
+> 3. „Urmează în …”: până la 6 meciuri reale (3 pe telefon) + „Vezi toate meciurile”.
+> 4. „Cum funcționează” în 3 pași numerotați (e o secvență reală).
+> 5. Apel la acțiune: cont gratuit pentru vizitatori, „Organizează un meci” pentru membri.
+>
+> Șterse: `welcome.blade.php`, componenta veche `x-match-search`, Three.js, GSAP și fonturile Big Shoulders / Libre Franklin / DotGothic16. Nu mai există niciun număr inventat pe site.
+
 **Faza 7: finisare și calitate.** Lighthouse (Performance și Accessibility peste 90 pe mobil), test pe un Android de gamă medie, tastatură și contrast, traduceri RU complete, temă închisă (D3) dacă rămâne timp.
 
 **Faza 8 (după licență, v2–v3).** Scor de fiabilitate, recenzii după meci, link de distribuire îmbunătățit, notificări, evenimente recurente, statistici și clasamente, echipe echilibrate.
