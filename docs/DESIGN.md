@@ -312,6 +312,15 @@ Fiecare fază se termină cu commit și cu verificare în browser (telefon real 
 
 **Faza 2: componente.** Componentele din secțiunea 7, în ordine, toate afișate pe `/styleguide`.
 
+> **Făcut (Faza 2):** cele 12 componente din secțiunea 7 (`resources/views/components/`), stilurile în `public/assets/css/components.css`, texte în `lang/{ro,ru}/components.php`, toate pe `/styleguide`.
+> - **Pictograme de sport:** volei și alergare din Lucide (`volleyball`, `footprints`); fotbal, baschet, tenis, handbal, tenis de masă și padel desenate în stilul Lucide (`icon/sport-*.blade.php`).
+> - **`<x-sport-icon>`:** pictograma stă pe culoarea **plină** a sportului, în culoarea `--on-sport-*`, ca să aibă contrast de cel puțin 3:1 pentru grafice. Fundalul pastel (tint) e folosit de `<x-sport-card>`.
+> - **`<x-badge>`:** mereu text + punct colorat; textul rămâne `--text`, deci verdele/portocaliul stărilor nu se confundă cu fotbalul/baschetul.
+> - **„Aproape plin”:** rămân cel mult 20% din locuri (minim 1), prin `Room::availability()`, metodă doar de afișare.
+> - **Nume de sport în RU:** `lang/ru/sports.php` + `Sport::label()`.
+> - **`<x-step-form>`:** validează pasul curent cu validarea browserului și deschide pasul cu eroare după răspunsul serverului; fără JS, toți pașii apar pe o pagină.
+> - Formatul (ex. 7×7) și prețul lipsesc din `<x-match-card>` până când există în baza de date (Faza 4).
+
 **Faza 3: lista de meciuri.** Redesign `/rooms`: chips, carduri grupate pe zile, skeleton, stare goală. Filtrele existente rămân funcționale.
 
 **Faza 4: detalii și creare meci.** `/rooms/{id}` cu buton fix jos; `/rooms/create` pe pași, cu previzualizare; câmpuri noi (taxă, echipament) dacă se decide.
