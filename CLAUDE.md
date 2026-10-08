@@ -19,6 +19,6 @@ Folosește skill-ul `sportmd-design`. Dacă intră în conflict cu `frontend-des
 
 ## Reguli
 - Nu schimba logica din backend fără să întrebi.
-- Rulează testele (Pest) după orice modificare de backend: `php artisan test`.
+- Rulează testele (Pest) după orice modificare de backend cu `composer test` (curăță întâi cache-ul de configurare). Nu rula testele cu config în cache: ar șterge baza MySQL reală (tests/TestCase.php oprește acum asta).
 - Fă commit mic după fiecare pas finalizat.
 - După fiecare ecran, verifică la 360px, 390px, 768px și 1280px lățime.
