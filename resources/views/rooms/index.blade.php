@@ -34,11 +34,6 @@
     .rooms-head__title { display: grid; }
     .rooms-head__actions { display: flex; align-items: center; gap: var(--space-2); }
     .rooms-head__create { display: none; }
-    .city-select { min-width: 0; }
-    .city-select .input {
-        min-height: var(--tap); padding: 0 var(--space-7) 0 var(--space-4); border-radius: var(--radius-pill);
-        font-size: var(--fs-callout); font-weight: var(--fw-semibold); max-width: 190px; text-overflow: ellipsis;
-    }
 
     .search { position: relative; margin-top: var(--space-4); }
     .search .icon { position: absolute; left: var(--space-3); top: 50%; transform: translateY(-50%); width: 20px; height: 20px; color: var(--text-2); pointer-events: none; }
@@ -85,15 +80,10 @@
                 <p class="t-callout t-secondary" aria-live="polite">{{ trans_choice('rooms.index.count', $rooms->total(), ['count' => $rooms->total()]) }}</p>
             </div>
             <div class="rooms-head__actions">
-                <label class="sr-only" for="city">{{ __('rooms.index.city') }}</label>
-                <div class="select city-select">
-                    <select id="city" name="city" class="input" x-on:change="loading = true; $el.form.submit()">
-                        <option value="">{{ __('rooms.index.all_cities') }}</option>
-                        @foreach ($cities as $city)
-                            <option value="{{ $city->slug }}" @selected(($filters['city'] ?? null) === $city->slug)>{{ $city->label() }}</option>
-                        @endforeach
-                    </select>
-                </div>
+                <x-dropdown :label="__('rooms.index.city')"
+                            :current="$cities->firstWhere('slug', $filters['city'] ?? null)?->label() ?? __('rooms.index.all_cities')"
+                            :items="collect([['label' => __('rooms.index.all_cities'), 'href' => $url(['city' => null]), 'active' => empty($filters['city'])]])
+                                ->concat($cities->map(fn ($c) => ['label' => $c->label(), 'href' => $url(['city' => $c->slug]), 'active' => ($filters['city'] ?? null) === $c->slug]))->all()" />
                 <x-button href="{{ route('rooms.create', array_filter(['sport' => $sportSlug])) }}" icon="circle-plus" class="rooms-head__create">
                     {{ __('rooms.index.create') }}
                 </x-button>

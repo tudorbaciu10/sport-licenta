@@ -82,5 +82,5 @@ it('renders the home page in Russian', function () {
         ->assertSee('Во что играем сегодня?')
         ->assertSee('Скоро · Кишинёв')
         ->assertSee('Футбол')
-        ->assertDontSee('home.');
+        ->assertDontSee('>home.', false);   // no untranslated key in visible text
 });

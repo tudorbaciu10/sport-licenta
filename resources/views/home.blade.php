@@ -99,17 +99,8 @@
             <section class="pick" aria-labelledby="pick-title">
                 <div class="section-head">
                     <h2 id="pick-title" class="t-title2">{{ __('home.pick_title') }}</h2>
-                <form method="GET" action="{{ route('home') }}">
-                        <label class="sr-only" for="home-city">{{ __('home.city') }}</label>
-                        <div class="select">
-                            <select id="home-city" name="city" class="input" onchange="this.form.submit()">
-                                @foreach ($cities as $c)
-                                    <option value="{{ $c->slug }}" @selected($city?->is($c))>{{ $c->label() }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <noscript><x-button variant="secondary" size="sm" type="submit">{{ __('rooms.index.apply') }}</x-button></noscript>
-                    </form>
+                <x-dropdown :label="__('home.city')" :current="$city?->label() ?? __('home.all_cities')"
+                            :items="$cities->map(fn ($c) => ['label' => $c->label(), 'href' => route('home', ['city' => $c->slug]), 'active' => $city?->is($c)])->all()" />
                 </div>
                 {{-- Phones: one row you swipe sideways ("Toate" first), like 999.md. Wider screens: 2-column grid next to the calendar. --}}
                 <div class="sport-grid sport-grid--compact sport-rail">

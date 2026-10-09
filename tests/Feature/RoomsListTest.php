@@ -64,3 +64,15 @@ it('is visible to guests and translated to Russian', function () {
         ->assertSee('Футбол')
         ->assertDontSee('rooms.index.');
 });
+
+it('picks the city from a rounded dropdown that keeps the other filters', function () {
+    listRoom();
+    City::firstOrCreate(['slug' => 'balti'], ['name' => 'Bălți']);
+
+    $this->get('/rooms?q=Meci&city=chisinau')->assertOk()
+        ->assertSee('class="dropdown__button"', false)
+        ->assertSee('aria-current="true"', false)
+        ->assertSee(e(route('rooms.index', ['city' => 'balti', 'q' => 'Meci'])), false)   // other filters kept
+        ->assertSee(e(route('rooms.index', ['q' => 'Meci'])), false)                      // "Toate orașele"
+        ->assertDontSee('<select id="city"', false);
+});
