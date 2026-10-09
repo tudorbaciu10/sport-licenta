@@ -35,8 +35,11 @@ class StoreRoomRequest extends FormRequest
             'title' => ['required', 'string', 'max:120'],
             'description' => ['nullable', 'string', 'max:2000'],
             'location_name' => ['required', 'string', 'max:160'],
+            // Optional map pin; both or neither.
+            'latitude' => ['nullable', 'required_with:longitude', 'numeric', 'between:-90,90'],
+            'longitude' => ['nullable', 'required_with:latitude', 'numeric', 'between:-180,180'],
             'venue_type' => ['nullable', Rule::in(array_keys(Room::VENUE_TYPES))],
-            'match_date_time' => ['required', 'date', 'after:now'],
+            'match_date_time' => ['required', 'date', 'after:now', 'before:+6 months'],
             'max_players' => ['required', 'integer', 'min:2', 'max:50'],
             'price' => ['integer', 'min:0', 'max:1000'],
             'price_collector' => ['nullable', 'required_unless:price,0', Rule::in(Room::PRICE_COLLECTORS)],

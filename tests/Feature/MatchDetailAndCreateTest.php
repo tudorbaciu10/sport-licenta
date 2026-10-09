@@ -59,7 +59,7 @@ it('requires a collector for paid matches and drops it for free ones', function 
 it('shows Romanian validation messages', function () {
     $this->actingAs(User::factory()->create())
         ->post(route('rooms.store'), validPayload(['title' => '']))
-        ->assertSessionHasErrors(['title' => 'Completează titlul.']);
+        ->assertSessionHasErrors(['title' => 'Scrie un titlu pentru meci.']);
 });
 
 it('filters the coming weekend and free matches', function () {
@@ -125,4 +125,54 @@ it('renders the create form in steps and in Russian', function () {
 
     $this->withSession(['locale' => 'ru'])->get(route('rooms.create'))->assertOk()
         ->assertSee('Создать матч')->assertSee('Футбол')->assertDontSee('match.create.');
+});
+
+it('saves the map pin and shows it on the match page', function () {
+    $this->actingAs(User::factory()->create())
+        ->post(route('rooms.store'), validPayload(['latitude' => '47.0105', 'longitude' => '28.8638']))
+        ->assertRedirect();
+
+    $room = Room::latest('id')->first();
+    expect($room->latitude)->toBe(47.0105)->and($room->longitude)->toBe(28.8638);
+
+    $this->get(route('rooms.show', $room))
+        ->assertSee('roomMap(47.0105, 28.8638)', false)
+        ->assertSee('https://www.google.com/maps/search/?api=1&amp;query=47.0105,28.8638', false);
+});
+
+it('works without a pin and rejects half a pin or a match too far ahead', function () {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)->post(route('rooms.store'), validPayload())->assertRedirect();
+    expect(Room::latest('id')->first()->hasPin())->toBeFalse();
+
+    $this->post(route('rooms.store'), validPayload(['latitude' => '47.01']))
+        ->assertSessionHasErrors(['longitude' => 'Punctul de pe hartă nu e valid.']);
+    $this->post(route('rooms.store'), validPayload(['match_date_time' => now()->addMonths(7)->format('Y-m-d\TH:i')]))
+        ->assertSessionHasErrors(['match_date_time' => 'Poți programa un meci cel mult 6 luni înainte.']);
+});
+
+it('validates in the visitor\'s language, Russian included', function () {
+    $this->actingAs(User::factory()->create())->withSession(['locale' => 'ru'])
+        ->post(route('rooms.store'), validPayload(['sport_id' => '', 'match_date_time' => '', 'location_name' => '']))
+        ->assertSessionHasErrors([
+            'sport_id' => 'Выберите вид спорта.',
+            'match_date_time' => 'Выберите день и время матча.',
+            'location_name' => 'Напишите, где играете (площадка, адрес).',
+        ]);
+});
+
+it('renders the planner: calendar, map and translated browser messages', function () {
+    $this->actingAs(User::factory()->create())->get(route('rooms.create'))
+        ->assertOk()
+        ->assertSee('createMatch(', false)
+        ->assertSee('class="mcal"', false)
+        ->assertSee('Alege pe hartă')
+        ->assertSee('Alege ziua și ora meciului.')       // client-side message from lang/ro/validation.php
+        ->assertDontSee('type="datetime-local"', false);
+
+    $this->withSession(['locale' => 'ru'])->get(route('rooms.create'))
+        ->assertSee('Выбрать на карте')
+        ->assertSee('Выберите день и время матча.')
+        ->assertDontSee('>match.create.', false);
 });

@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 #[Fillable([
-    'sport_id', 'city_id', 'title', 'description', 'location_name', 'venue_type',
+    'sport_id', 'city_id', 'title', 'description', 'location_name', 'latitude', 'longitude', 'venue_type',
     'match_date_time', 'max_players', 'rules',
     'price', 'price_collector', 'equipment_by',
 ])]
@@ -39,6 +39,8 @@ class Room extends Model
             'max_players' => 'integer',
             'current_players_count' => 'integer',
             'price' => 'integer',
+            'latitude' => 'float',
+            'longitude' => 'float',
         ];
     }
 
@@ -125,6 +127,17 @@ class Room extends Model
             $left <= max(1, (int) floor($this->max_players * .2)) => 'almost',
             default => 'open',
         };
+    }
+
+    public function hasPin(): bool
+    {
+        return $this->latitude !== null && $this->longitude !== null;
+    }
+
+    /** Opens the pin in the phone's maps app (or Google Maps in the browser). */
+    public function mapsUrl(): ?string
+    {
+        return $this->hasPin() ? 'https://www.google.com/maps/search/?api=1&query='.$this->latitude.','.$this->longitude : null;
     }
 
     public function venueLabel(): ?string

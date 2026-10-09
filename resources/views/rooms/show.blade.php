@@ -28,6 +28,10 @@
     .match-hero__sport { display: flex; align-items: center; gap: var(--space-3); }
     .match-hero__by { display: flex; align-items: center; gap: var(--space-2); color: var(--text-2); }
 
+    .map-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
+    .room-map { height: 240px; border-radius: var(--radius-card); overflow: hidden; background: var(--bg-subtle); z-index: 0; position: relative; }
+    .room-map .map-pin span { position: absolute; left: 4px; top: 0; width: 24px; height: 24px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: var(--brand); box-shadow: var(--shadow-1); }
+    .room-map .map-pin span::after { content: ""; position: absolute; inset: 7px; border-radius: 50%; background: var(--on-brand); }
     .info-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
     .info { display: grid; gap: var(--space-1); align-content: start; padding: var(--space-4); border-radius: var(--radius-card); background: var(--bg-subtle); }
     .info--wide { grid-column: 1 / -1; }
@@ -142,6 +146,18 @@
                     </dd>
                 </div>
             </dl>
+
+            @if ($room->hasPin())
+                {{-- Pin set by the organiser: small map (OpenStreetMap, loaded on this page only) + open in the maps app --}}
+                <section class="detail-section" aria-labelledby="map-title">
+                    <div class="map-head">
+                        <h2 id="map-title" class="t-title2">{{ __('match.show.map_title') }}</h2>
+                        <x-button variant="secondary" size="sm" :href="$room->mapsUrl()" icon="map-pin" target="_blank" rel="noopener">{{ __('match.show.map_open') }}</x-button>
+                    </div>
+                    <div class="room-map" x-data="roomMap({{ $room->latitude }}, {{ $room->longitude }})" role="img"
+                         aria-label="{{ __('match.show.map_title') }}: {{ $room->location_name }}, {{ $room->city->label() }}"></div>
+                </section>
+            @endif
 
             @if ($room->description)
                 <section class="detail-section" aria-labelledby="note-title">
@@ -265,3 +281,29 @@
         </aside>
     </div>
 @endsection
+
+@if ($room->hasPin())
+@push('scripts')
+<script>
+    // Read-only map of the pin; Leaflet from cdnjs, tiles from OpenStreetMap.
+    function roomMap(lat, lng) {
+        return {
+            init() {
+                const css = document.createElement('link');
+                css.rel = 'stylesheet';
+                css.href = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';
+                document.head.append(css);
+                const js = document.createElement('script');
+                js.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
+                js.onload = () => {
+                    const map = L.map(this.$el, { scrollWheelZoom: false, dragging: !L.Browser.mobile, zoomControl: true }).setView([lat, lng], 16);
+                    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(map);
+                    L.marker([lat, lng], { icon: L.divIcon({ className: 'map-pin', html: '<span></span>', iconSize: [32, 40], iconAnchor: [16, 38] }), keyboard: false }).addTo(map);
+                };
+                document.head.append(js);
+            },
+        };
+    }
+</script>
+@endpush
+@endif
