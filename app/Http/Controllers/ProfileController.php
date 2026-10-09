@@ -46,6 +46,7 @@ class ProfileController extends Controller
         $data = $request->validated();
 
         $user->fill(['name' => $data['name'], 'city_id' => $data['city_id'] ?? null]);
+        $user->forceFill(collect(['telegram', 'instagram', 'facebook', 'whatsapp'])->mapWithKeys(fn ($n) => [$n => $data[$n] ?? null])->all());
 
         $disk = Storage::disk('avatars');
         if ($request->hasFile('avatar') || $request->boolean('remove_avatar')) {

@@ -216,6 +216,7 @@
 .profile-form { gap: var(--space-5); }
 .profile-form__actions { display: flex; gap: var(--space-3); justify-content: flex-end; }
 .level-list { display: grid; gap: var(--space-3); }
+.social-fields { display: grid; gap: var(--space-3); }
 .level-row { display: grid; gap: var(--space-3); margin: 0; padding: var(--space-4); border: 1px solid var(--separator); border-radius: var(--radius-card); min-width: 0; }
 .level-row__head { display: flex; align-items: center; gap: var(--space-3); padding: 0; float: left; width: 100%; }
 .level-row__head + * { clear: both; }
@@ -244,6 +245,7 @@
 
 @media (min-width: 768px) {
     .level-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .social-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3) var(--space-4); }
 }
 
 /* ---------- Cookie banner (x-cookie-consent) ---------- */

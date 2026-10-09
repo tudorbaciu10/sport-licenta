@@ -69,6 +69,19 @@
         </div>
     </section>
 
+    <section class="profile-section" aria-labelledby="social-title">
+        <div>
+            <h2 id="social-title" class="t-title2">{{ __('profile.social_title') }}</h2>
+            <p class="t-callout t-secondary measure">{{ __('profile.social_help') }}</p>
+        </div>
+        <div class="social-fields">
+            @foreach (['telegram' => 'text', 'whatsapp' => 'tel', 'instagram' => 'text', 'facebook' => 'text'] as $network => $type)
+                <x-field :name="$network" :type="$type" :label="__('profile.social.'.$network)" :placeholder="__('profile.social_ph.'.$network)"
+                         :value="$user->{$network}" maxlength="60" autocomplete="off" autocapitalize="off" spellcheck="false" optional />
+            @endforeach
+        </div>
+    </section>
+
     <div class="profile-form__actions">
         <x-button variant="secondary" :href="route('profile')">{{ __('profile.cancel') }}</x-button>
         <x-button type="submit">{{ __('profile.save') }}</x-button>

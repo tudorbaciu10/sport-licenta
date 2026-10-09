@@ -6,6 +6,7 @@
     $me = auth()->user();
     $status = $myStatus?->value;              // 'joined' | 'interested' | null
     $isCreator = $me && $me->id === $room->user_id;
+    $canChat = $status === 'joined' && \App\Support\Chat::canChat($me, $room);
     $players = $room->participants->where('pivot.status', 'joined')
         ->sortBy(fn ($u) => $u->id === $room->user_id ? 0 : 1)->values();
     $interested = $room->participants->where('pivot.status', 'interested')->values();
@@ -245,6 +246,10 @@
                         @endif
                     @endif
                 @endguest
+
+                @if ($canChat)
+                    <x-button :href="route('chat.room', $room)" icon="message-circle" :variant="$isCreator ? 'secondary' : 'primary'" block>{{ __('chat.title') }}</x-button>
+                @endif
 
                 @if ($isCreator)
                     {{-- The organiser's job here is inviting people: full-width share --}}

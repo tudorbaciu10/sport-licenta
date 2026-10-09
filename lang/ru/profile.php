@@ -81,4 +81,11 @@ return array (
   ),
   'support' => 'Техподдержка',
   'support_text' => 'Что-то не работает? Напишите нам в чат.',
+  'social_invalid' => 
+  array (
+    'telegram' => 'Имя в Telegram: 5–32 латинские буквы, цифры или _.',
+    'instagram' => 'Имя в Instagram: латинские буквы, цифры, точка или _.',
+    'facebook' => 'Имя в Facebook: из адреса профиля (facebook.com/…).',
+    'whatsapp' => 'Номер WhatsApp с кодом страны, например +37369123456.',
+  ),
 );

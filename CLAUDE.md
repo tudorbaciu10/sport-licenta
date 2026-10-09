@@ -4,7 +4,9 @@
 Laravel 13, PHP 8.3, MySQL 8, Blade + componente Blade, Alpine.js, CSS simplu cu variabile.
 Fără Tailwind. Fără pas de build pentru CSS.
 
-Baza de date locală pentru acest branch: `sport_licenta_ilie` (în `.env`). Cont demo: `demo@sport.md` / `password`.
+Baza de date locală pentru acest branch: `sport_licenta_ilie` (în `.env`). Cont demo: `demo@sport.md` / `password`; cont suport tehnic: `suport@sport.md` / `password`.
+
+Chat în timp real (Laravel Reverb): pornește și `php artisan reverb:start` lângă `php artisan serve`. Fără Reverb chat-ul merge în continuare, cu mesaje noi la 10 s. Date demo pentru chat: `php artisan db:seed --class=ChatDemoSeeder`.
 
 ## Design (OBLIGATORIU)
 Citește docs/DESIGN.md înainte de orice modificare de interfață.

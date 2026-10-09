@@ -81,4 +81,11 @@ return array (
   ),
   'support' => 'Suport tehnic',
   'support_text' => 'Ceva nu merge? Scrie-ne în chat.',
+  'social_invalid' => 
+  array (
+    'telegram' => 'Numele de Telegram: 5–32 litere latine, cifre sau _.',
+    'instagram' => 'Numele de Instagram: litere latine, cifre, punct sau _.',
+    'facebook' => 'Numele de Facebook: cel din adresa profilului (facebook.com/…).',
+    'whatsapp' => 'Numărul de WhatsApp cu prefixul țării, de exemplu +37369123456.',
+  ),
 );

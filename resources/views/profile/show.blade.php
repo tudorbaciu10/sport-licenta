@@ -55,6 +55,9 @@
             <li><a class="list-row list-row--link" href="{{ route('profile.edit') }}">
                 <x-icon.user-round /> <span class="list-row__text t-body">{{ __('profile.edit') }}</span> <x-icon.chevron-right class="icon list-row__chevron" />
             </a></li>
+            <li><a class="list-row list-row--link" href="{{ route('chat.support') }}">
+                <x-icon.life-buoy /> <span class="list-row__text t-body">{{ __('profile.support') }}</span> <x-icon.chevron-right class="icon list-row__chevron" />
+            </a></li>
             <li>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf

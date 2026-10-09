@@ -6,7 +6,7 @@
     <article class="legal">
         <header class="legal__head">
             <h1 class="t-large">{{ __('legal.privacy.title') }}</h1>
-            <p class="t-footnote t-secondary">{{ __('legal.updated', ['date' => \Illuminate\Support\Carbon::parse('2026-10-08')->locale(app()->getLocale())->isoFormat('D MMMM YYYY')]) }}</p>
+            <p class="t-footnote t-secondary">{{ __('legal.updated', ['date' => \Illuminate\Support\Carbon::parse('2026-10-09')->locale(app()->getLocale())->isoFormat('D MMMM YYYY')]) }}</p>
         </header>
         <p class="t-body measure">{{ __('legal.privacy.intro') }}</p>
 

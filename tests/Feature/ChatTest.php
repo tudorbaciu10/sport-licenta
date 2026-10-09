@@ -181,3 +181,52 @@ it('shows the chat in Russian', function () {
         ->assertSee('Техподдержка')
         ->assertDontSee('>chat.', false);
 });
+
+it('saves social handles from what people paste and shows them to teammates in the chat', function () {
+    $organizer = User::factory()->create();
+    $player = User::factory()->create();
+    $room = chatRoom($organizer, [$player]);
+
+    $this->actingAs($player)->put(route('profile.update'), [
+        'name' => $player->name,
+        'telegram' => 'https://t.me/ion_popescu',
+        'instagram' => '@ion.popescu',
+        'facebook' => 'https://www.facebook.com/ion.popescu/',
+        'whatsapp' => '+373 69 123 456',
+    ])->assertRedirect(route('profile'))->assertSessionHasNoErrors();
+
+    expect($player->fresh()->only(['telegram', 'instagram', 'facebook', 'whatsapp']))->toBe([
+        'telegram' => 'ion_popescu', 'instagram' => 'ion.popescu', 'facebook' => 'ion.popescu', 'whatsapp' => '+37369123456',
+    ]);
+
+    $this->actingAs($organizer)->get(route('chat.room', $room))
+        ->assertSee('https://t.me/ion_popescu', false)
+        ->assertSee('https://wa.me/37369123456', false)
+        ->assertSee('rel="noopener noreferrer"', false);
+});
+
+it('rejects social handles that are not handles', function () {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)->put(route('profile.update'), [
+        'name' => $user->name,
+        'telegram' => 'javascript:alert(1)',
+        'whatsapp' => 'sună-mă',
+    ])->assertSessionHasErrors(['telegram', 'whatsapp']);
+});
+
+it('links the match page to its chat for joined players only', function () {
+    $organizer = User::factory()->create();
+    $player = User::factory()->create();
+    $room = chatRoom($organizer, [$player]);
+    $link = 'href="'.route('chat.room', $room).'"';
+
+    $this->actingAs($player)->get(route('rooms.show', $room))->assertSee($link, false);
+    $this->actingAs(User::factory()->create())->get(route('rooms.show', $room))->assertDontSee($link, false);
+});
+
+it('offers support from the profile and the footer', function () {
+    $this->actingAs(User::factory()->create())->get(route('profile'))
+        ->assertSee(route('chat.support'), false)
+        ->assertSee('Suport tehnic');
+});
