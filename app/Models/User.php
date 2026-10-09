@@ -33,6 +33,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_support' => 'boolean',
         ];
     }
 
@@ -52,6 +53,34 @@ class User extends Authenticatable
     public function avatarUrl(): ?string
     {
         return $this->avatar_path ? asset('uploads/avatars/'.$this->avatar_path) : null;
+    }
+
+    /** "Ion Popescu" → "IP", same rule as <x-avatar>. */
+    public function initials(): string
+    {
+        return mb_strtoupper(collect(preg_split('/\s+/u', trim((string) $this->name)))
+            ->filter()->take(2)->map(fn ($p) => mb_substr($p, 0, 1))->join(''));
+    }
+
+    /**
+     * Links built on the server from the stored handles (never a user-typed URL).
+     *
+     * @return array<string, string> network => url
+     */
+    public function socialLinks(): array
+    {
+        return array_filter([
+            'telegram' => $this->telegram ? 'https://t.me/'.ltrim($this->telegram, '@') : null,
+            'whatsapp' => $this->whatsapp ? 'https://wa.me/'.preg_replace('/\D/', '', $this->whatsapp) : null,
+            'instagram' => $this->instagram ? 'https://instagram.com/'.ltrim($this->instagram, '@') : null,
+            'facebook' => $this->facebook ? 'https://facebook.com/'.$this->facebook : null,
+        ]);
+    }
+
+    /** The user's private thread with the support team. */
+    public function supportMessages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'support_user_id');
     }
 
     public function createdRooms(): HasMany

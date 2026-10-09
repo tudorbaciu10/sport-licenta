@@ -55,5 +55,7 @@ class DatabaseSeeder extends Seeder
             $interested = $players->diff($joined)->except($room->user_id)->random(rand(0, 4));
             $room->participants()->attach($interested->pluck('id'), ['status' => ParticipationStatus::Interested->value]);
         }
+
+        $this->call(ChatDemoSeeder::class);
     }
 }

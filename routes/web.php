@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MyMatchesController;
 use App\Http\Controllers\ProfileController;
@@ -61,6 +62,19 @@ Route::middleware('auth')->group(function () {
     Route::post('/rooms/{room}/join', [RoomController::class, 'join'])->name('rooms.join');
     Route::post('/rooms/{room}/interest', [RoomController::class, 'interest'])->name('rooms.interest');
     Route::delete('/rooms/{room}/leave', [RoomController::class, 'leave'])->name('rooms.leave');
+
+    // Chat: match chats for joined players and a private support thread per user.
+    Route::prefix('chat')->name('chat.')->controller(ChatController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/rooms/{room}', 'room')->name('room')->whereNumber('room');
+        Route::get('/support/{owner?}', 'support')->name('support')->whereNumber('owner');
+
+        Route::middleware('throttle:120,1')->group(function () {
+            Route::get('/{kind}/{id}/messages', 'messages')->name('messages')->whereIn('kind', ['rooms', 'support'])->whereNumber('id');
+            Route::post('/{kind}/{id}/read', 'read')->name('read')->whereIn('kind', ['rooms', 'support'])->whereNumber('id');
+        });
+        Route::post('/{kind}/{id}/messages', 'send')->name('send')->whereIn('kind', ['rooms', 'support'])->whereNumber('id')->middleware('throttle:20,1');
+    });
 });
 
 // Declared after /rooms/create so "create" isn't captured as a room id.

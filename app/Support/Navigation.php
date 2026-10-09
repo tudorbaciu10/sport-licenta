@@ -27,4 +27,25 @@ class Navigation
 
         return $items;
     }
+
+    /**
+     * "Chat" link: in the top nav on laptops and as an icon in the header on phones (the tab bar keeps five tabs).
+     * Only once the user has joined a match with at least one other player, or is on the support team.
+     *
+     * @return array{url: string, active: bool, unread: int}|null
+     */
+    public static function chat(): ?array
+    {
+        $user = auth()->user();
+
+        if (! Chat::available($user)) {
+            return null;
+        }
+
+        return [
+            'url' => route('chat.index'),
+            'active' => request()->routeIs('chat.*'),
+            'unread' => Chat::unreadTotal($user),
+        ];
+    }
 }
