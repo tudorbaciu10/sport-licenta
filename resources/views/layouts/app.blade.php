@@ -1,5 +1,6 @@
 {{-- App layout: header (top nav on laptops), content, bottom tab bar on phones. --}}
 @php($nav = \App\Support\Navigation::items())
+@php($chat = \App\Support\Navigation::chat())
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
@@ -28,9 +29,25 @@
                 @continue($item['key'] === 'login')
                 <a href="{{ $item['url'] }}" @if ($item['active']) aria-current="page" @endif>{{ __('ui.nav.'.$item['key']) }}</a>
             @endforeach
+            {{-- Only once the user is in a match with at least one other player (App\Support\Chat) --}}
+            @if ($chat)
+                <a href="{{ $chat['url'] }}" @if ($chat['active']) aria-current="page" @endif
+                   aria-label="{{ trans_choice('chat.nav_unread', $chat['unread'], ['count' => $chat['unread']]) }}">
+                    {{ __('chat.title') }}
+                    @if ($chat['unread'])<span class="count-badge" aria-hidden="true">{{ min(99, $chat['unread']) }}</span>@endif
+                </a>
+            @endif
         </nav>
 
         <div class="header-actions">
+            @if ($chat)
+                {{-- Phones: the tab bar keeps its five tabs, chat lives in the header --}}
+                <a href="{{ $chat['url'] }}" class="header-chat" @if ($chat['active']) aria-current="page" @endif
+                   aria-label="{{ trans_choice('chat.nav_unread', $chat['unread'], ['count' => $chat['unread']]) }}">
+                    <x-icon.message-circle />
+                    @if ($chat['unread'])<span class="count-badge" aria-hidden="true">{{ min(99, $chat['unread']) }}</span>@endif
+                </a>
+            @endif
             <div class="locale-switch" role="group" aria-label="{{ __('ui.language') }}">
                 @foreach (\App\Http\Middleware\SetLocale::SUPPORTED as $locale)
                     <a href="{{ route('locale', $locale) }}" lang="{{ $locale }}" hreflang="{{ $locale }}"
@@ -68,6 +85,9 @@
         <nav class="app-footer__links" aria-label="{{ __('consent.settings_title') }}">
             <a href="{{ route('legal.cookies') }}">{{ __('consent.cookie_policy') }}</a>
             <a href="{{ route('legal.privacy') }}">{{ __('consent.privacy_policy') }}</a>
+            @auth
+                <a href="{{ route('chat.support') }}">{{ __('chat.contact_support') }}</a>
+            @endauth
             <button type="button" class="app-footer__btn" onclick="window.dispatchEvent(new CustomEvent('open-cookie-settings'))">{{ __('consent.footer_settings') }}</button>
         </nav>
     </div>

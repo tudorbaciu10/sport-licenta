@@ -63,4 +63,22 @@ return array (
     'empty_past_text' => 'Meciurile la care participi vor apărea aici după ce se termină.',
     'find' => 'Caută meciuri',
   ),
+  'social' => 
+  array (
+    'telegram' => 'Telegram',
+    'whatsapp' => 'WhatsApp',
+    'instagram' => 'Instagram',
+    'facebook' => 'Facebook',
+  ),
+  'social_title' => 'Rețele sociale',
+  'social_help' => 'Opțional. Le văd doar jucătorii cu care ești la același meci, în lista de jucători din chat.',
+  'social_ph' => 
+  array (
+    'telegram' => '@nume',
+    'whatsapp' => '+373 69 123 456',
+    'instagram' => '@nume',
+    'facebook' => 'nume.prenume',
+  ),
+  'support' => 'Suport tehnic',
+  'support_text' => 'Ceva nu merge? Scrie-ne în chat.',
 );

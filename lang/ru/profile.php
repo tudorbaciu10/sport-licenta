@@ -63,4 +63,22 @@ return array (
     'empty_past_text' => 'Матчи, в которых вы участвуете, появятся здесь после их окончания.',
     'find' => 'Найти матчи',
   ),
+  'social' => 
+  array (
+    'telegram' => 'Telegram',
+    'whatsapp' => 'WhatsApp',
+    'instagram' => 'Instagram',
+    'facebook' => 'Facebook',
+  ),
+  'social_title' => 'Соцсети',
+  'social_help' => 'Необязательно. Их видят только игроки того же матча, в списке игроков в чате.',
+  'social_ph' => 
+  array (
+    'telegram' => '@имя',
+    'whatsapp' => '+373 69 123 456',
+    'instagram' => '@имя',
+    'facebook' => 'imya.familiya',
+  ),
+  'support' => 'Техподдержка',
+  'support_text' => 'Что-то не работает? Напишите нам в чат.',
 );
