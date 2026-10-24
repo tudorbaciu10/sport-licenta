@@ -27,3 +27,6 @@ Homestead.yaml
 Thumbs.db
 
 /public/uploads
+
+# Brainstorming mockups (local only)
+/.superpowers/
