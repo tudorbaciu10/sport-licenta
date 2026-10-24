@@ -41,4 +41,13 @@ return array (
   'cta_login' => 'Am deja cont',
   'cta_member' => 'Organizează un meci',
   'all_sports' => 'Toate',
+  'greeting' => 'Salut, :name',
+  'greeting_guest' => 'Salut!',
+  'sports_title' => 'Sporturi',
+  'sports_all' => 'Vezi toate',
+  'banner_title' => 'Când vrei să joci?',
+  'banner_text' => 'Alege ziua și vezi meciurile cu locuri libere.',
+  'banner_action' => 'Calendar',
+  'calendar_title' => 'Calendarul meciurilor',
+  'login' => 'Intră',
 );

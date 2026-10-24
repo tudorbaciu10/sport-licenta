@@ -41,4 +41,13 @@ return array (
   'cta_login' => 'Уже есть аккаунт',
   'cta_member' => 'Организовать матч',
   'all_sports' => 'Все',
+  'greeting' => 'Привет, :name',
+  'greeting_guest' => 'Привет!',
+  'sports_title' => 'Виды спорта',
+  'sports_all' => 'Все',
+  'banner_title' => 'Когда хотите играть?',
+  'banner_text' => 'Выберите день и смотрите матчи со свободными местами.',
+  'banner_action' => 'Календарь',
+  'calendar_title' => 'Календарь матчей',
+  'login' => 'Войти',
 );

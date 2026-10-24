@@ -84,3 +84,28 @@ it('renders the home page in Russian', function () {
         ->assertSee('Футбол')
         ->assertDontSee('>home.', false);   // no untranslated key in visible text
 });
+
+it('greets the player by first name and a guest with a plain hello', function () {
+    $user = User::factory()->create(['name' => 'Andrei Popescu']);
+    $this->actingAs($user)->get('/')->assertOk()->assertSee('Salut, Andrei');
+
+    auth()->logout();
+    $this->get('/')->assertOk()->assertSee('Salut!')->assertDontSee('Salut, ');
+});
+
+it('shows sports as chips linking to the list with the chosen city, plus a calendar banner', function () {
+    homeRoom('chisinau', 'fotbal');
+
+    $this->get('/')->assertOk()
+        ->assertSee('home-sports', false)
+        ->assertSee(e(route('rooms.index', ['city' => 'chisinau', 'sport' => 'fotbal'])), false)
+        ->assertSee("\$dispatch('open-sheet', 'home-calendar')", false)
+        ->assertSee('id="sheet-home-calendar"', false)
+        ->assertSee('match-card--hero', false);
+});
+
+it('renders the greeting and banner in Russian', function () {
+    $this->withSession(['locale' => 'ru'])->get('/')->assertOk()
+        ->assertSee(__('home.greeting_guest', [], 'ru'))
+        ->assertSee(__('home.banner_title', [], 'ru'));
+});

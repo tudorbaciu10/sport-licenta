@@ -447,3 +447,35 @@ body.sheet-open { overflow: hidden; }
 @media (max-width: 1023px) {
     body:has(.action-bar-m) .app-main { padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
 }
+
+/* ---------- Round icon button (Figma "IconButton"), 44px ---------- */
+.icon-btn {
+    position: relative; flex: none; display: inline-grid; place-items: center;
+    width: var(--tap); height: var(--tap); border: 1px solid var(--separator); border-radius: var(--radius-pill);
+    background: var(--bg); color: var(--text);
+}
+.icon-btn:hover { text-decoration: none; background: var(--bg-subtle); }
+.icon-btn .icon { width: 22px; height: 22px; }
+.icon-btn .count-badge { position: absolute; top: -4px; right: -4px; box-shadow: 0 0 0 2px var(--bg); }
+
+/* Dropdown whose trigger reads as plain text ("Chișinău ⌄" under the hello on Home) */
+.dropdown--plain .dropdown__button { min-height: var(--tap); padding: 0; border: 0; background: none; color: var(--text-2); font-size: var(--fs-callout); font-weight: var(--fw-regular); }
+.dropdown--plain .dropdown__button:hover { background: none; color: var(--text); }
+.dropdown--plain .dropdown__button[aria-expanded="true"] { background: none; }
+
+/* ---------- Big match card on Home (phones): sport band with the time, like the Figma "Venue Card" ---------- */
+@media (max-width: 1023px) {
+    .match-card--hero { padding: 0; gap: 0; }
+    .match-card--hero::before { display: none; }
+    .match-card--hero .match-card__head {
+        position: relative; align-items: flex-end; min-height: 112px; padding: var(--space-4);
+        background: color-mix(in srgb, var(--c) 22%, var(--bg));
+    }
+    .match-card--hero .sport-icon { width: 56px; height: 56px; }
+    .match-card--hero .sport-icon .icon { width: 30px; height: 30px; }
+    .match-card--hero .match-card__when { justify-items: end; text-align: right; }
+    .match-card--hero .match-card__when time { font-size: var(--fs-large); line-height: var(--lh-large); }
+    .match-card--hero .match-card__badge { position: absolute; top: var(--space-3); right: var(--space-3); }
+    .match-card--hero .match-card__body { padding: var(--space-3) var(--space-4) 0; }
+    .match-card--hero .match-card__spots { padding: var(--space-3) var(--space-4) var(--space-4); }
+}

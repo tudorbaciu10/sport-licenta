@@ -1,12 +1,12 @@
-{{-- <x-match-card :room="$room" />
+{{-- <x-match-card :room="$room" />   <x-match-card :room="$room" hero />  (hero: big card with a sport band, phones only — Home)
      Expects sport and city loaded. Time is the strongest element; sport colour only in the band and icon. --}}
-@props(['room'])
+@props(['room', 'hero' => false])
 @php
     $left = $room->spotsLeft();
     $pct = $room->max_players ? min(100, round($room->current_players_count / $room->max_players * 100)) : 0;
     $when = $room->match_date_time->locale(app()->getLocale());
 @endphp
-<a href="{{ route('rooms.show', $room) }}" {{ $attributes->class('match-card') }} style="--c: var({{ $room->sport->cssVar() }})">
+<a href="{{ route('rooms.show', $room) }}" {{ $attributes->class(['match-card', 'match-card--hero' => $hero]) }} style="--c: var({{ $room->sport->cssVar() }})">
     <div class="match-card__head">
         <x-sport-icon :sport="$room->sport" size="md" />
         <div class="match-card__when">

@@ -40,6 +40,25 @@
     .sport-card--all { display: none; --c: var(--text-2); }
     .sport-card--all .sport-icon { --c: var(--bg); --on: var(--text); }
 
+    .pick-row__calendar { min-width: 0; }   /* inside the sheet wrapper (display: contents on laptops) */
+
+    /* Phones (Figma Home): hello + city, chips, calendar banner */
+    .home-hello { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+    .home-hello__text { display: grid; min-width: 0; }
+    .home-hello__city { display: flex; align-items: center; gap: var(--space-1); color: var(--text-2); }
+    .home > *, .first > *, .home-sports { min-width: 0; }   /* the chips row scrolls instead of widening the page */
+    .home-sports .section-head { margin-bottom: var(--space-2); }
+    .home-banner {
+        display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3);
+        padding: var(--space-4) var(--space-5); border-radius: var(--radius-card); background: var(--bg-subtle);
+    }
+    .home-banner__text { display: grid; gap: 2px; flex: 1 1 160px; min-width: 0; }
+    .home-banner .btn { flex: none; }
+    @media (max-width: 1023px) {
+        .home { gap: var(--space-7); }
+        .pick-row { display: contents; }   /* only the (closed) calendar sheet is left in it on phones */
+    }
+
     /* Phones: three upcoming matches are enough; "Vezi toate" leads to the rest */
     @media (max-width: 767px) {
         .home .match-list > :nth-child(n+4) { display: none; }
@@ -84,6 +103,26 @@
     <div class="first">
         {{-- Only the search bar is visible; the page title stays for screen readers --}}
         <h1 class="sr-only">{{ __('home.hero_title') }}</h1>
+
+        {{-- Phones (Figma Home): hello + city, chat or login on the right --}}
+        <header class="home-hello m-only">
+            <div class="home-hello__text">
+                <p class="t-title1">{{ auth()->check() ? __('home.greeting', ['name' => \Illuminate\Support\Str::before(trim(auth()->user()->name), ' ')]) : __('home.greeting_guest') }}</p>
+                <div class="home-hello__city">
+                    <x-icon.map-pin class="icon icon--xs" />
+                    <x-dropdown class="dropdown--plain" align="start" :label="__('home.city')" :current="$city?->label() ?? __('home.all_cities')"
+                                :items="$cities->map(fn ($c) => ['label' => $c->label(), 'href' => route('home', ['city' => $c->slug]), 'active' => $city?->is($c)])->all()" />
+                </div>
+            </div>
+            @if ($chatLink = \App\Support\Navigation::chat())
+                <a href="{{ $chatLink['url'] }}" class="icon-btn" aria-label="{{ trans_choice('chat.nav_unread', $chatLink['unread'], ['count' => $chatLink['unread']]) }}">
+                    <x-icon.message-circle />
+                    @if ($chatLink['unread'])<span class="count-badge" aria-hidden="true">{{ min(99, $chatLink['unread']) }}</span>@endif
+                </a>
+            @elseif (auth()->guest())
+                <x-button variant="secondary" size="sm" :href="route('login')">{{ __('home.login') }}</x-button>
+            @endif
+        </header>
             <form method="GET" action="{{ route('rooms.index') }}" class="hero-search" role="search">
                 @if ($city)<input type="hidden" name="city" value="{{ $city->slug }}">@endif
                 <div class="search">
@@ -91,12 +130,36 @@
                     <x-icon.search />
                     <input id="home-q" type="search" name="q" class="input" maxlength="80" placeholder="{{ __('home.search_ph') }}" enterkeyhint="search" autocomplete="off">
                 </div>
-                <x-button type="submit">{{ __('home.search') }}</x-button>
+                <x-button type="submit" class="d-only">{{ __('home.search') }}</x-button>
             </form>
+
+        {{-- Phones: sports as one row of chips and a banner that opens the calendar in a sheet --}}
+        <section class="home-sports m-only" aria-labelledby="home-sports-title">
+            <div class="section-head">
+                <h2 id="home-sports-title" class="t-title2">{{ __('home.sports_title') }}</h2>
+                <a class="see-all" href="{{ $roomsUrl() }}">{{ __('home.sports_all') }}</a>
+            </div>
+            <nav class="chips" aria-label="{{ __('home.sports_title') }}">
+                <x-chip :href="$roomsUrl()" active>{{ __('home.all_sports') }}</x-chip>
+                @foreach ($sports as $sport)
+                    <x-chip :href="$roomsUrl(['sport' => $sport->slug])" :sport="$sport">{{ $sport->label() }}</x-chip>
+                @endforeach
+            </nav>
+        </section>
+
+        <div class="home-banner m-only">
+            <div class="home-banner__text">
+                <p class="t-headline">{{ __('home.banner_title') }}</p>
+                <p class="t-footnote t-secondary">{{ __('home.banner_text') }}</p>
+            </div>
+            <button type="button" class="btn btn--primary btn--sm" x-data x-on:click="$dispatch('open-sheet', 'home-calendar')">
+                <x-icon.calendar-days class="icon icon--sm" /> {{ __('home.banner_action') }}
+            </button>
+        </div>
 
         <div class="pick-row">
             {{-- "Ce joci azi?" — compact sport cards, real counts for the chosen city --}}
-            <section class="pick" aria-labelledby="pick-title">
+            <section class="pick d-only" aria-labelledby="pick-title">
                 <div class="section-head">
                     <h2 id="pick-title" class="t-title2">{{ __('home.pick_title') }}</h2>
                 <x-dropdown :label="__('home.city')" :current="$city?->label() ?? __('home.all_cities')"
@@ -117,7 +180,10 @@
                 </div>
             </section>
 
-            <x-calendar :city="$city" class="pick-row__calendar" />
+            {{-- Laptops: next to the sports. Phones: in a sheet opened from the banner --}}
+            <x-sheet name="home-calendar" :title="__('home.calendar_title')" inline-desktop>
+                <x-calendar :city="$city" class="pick-row__calendar" />
+            </x-sheet>
         </div>
     </div>
 
@@ -136,7 +202,7 @@
         @else
             <div class="match-list">
                 @foreach ($upcoming as $room)
-                    <x-match-card :room="$room" />
+                    <x-match-card :room="$room" hero />
                 @endforeach
             </div>
         @endif
