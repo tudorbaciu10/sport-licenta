@@ -4,6 +4,7 @@
 
 @section('content')
     <div class="auth-card">
+        <x-locale-switch class="auth-locale m-only" />
         <header class="auth-card__head">
             <span class="auth-card__mark" aria-hidden="true"><x-icon.user-round /></span>
             <h1 class="t-large">{{ __('auth.login_title') }}</h1>

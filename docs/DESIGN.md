@@ -204,11 +204,13 @@ Culorile sporturilor rămân aceleași (se ajustează doar dacă nu au contrast)
 
 Aplicație mobile-first. Pe telefon: bară de navigare jos cu 4–5 destinații. Pe laptop (>1024px): același conținut în grilă, navigare sus, conținut în max 1100px lățime.
 
-**Bara de jos:** Acasă · Caută · ➕ Creează · Meciurile mele · Profil
+**Bara de jos:** Acasă · Caută · ➕ Creează · Meciurile mele · Profil. Stil ca în Figma: pictograma deasupra textului, tab-ul activ în `--text` și semibold, „Creează” ca pastilă `--brand`; un punct `--brand` pe „Meciurile mele” când sunt mesaje necitite.
+
+**Sub 1024px (telefon și tabletă) ecranele urmează wireframe-urile Figma** — vezi §6.10 și `docs/superpowers/specs/2026-10-25-design-mobil-design.md`. De la 1024px în sus rămâne aspectul de laptop descris mai jos.
 
 ### 6.1 Acasă / Alegere sport (`/` după redesign, sau `/sports`)
 
-- Titlu: „Ce joci azi?”
+- Titlu: „Ce joci azi?” (laptop). Pe telefon pagina începe cu „Salut, {prenume}” și orașul, apoi căutarea și sporturile ca chips (§6.10).
 - Grilă de carduri (2 coloane pe telefon): pictogramă mare pe fundal tint, numele sportului, numărul de meciuri deschise în orașul curent.
 - Selector de oraș sus (implicit Chișinău).
 - Fără cont necesar.
@@ -225,7 +227,7 @@ Aplicație mobile-first. Pe telefon: bară de navigare jos cu 4–5 destinații.
 ### 6.3 Detalii meci (`/rooms/{id}`)
 
 - Antet: sportul (culoare), titlul, organizatorul.
-- Grilă de informații: Când · Unde · Format · Teren (interior/exterior) · Preț · Locuri.
+- Grilă de informații: Când · Unde · Format · Teren (interior/exterior) · Preț · Locuri (laptop). Pe telefon: bandă în culoarea sportului cu ora mare, chips informative și rânduri scurte de detalii (§6.10).
 - Notă de la organizator (ex. „Adu o minge, vino cu 10 minute mai devreme”).
 - Reguli (existente, max 10).
 - Lista de participanți cu avatare + secțiunea „Interesați”.
@@ -253,7 +255,7 @@ Aplicație mobile-first. Pe telefon: bară de navigare jos cu 4–5 destinații.
 
 ### 6.8 Calendarul meciurilor
 
-- **Public**, pe pagina principală (dreapta titlului, ≥1024px; sub el pe telefon). **Personal**, în „Meciurile mele”.
+- **Public**, pe pagina principală (dreapta titlului, ≥1024px; pe telefon într-o foaie de jos, deschisă din bannerul „Calendar”). **Personal**, în „Meciurile mele”.
 - Lunar, săptămâna începe luni, navigare de la luna curentă până la +6 luni, „Azi”. Puncte pe sport (max 3, al treilea devine „+”), ziua de azi cu contur, ziua aleasă cu fundal `--text`, zilele trecute estompate și neselectabile.
 - Personal: „Toate meciurile / Doar ale mele”, inel `--brand` pe zilele mele, rolul, plata, echipamentul, jucătorii și acțiunile „Ocupă un loc / Mă interesează / Ies”.
 - Cod: `components/calendar.blade.php`, `assets/css/calendar.css`, `assets/js/calendar.js` (constantele `WEEK_STARTS_ON`, `MAX_DOTS`, `LOOKAHEAD_MONTHS`, `ANIMATION_MS`), date din `CalendarController` (`/calendar/days`, `/calendar/day`).
@@ -265,6 +267,18 @@ Aplicație mobile-first. Pe telefon: bară de navigare jos cu 4–5 destinații.
 - Categorii reale: **Necesare** (sesiune, CSRF, „Ține-mă minte”, alegerea privind cookie-urile) și **Preferințe** (limba ținută minte 1 an în `sportmd_locale`, doar cu acord). Fără cookie-uri de reclamă sau analiză.
 - Alegerea: cookie `sportmd_consent` (JSON, 180 de zile, cu versiune; la o versiune nouă bannerul întreabă din nou). Server: `App\Support\Consent`.
 - Pagini: `/cookies` (tabel cu numele și duratele reale din configurare) și `/confidentialitate`. Emailul de contact: `CONTACT_EMAIL` în `.env`.
+
+### 6.10 Telefon < 1024px, după Figma
+
+Sursa: wireframe-urile Figma „Sport Booking App – Wireframes”, adaptate la Sport.md (fără fotografii, D5). Detalii și decizii: `docs/superpowers/specs/2026-10-25-design-mobil-design.md`.
+
+- Fără antetul de sus: limba se alege din Profil (sau pe login / înregistrare), chat-ul din Acasă, Profil și pagina meciului.
+- Acasă: salut + oraș, căutare, sporturi ca chips, banner spre calendar, carduri mari cu bandă și oră mare.
+- Caută: căutare + buton de filtre (foaie de jos), rând de sporturi, comutator Listă / Hartă, rânduri compacte. Harta arată meciurile deschise cu locuri din toată țara, grupate la zoom mic.
+- Pagina meciului: bandă sus, chips, avatare, bară de acțiune fixă jos (tab bar-ul ascuns).
+- Meciurile mele: banda săptămânii, Viitoare / Trecute, rânduri cu rolul și mesajele necitite.
+- Creează: bara de sus cu pașii, banda săptămânii și orele în pasul 2, bară fixă jos cu alegerea.
+- Componente: `x-sheet`, `x-action-bar`, `x-match-row`, `x-week-strip`, `x-locale-switch`; clasele `.m-only` / `.d-only` separă markup-ul de telefon de cel de laptop.
 
 ### 6.7 Pagina principală de prezentare (faza finală)
 

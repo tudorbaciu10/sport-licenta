@@ -55,6 +55,17 @@
             <li><a class="list-row list-row--link" href="{{ route('profile.edit') }}">
                 <x-icon.user-round /> <span class="list-row__text t-body">{{ __('profile.edit') }}</span> <x-icon.chevron-right class="icon list-row__chevron" />
             </a></li>
+            {{-- Phones have no header: language and chat live here (laptops keep them in the header) --}}
+            @if ($chatLink = \App\Support\Navigation::chat())
+                <li class="m-only"><a class="list-row list-row--link" href="{{ $chatLink['url'] }}">
+                    <x-icon.message-circle /> <span class="list-row__text t-body">{{ __('chat.title') }}</span>
+                    @if ($chatLink['unread'])<span class="count-badge">{{ min(99, $chatLink['unread']) }}</span>@endif
+                    <x-icon.chevron-right class="icon list-row__chevron" />
+                </a></li>
+            @endif
+            <li class="list-row profile-locale m-only">
+                <x-icon.globe /> <span class="list-row__text t-body">{{ __('ui.language') }}</span> <x-locale-switch />
+            </li>
             <li><a class="list-row list-row--link" href="{{ route('chat.support') }}">
                 <x-icon.life-buoy /> <span class="list-row__text t-body">{{ __('profile.support') }}</span> <x-icon.chevron-right class="icon list-row__chevron" />
             </a></li>

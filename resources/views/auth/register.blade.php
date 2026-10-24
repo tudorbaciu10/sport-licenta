@@ -4,6 +4,7 @@
 
 @section('content')
     <div class="auth-card">
+        <x-locale-switch class="auth-locale m-only" />
         <header class="auth-card__head">
             <span class="auth-card__mark" aria-hidden="true"><x-icon.circle-plus /></span>
             <h1 class="t-large">{{ __('auth.register_title') }}</h1>

@@ -123,3 +123,15 @@ it('renders auth, profile and my matches in Russian', function () {
     $this->actingAs($user)->withSession(['locale' => 'ru'])->get('/profile/edit')->assertOk()->assertSee('Не играю');
     $this->actingAs($user)->withSession(['locale' => 'ru'])->get('/my-matches')->assertOk()->assertSee('Прошедшие');
 });
+
+it('lets the user switch language from the profile', function () {
+    $this->actingAs(User::factory()->create())->get('/profile')->assertOk()
+        ->assertSee('profile-locale', false)
+        ->assertSee(route('locale', 'ro'), false)
+        ->assertSee(route('locale', 'ru'), false);
+});
+
+it('offers the language switch on login and register for guests', function () {
+    $this->get('/login')->assertOk()->assertSee('auth-locale', false);
+    $this->get('/register')->assertOk()->assertSee('auth-locale', false);
+});

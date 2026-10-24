@@ -197,9 +197,14 @@ textarea.input { min-height: calc(var(--tap) * 3); resize: vertical; }
     font-size: var(--fs-caption); line-height: var(--lh-caption); font-weight: var(--fw-medium);
 }
 .bottom-nav a:hover { text-decoration: none; color: var(--text); }
-.bottom-nav a[aria-current="page"] { color: var(--brand); }
-.bottom-nav .icon { width: 26px; height: 26px; }
-.bottom-nav .bottom-nav__create .icon { color: var(--brand); width: 30px; height: 30px; margin-block: -2px; }  /* bigger, same row height */
+/* Figma tab bar: the active tab is dark and semibold, the others grey; "Creează" is a brand pill */
+.bottom-nav a[aria-current="page"] { color: var(--text); font-weight: var(--fw-semibold); }
+.bottom-nav__icon { position: relative; display: inline-grid; place-items: center; height: 28px; }
+.bottom-nav .icon { width: 24px; height: 24px; }
+.bottom-nav .bottom-nav__create .bottom-nav__icon { width: 44px; border-radius: var(--radius-pill); background: var(--brand); color: var(--on-brand); }
+.bottom-nav .bottom-nav__create:hover .bottom-nav__icon { background: var(--brand-hover); }
+.bottom-nav .bottom-nav__create .icon { width: 22px; height: 22px; }
+.bottom-nav__dot { position: absolute; top: 0; right: -3px; width: 9px; height: 9px; border-radius: var(--radius-pill); background: var(--brand); box-shadow: 0 0 0 2px var(--bg); }
 
 .flash {
     display: flex; align-items: flex-start; gap: var(--space-3);
@@ -226,6 +231,22 @@ textarea.input { min-height: calc(var(--tap) * 3); resize: vertical; }
     .bottom-nav { display: none; }
     .app-main { padding-block: var(--space-7) var(--space-8); }
     .app-footer { padding-bottom: var(--space-6); }
+}
+
+/* ---------- Phones and tablets (< 1024px): Figma layout, no top header ----------
+   Laptops (≥ 1024px) stay exactly as before; .m-only / .d-only split markup between the two. */
+@media (min-width: 1024px) {
+    .m-only { display: none !important; }
+}
+@media (max-width: 1023px) {
+    .d-only { display: none !important; }
+    .app-header { display: none; }   /* markup stays (tests, laptops); language, chat and logout move into the pages */
+    .app-main { padding-top: calc(var(--space-4) + env(safe-area-inset-top)); }
+    body.no-tabbar .bottom-nav { display: none; }
+    body.no-tabbar .app-footer { padding-bottom: var(--space-6); }
+
+    .profile-locale .locale-switch { margin-left: auto; }
+    .auth-locale { display: flex; width: max-content; margin: 0 0 var(--space-4) auto; }
 }
 
 @media (prefers-reduced-motion: reduce) {

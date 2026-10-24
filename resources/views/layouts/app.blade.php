@@ -15,7 +15,7 @@
     @stack('styles')
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
 </head>
-<body>
+<body @hasSection('no_tabbar') class="no-tabbar" @endif>
 <a class="skip-link" href="#main">{{ __('ui.skip_to_content') }}</a>
 <x-cookie-consent />
 
@@ -48,12 +48,7 @@
                     @if ($chat['unread'])<span class="count-badge" aria-hidden="true">{{ min(99, $chat['unread']) }}</span>@endif
                 </a>
             @endif
-            <div class="locale-switch" role="group" aria-label="{{ __('ui.language') }}">
-                @foreach (\App\Http\Middleware\SetLocale::SUPPORTED as $locale)
-                    <a href="{{ route('locale', $locale) }}" lang="{{ $locale }}" hreflang="{{ $locale }}"
-                       aria-current="{{ app()->getLocale() === $locale ? 'true' : 'false' }}">{{ strtoupper($locale) }}</a>
-                @endforeach
-            </div>
+            <x-locale-switch />
             @auth
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
@@ -93,7 +88,7 @@
     </div>
 </footer>
 
-<x-bottom-nav />
+<x-bottom-nav :unread="$chat['unread'] ?? 0" />
 @stack('scripts')
 </body>
 </html>
