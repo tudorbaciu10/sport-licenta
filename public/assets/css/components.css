@@ -438,9 +438,8 @@ body.sheet-open { overflow: hidden; }
     padding: var(--space-3) var(--gutter) calc(var(--space-3) + env(safe-area-inset-bottom));
     background: var(--bg); border-top: 1px solid var(--separator);
 }
-.action-bar-m__summary { flex: 1; min-width: 0; display: grid; }
-.action-bar-m__actions { flex: 1; display: flex; gap: var(--space-2); }
-.action-bar-m__summary + .action-bar-m__actions { flex: none; }
+.action-bar-m__summary { flex: none; display: grid; white-space: nowrap; }   /* price label + amount, never squeezed */
+.action-bar-m__actions { flex: 1; min-width: 0; display: flex; gap: var(--space-2); }
 .action-bar-m__actions > *, .action-bar-m__actions > form > .btn { flex: 1; min-width: 0; }
 .action-bar-m__actions > form { display: flex; flex: 1; }
 .action-bar-m .btn { min-height: 52px; white-space: normal; text-align: center; line-height: var(--lh-callout); }

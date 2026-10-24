@@ -176,3 +176,99 @@ it('renders the planner: calendar, map and translated browser messages', functio
         ->assertSee('Выберите день и время матча.')
         ->assertDontSee('>match.create.', false);
 });
+
+/** The phone action bar (x-action-bar) of a rendered page, as HTML. */
+function phoneActionBar(string $html): string
+{
+    $dom = new DOMDocument;
+    @$dom->loadHTML('<?xml encoding="utf-8"?>'.$html);
+    $node = (new DOMXPath($dom))->query('//*[contains(concat(" ", normalize-space(@class), " "), " action-bar-m ")]')->item(0);
+
+    return $node ? $dom->saveHTML($node) : '';
+}
+
+/** Builds the viewer for a state of the phone action bar and returns the bar's HTML. */
+function barFor(string $who): string
+{
+    $creator = User::factory()->create();
+    $room = detailRoom(['price' => 30, 'price_collector' => 'organizer', 'max_players' => $who === 'full' ? 2 : 10], $creator);
+    $membership = app(RoomMembership::class);
+    $viewer = User::factory()->create();
+
+    match ($who) {
+        'guest' => null,
+        'interested' => $membership->markInterested($room, $viewer),
+        'full' => $membership->join($room, User::factory()->create()),
+        'player-chat' => [$membership->join($room, User::factory()->create()), $membership->join($room, $viewer)],
+
+        default => null,
+    };
+    if ($who === 'organizer') {
+        $viewer = $creator;
+    }
+
+    $test = test();
+    $response = $who === 'guest' ? $test->get(route('rooms.show', $room)) : $test->actingAs($viewer)->get(route('rooms.show', $room));
+
+    return phoneActionBar($response->assertOk()->getContent());
+}
+
+it('shows the right phone action bar for each viewer', function (string $who, array $see, array $dontSee) {
+    $bar = barFor($who);
+
+    expect($bar)->not->toBe('');
+    foreach ($see as $key) {
+        expect($bar)->toContain(e(__($key)));
+    }
+    foreach ($dontSee as $key) {
+        expect($bar)->not->toContain(e(__($key)));
+    }
+})->with([
+    'guest' => ['guest', ['match.show.join_guest'], ['match.show.leave', 'match.show.interest']],
+    'member' => ['member', ['match.show.join', 'match.show.interest'], ['match.show.team_chat', 'match.show.leave']],
+    'interested' => ['interested', ['match.show.join', 'match.show.uninterest'], ['match.show.leave']],
+    'full' => ['full', ['match.show.full', 'match.show.interest'], ['match.show.leave']],
+    'player with chat' => ['player-chat', ['match.show.team_chat', 'match.show.leave'], ['match.show.invite']],
+    'organizer' => ['organizer', ['match.show.invite'], ['match.show.leave']],
+]);
+
+it('lets a player invite others when the match chat is closed', function () {
+    // The organiser always plays, so a joined player has a chat unless the match was cancelled or ended long ago.
+    $room = detailRoom();
+    $viewer = User::factory()->create();
+    app(RoomMembership::class)->join($room, $viewer);
+    $room->forceFill(['status' => \App\Enums\RoomStatus::Cancelled])->save();
+
+    $bar = phoneActionBar($this->actingAs($viewer)->get(route('rooms.show', $room))->assertOk()->getContent());
+
+    expect(\App\Support\Chat::canChat($viewer, $room->fresh()))->toBeFalse()
+        ->and($bar)->toContain(e(__('match.show.invite')))->toContain(e(__('match.show.leave')))
+        ->not->toContain(e(__('match.show.team_chat')));
+});
+
+it('disables the join button on a full match in the phone bar', function () {
+    expect(barFor('full'))->toContain('disabled');
+});
+
+it('hides the tab bar on the match page and keeps the named player list', function () {
+    $room = detailRoom();
+
+    $html = $this->get(route('rooms.show', $room))->assertOk()->getContent();
+
+    expect($html)->toContain('class="no-tabbar"')
+        ->toContain('m-hero')
+        ->toContain('class="people"')
+        ->toContain('m-stack');
+});
+
+it('puts the price in the bar for one action and among the chips for two', function () {
+    $guestBar = barFor('guest');
+    expect($guestBar)->toContain('action-bar-m__summary')->toContain('30 lei');
+
+    $creator = User::factory()->create();
+    $room = detailRoom(['price' => 30], $creator);
+    $html = $this->actingAs(User::factory()->create())->get(route('rooms.show', $room))->getContent();
+
+    expect(phoneActionBar($html))->not->toContain('action-bar-m__summary')
+        ->and($html)->toContain('m-chip--price');
+});

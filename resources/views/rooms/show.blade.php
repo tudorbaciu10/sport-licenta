@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', $room->title)
+@section('no_tabbar', true)
 
 @php
     $me = auth()->user();
@@ -15,6 +16,10 @@
     $when = $room->match_date_time->locale(app()->getLocale());
     $pct = $room->max_players ? min(100, round($room->current_players_count / $room->max_players * 100)) : 0;
     $shareText = __('match.show.share_text', ['title' => $room->title, 'when' => $when->isoFormat('dddd, D MMM, HH:mm')]);
+    $backUrl = route('rooms.index', ['sport' => $room->sport->slug, 'city' => $room->city->slug]);
+    // Phone action bar: one button keeps the price beside it; two buttons share the bar and the price moves up to the chips.
+    $twoActions = $me && ! ($isCreator && ! $canChat);
+    $priceText = $room->price ? __('match.price.amount', ['price' => $room->price]) : __('match.price.free');
 @endphp
 
 @push('styles')
@@ -66,6 +71,52 @@
     .toast { position: fixed; left: 50%; bottom: calc(180px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 50;
              padding: var(--space-2) var(--space-4); border-radius: var(--radius-pill); background: var(--text); color: var(--bg); font-size: var(--fs-callout); }
 
+    /* Phones (Figma Venue Details): sport band with the time, chips, avatars, action bar fixed at the bottom */
+    @media (max-width: 1023px) {
+        .match-detail { margin-top: 0; padding-bottom: 0; gap: var(--space-5); }
+        .match-detail__main { display: grid; gap: var(--space-6); }
+        .m-hero {
+            position: relative; display: flex; align-items: flex-end; justify-content: space-between; gap: var(--space-3);
+            min-height: 200px; margin: calc(-1 * (var(--space-4) + env(safe-area-inset-top))) calc(-1 * var(--gutter)) 0;
+            padding: calc(var(--space-4) + env(safe-area-inset-top)) var(--gutter) var(--space-4);
+            background: color-mix(in srgb, var(--c) 24%, var(--bg));
+        }
+        .m-hero .icon-btn { position: absolute; top: calc(var(--space-3) + env(safe-area-inset-top)); border-color: transparent; background: color-mix(in srgb, var(--bg) 88%, transparent); }
+        .m-hero__back { left: var(--gutter); }
+        .m-hero__share { right: var(--gutter); }
+        .m-hero__when { display: grid; justify-items: end; text-align: right; color: var(--text); }
+        .m-hero__when span { font-size: var(--fs-callout); line-height: var(--lh-callout); font-weight: var(--fw-semibold); }
+        .m-hero__when time { font-size: var(--fs-large); line-height: var(--lh-large); font-weight: var(--fw-bold); letter-spacing: var(--tracking-tight); }
+        .m-intro { display: grid; gap: var(--space-2); margin-top: calc(-1 * var(--space-2)); }
+        .m-intro h1 { overflow-wrap: anywhere; }
+        .m-intro__by { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); color: var(--text-2); }
+        .m-intro__where { display: flex; align-items: flex-start; gap: var(--space-1); }
+        .m-intro__where .icon { margin-top: 2px; flex: none; }
+        .m-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-2); }
+        .m-chip {
+            display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 var(--space-3);
+            border: 1px solid var(--separator); border-radius: var(--radius-pill);
+            font-size: var(--fs-footnote); line-height: var(--lh-footnote); font-weight: var(--fw-medium);
+        }
+        .m-chip > .icon { width: 16px; height: 16px; color: var(--text-2); }
+        .m-chip--price { font-weight: var(--fw-semibold); }
+        .m-details { display: grid; gap: var(--space-2); margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--separator); }
+        .m-details div { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-3); font-size: var(--fs-callout); line-height: var(--lh-callout); }
+        .m-details dt { color: var(--text-2); }
+        .m-details dd { margin: 0; font-weight: var(--fw-semibold); text-align: right; }
+        .m-stack { display: grid; gap: var(--space-2); margin-bottom: var(--space-2); }
+        .m-stack .avatar-stack { align-items: center; }
+        .m-stack__more, .m-stack__free {
+            display: inline-grid; place-items: center; width: 32px; height: 32px; margin-left: calc(-1 * var(--space-2));
+            border-radius: var(--radius-pill); font-size: var(--fs-caption); font-weight: var(--fw-semibold);
+        }
+        .m-stack__more { background: var(--bg-subtle); border: 2px solid var(--bg); }
+        .m-stack__free { border: 2px dashed var(--separator); background: var(--bg); color: var(--text-2); }
+        .m-stack .progress { max-width: 280px; }
+        .toast { bottom: calc(100px + env(safe-area-inset-bottom)); }
+        .action-bar-m__summary strong { font-size: var(--fs-title2); line-height: var(--lh-title2); }
+    }
+
     @media (min-width: 1024px) {
         .match-detail { grid-template-columns: minmax(0, 1fr) 340px; align-items: start; padding-bottom: 0; }
         .match-detail__main { display: grid; gap: var(--space-6); }
@@ -83,13 +134,67 @@
 @endpush
 
 @section('content')
-    <a class="back-link" href="{{ route('rooms.index', ['sport' => $room->sport->slug, 'city' => $room->city->slug]) }}">
+    <a class="back-link d-only" href="{{ $backUrl }}">
         <x-icon.arrow-left /> {{ __('match.show.back') }}
     </a>
 
-    <div class="match-detail" style="--c: var({{ $room->sport->cssVar() }})">
+    <div class="match-detail" style="--c: var({{ $room->sport->cssVar() }})"
+         x-data="{
+             copied: false,
+             async share() {
+                 const data = { title: @js($room->title), text: @js($shareText), url: @js(route('rooms.show', $room)) };
+                 if (navigator.share) { try { await navigator.share(data); } catch (e) {} return; }
+                 await navigator.clipboard?.writeText(data.url);
+                 this.copied = true; setTimeout(() => this.copied = false, 2000);
+             }
+         }">
         <article class="match-detail__main">
-            <header class="match-hero">
+            {{-- Phones: sport band with the day and the time, back and share on top --}}
+            <header class="m-hero m-only">
+                <a class="icon-btn m-hero__back" href="{{ $backUrl }}" aria-label="{{ __('match.show.back') }}"><x-icon.arrow-left /></a>
+                <button type="button" class="icon-btn m-hero__share" x-on:click="share()" aria-label="{{ __('match.show.share') }}"><x-icon.share-2 /></button>
+                <x-sport-icon :sport="$room->sport" size="lg" />
+                <p class="m-hero__when">
+                    <span>{{ \Illuminate\Support\Str::ucfirst($when->isoFormat('dddd, D MMM')) }}</span>
+                    <time class="tabular" datetime="{{ $room->match_date_time->toIso8601String() }}">{{ $when->format('H:i') }}</time>
+                </p>
+            </header>
+
+            <div class="m-intro m-only">
+                <h1 class="t-title1">{{ $room->title }}</h1>
+                <p class="m-intro__by t-callout">
+                    <x-avatar :user="$room->creator" size="sm" />
+                    <span>{{ __('match.show.organized_by', ['name' => $room->creator->name]) }}</span>
+                    <x-badge :status="$room->availability()" />
+                </p>
+                <p class="m-intro__where t-callout">
+                    <x-icon.map-pin class="icon icon--xs" />
+                    <span>{{ $room->location_name }},
+                        @if ($room->hasPin())<span data-distance data-lat="{{ $room->latitude }}" data-lng="{{ $room->longitude }}">{{ $room->city->label() }}</span>@else{{ $room->city->label() }}@endif
+                    </span>
+                </p>
+                <ul class="m-chips" role="list">
+                    <li class="m-chip"><x-sport-icon :sport="$room->sport" size="xs" /> {{ $room->sport->label() }}</li>
+                    <li class="m-chip"><x-icon.house /> {{ $room->venue_type ? __('rooms.index.'.$room->venue_type) : __('match.show.venue_any') }}</li>
+                    @if ($room->equipment_by)
+                        <li class="m-chip"><x-icon.shirt /> {{ __('match.equipment.'.$room->equipment_by) }}</li>
+                    @endif
+                    @if ($twoActions)
+                        <li class="m-chip m-chip--price"><x-icon.banknote /> {{ $room->price ? __('match.price.per_player', ['price' => $room->price]) : __('match.price.free') }}</li>
+                    @endif
+                </ul>
+                <dl class="m-details">
+                    @if ($room->price && $room->price_collector)
+                        <div><dt>{{ __('match.show.price') }}</dt><dd>{{ __('match.price.collector.'.$room->price_collector) }}</dd></div>
+                    @endif
+                    <div>
+                        <dt>{{ __('match.show.spots') }}</dt>
+                        <dd class="tabular">{{ __('components.match.taken', ['taken' => $room->current_players_count, 'max' => $room->max_players]) }} · {{ trans_choice('components.match.spots_left', $left, ['count' => $left]) }}</dd>
+                    </div>
+                </dl>
+            </div>
+
+            <header class="match-hero d-only">
                 <div class="match-hero__sport">
                     <x-sport-icon :sport="$room->sport" size="lg" />
                     <div>
@@ -104,7 +209,7 @@
                 </p>
             </header>
 
-            <dl class="info-grid">
+            <dl class="info-grid d-only">
                 <div class="info">
                     <dt><x-icon.clock /> {{ __('match.show.when') }}</dt>
                     <dd class="tabular">
@@ -179,6 +284,17 @@
 
             <section class="detail-section" aria-labelledby="players-title">
                 <h2 id="players-title" class="t-title2">{{ __('match.show.players') }} <span class="t-secondary tabular">{{ $players->count() }}</span></h2>
+                {{-- Phones: who is in at a glance, the free spots as a dashed "+"; the named list follows --}}
+                <div class="m-stack m-only" aria-hidden="true">
+                    <div class="avatar-stack">
+                        @foreach ($players->take(5) as $user)
+                            <x-avatar :user="$user" size="sm" :highlight="$user->id === $room->user_id" />
+                        @endforeach
+                        @if ($players->count() > 5)<span class="m-stack__more">+{{ $players->count() - 5 }}</span>@endif
+                        @if ($left > 0)<span class="m-stack__free">+</span>@endif
+                    </div>
+                    <div class="progress"><span style="width: {{ $pct }}%"></span></div>
+                </div>
                 @if ($players->isEmpty())
                     <p class="t-callout t-secondary">{{ __('match.show.no_players') }}</p>
                 @else
@@ -211,16 +327,7 @@
         </article>
 
         {{-- Main action: fixed above the tab bar on phones, sticky side card on laptops --}}
-        <aside class="action-bar" aria-label="{{ __('match.show.join') }}"
-               x-data="{
-                   copied: false,
-                   async share() {
-                       const data = { title: @js($room->title), text: @js($shareText), url: @js(route('rooms.show', $room)) };
-                       if (navigator.share) { try { await navigator.share(data); } catch (e) {} return; }
-                       await navigator.clipboard?.writeText(data.url);
-                       this.copied = true; setTimeout(() => this.copied = false, 2000);
-                   }
-               }">
+        <aside class="action-bar d-only" aria-label="{{ __('match.show.join') }}">
             <p class="action-bar__status">
                 @if ($isCreator)
                     <x-icon.info /> {{ __('match.show.you_organize') }}
@@ -276,9 +383,59 @@
                     </button>
                 @endif
             </div>
-
-            <p class="toast" role="status" x-show="copied" x-cloak x-transition.opacity>{{ __('match.show.copied') }}</p>
         </aside>
+
+        <p class="toast" role="status" x-show="copied" x-cloak x-transition.opacity>{{ __('match.show.copied') }}</p>
+
+        {{-- Phones: the same actions in a bar fixed to the bottom (docs/superpowers/specs/2026-10-25-design-mobil-design.md §6.4) --}}
+        <x-action-bar :aria-label="__('match.show.join')">
+            @unless ($twoActions)
+                <x-slot:summary>
+                    <span class="t-footnote t-secondary">{{ __('match.show.price_each') }}</span>
+                    <strong>{{ $priceText }}</strong>
+                </x-slot:summary>
+            @endunless
+            <x-slot:actions>
+                @guest
+                    <x-button :href="route('login')">{{ __('match.show.join_guest') }}</x-button>
+                @else
+                    @if ($isCreator)
+                        <x-button icon="share-2" x-on:click="share()">{{ __('match.show.invite') }}</x-button>
+                        @if ($canChat)
+                            <x-button variant="secondary" :href="route('chat.room', $room)" icon="message-circle">{{ __('match.show.team_chat') }}</x-button>
+                        @endif
+                    @elseif ($status === 'joined')
+                        @if ($canChat)
+                            <x-button :href="route('chat.room', $room)" icon="message-circle">{{ __('match.show.team_chat') }}</x-button>
+                        @else
+                            <x-button icon="share-2" x-on:click="share()">{{ __('match.show.invite') }}</x-button>
+                        @endif
+                        <form method="POST" action="{{ route('rooms.leave', $room) }}">
+                            @csrf @method('DELETE')
+                            <x-button variant="secondary" type="submit">{{ __('match.show.leave') }}</x-button>
+                        </form>
+                    @else
+                        <form method="POST" action="{{ route('rooms.join', $room) }}">
+                            @csrf
+                            <x-button type="submit" :disabled="! $joinable">
+                                {{ $joinable ? __('match.show.join') : ($left === 0 ? __('match.show.full') : __('match.show.not_joinable')) }}
+                            </x-button>
+                        </form>
+                        @if ($status === 'interested')
+                            <form method="POST" action="{{ route('rooms.leave', $room) }}">
+                                @csrf @method('DELETE')
+                                <x-button variant="secondary" type="submit">{{ __('match.show.uninterest') }}</x-button>
+                            </form>
+                        @else
+                            <form method="POST" action="{{ route('rooms.interest', $room) }}">
+                                @csrf
+                                <x-button variant="secondary" type="submit">{{ __('match.show.interest') }}</x-button>
+                            </form>
+                        @endif
+                    @endif
+                @endguest
+            </x-slot:actions>
+        </x-action-bar>
     </div>
 @endsection
 

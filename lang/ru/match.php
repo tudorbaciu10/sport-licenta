@@ -50,6 +50,9 @@ return array (
     'share_text' => ':title, :when. Пойдём играть!',
     'venue_any' => 'Не указано',
     'map_title' => 'Место на карте',
+    'team_chat' => 'Чат команды',
+    'invite' => 'Пригласить игроков',
+    'price_each' => 'Цена с человека',
     'map_open' => 'Открыть в картах',
   ),
   'create' => 

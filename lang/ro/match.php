@@ -50,6 +50,9 @@ return array (
     'share_text' => ':title, :when. Hai la joc!',
     'venue_any' => 'Nespecificat',
     'map_title' => 'Locul pe hartă',
+    'team_chat' => 'Chat-ul echipei',
+    'invite' => 'Invită jucători',
+    'price_each' => 'Preț de persoană',
     'map_open' => 'Deschide în hărți',
   ),
   'create' => 
