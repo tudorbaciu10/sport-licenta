@@ -164,3 +164,9 @@
     .composer__send { transition: none; }
     .conv__log { scroll-behavior: auto; }
 }
+
+/* Phones and tablets (< 1024px): no top header any more (docs/DESIGN.md §6.10) */
+@media (max-width: 1023px) {
+    .chat { --chat-top: calc(var(--space-4) + env(safe-area-inset-top)); }
+    .chat--open .chat-pane { inset: 0; padding-top: env(safe-area-inset-top); }   /* full screen, like Messages */
+}
