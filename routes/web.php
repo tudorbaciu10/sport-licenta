@@ -7,6 +7,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MyMatchesController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\RoomMapController;
 use App\Http\Middleware\SetLocale;
 use App\Support\Consent;
 use Illuminate\Http\Request;
@@ -42,6 +43,9 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::get('/rooms', [RoomController::class, 'index'])->name('rooms.index');
+
+// Pins for the phone map: open matches that still need players, from the whole country (read-only JSON).
+Route::get('/rooms/map', RoomMapController::class)->middleware('throttle:60,1')->name('rooms.map');
 
 // JSON for the calendar (public; logged-in users get personal details too).
 Route::middleware('throttle:60,1')->group(function () {
