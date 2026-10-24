@@ -76,3 +76,29 @@ it('picks the city from a rounded dropdown that keeps the other filters', functi
         ->assertSee(e(route('rooms.index', ['q' => 'Meci'])), false)                      // "Toate orașele"
         ->assertDontSee('<select id="city"', false);
 });
+
+it('shows the number of active filters on the phone filter button', function () {
+    listRoom();
+
+    $this->get('/rooms?venue=indoor&date='.today()->toDateString())->assertOk()
+        ->assertSeeInOrder(['rooms-filter-btn', 'rooms-filter-btn__count" aria-hidden="true">2<'], false);
+});
+
+it('lists matches as compact rows for phones and keeps the desktop cards', function () {
+    listRoom(['title' => 'Meci compact']);
+
+    $html = $this->get('/rooms')->assertOk()->getContent();
+
+    expect($html)->toContain('class="match-row"')->toContain('class="match-card"')
+        ->toContain('id="sheet-rooms-filters"');
+});
+
+it('keeps the list/map choice in filter links', function () {
+    listRoom();
+
+    $this->get('/rooms?view=map')->assertOk()
+        ->assertSee(e(route('rooms.index', ['view' => 'map', 'venue' => 'indoor'])), false)
+        ->assertSee('id="rooms-map"', false);
+
+    $this->get('/rooms')->assertDontSee('id="rooms-map"', false);
+});

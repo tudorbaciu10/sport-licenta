@@ -3,11 +3,20 @@
 @section('title', __('rooms.index.title'))
 
 @php
+    // Phones: list or map (?view=map); kept in every filter link. Laptops always show the list.
+    $view = request('view') === 'map' ? 'map' : 'list';
+
     // Build a /rooms URL from the current filters with some changed; empty values drop out (and so does ?page).
     $url = fn (array $change) => route('rooms.index', array_filter(
-        array_merge($filters, $change),
+        array_merge(['view' => $view === 'map' ? 'map' : null], $filters, $change),
         fn ($v) => $v !== null && $v !== '' && $v !== false
     ));
+
+    // Phone filter button badge: everything that lives in the filter sheet (not sport or text search)
+    $activeFilters = collect(['date', 'time', 'venue', 'free', 'when', 'price', 'city'])->filter(fn ($k) => ! empty($filters[$k]))->count();
+    $cityItems = collect([['label' => __('rooms.index.all_cities'), 'href' => $url(['city' => null]), 'active' => empty($filters['city'])]])
+        ->concat($cities->map(fn ($c) => ['label' => $c->label(), 'href' => $url(['city' => $c->slug]), 'active' => ($filters['city'] ?? null) === $c->slug]))->all();
+    $cityCurrent = $cities->firstWhere('slug', $filters['city'] ?? null)?->label() ?? __('rooms.index.all_cities');
 
     $today = today()->toDateString();
     $tomorrow = today()->addDay()->toDateString();
@@ -60,6 +69,31 @@
         .rooms-head__create { display: inline-flex; }
         .more-filters__body { grid-template-columns: 200px 160px auto; align-items: end; }
         .more-filters__actions { grid-column: auto; }
+        /* the sport chips come first in the markup (outside the phone filter sheet); laptops keep the old order */
+        .rooms-filters__when { order: 1; }
+        .rooms-filters__sports { order: 2; }
+        .more-filters { order: 3; }
+    }
+
+    /* Phones (Figma Explore): search + filter button, one row of sports, List / Map */
+    @media (max-width: 1023px) {
+        .rooms-head__actions .dropdown { display: none; }   /* the city moves into the filter sheet */
+        .rooms-search { display: flex; gap: var(--space-2); align-items: flex-end; }
+        .rooms-search .search { flex: 1; min-width: 0; }
+        .rooms-filter-btn {
+            position: relative; flex: none; display: grid; place-items: center; width: 48px; height: 48px;
+            border: 1px solid var(--separator); border-radius: var(--radius-control); background: var(--bg); color: var(--text);
+        }
+        .rooms-filter-btn:hover { background: var(--bg-subtle); }
+        .rooms-filter-btn .icon { width: 22px; height: 22px; }
+        .rooms-filter-btn__count { position: absolute; top: -6px; right: -6px; min-width: 20px; height: 20px; padding: 0 6px; border-radius: var(--radius-pill); display: grid; place-items: center; background: var(--brand); color: var(--on-brand); font-size: var(--fs-caption); font-weight: var(--fw-bold); box-shadow: 0 0 0 2px var(--bg); }
+        .rooms-filters { gap: 0; }
+        .sheet .chips { flex-wrap: wrap; overflow: visible; margin: 0; padding: var(--space-1) 0; }
+        .sheet .more-filters { margin-top: var(--space-3); }
+        .rooms-sheet__city { margin-bottom: var(--space-3); }
+        .rooms-view { margin-top: var(--space-3); }
+        .rooms-view a { gap: var(--space-2); }
+        .rooms-view .icon { width: 18px; height: 18px; }
     }
 </style>
 @endpush
@@ -73,6 +107,7 @@
                 <input type="hidden" name="{{ $keep }}" value="{{ $filters[$keep] }}">
             @endif
         @endforeach
+        @if ($view === 'map')<input type="hidden" name="view" value="map">@endif
 
         <header class="rooms-head">
             <div class="rooms-head__title">
@@ -80,26 +115,46 @@
                 <p class="t-callout t-secondary" aria-live="polite">{{ trans_choice('rooms.index.count', $rooms->total(), ['count' => $rooms->total()]) }}</p>
             </div>
             <div class="rooms-head__actions">
-                <x-dropdown :label="__('rooms.index.city')"
-                            :current="$cities->firstWhere('slug', $filters['city'] ?? null)?->label() ?? __('rooms.index.all_cities')"
-                            :items="collect([['label' => __('rooms.index.all_cities'), 'href' => $url(['city' => null]), 'active' => empty($filters['city'])]])
-                                ->concat($cities->map(fn ($c) => ['label' => $c->label(), 'href' => $url(['city' => $c->slug]), 'active' => ($filters['city'] ?? null) === $c->slug]))->all()" />
+                <x-dropdown :label="__('rooms.index.city')" :current="$cityCurrent" :items="$cityItems" />
                 <x-button href="{{ route('rooms.create', array_filter(['sport' => $sportSlug])) }}" icon="circle-plus" class="rooms-head__create">
                     {{ __('rooms.index.create') }}
                 </x-button>
             </div>
         </header>
 
-        <div class="search">
-            <label class="sr-only" for="q">{{ __('rooms.index.search') }}</label>
-            <x-icon.search />
-            <input id="q" type="search" name="q" class="input" value="{{ $filters['q'] ?? '' }}" maxlength="80"
-                   placeholder="{{ __('rooms.index.search_placeholder') }}" enterkeyhint="search" autocomplete="off">
+        <div class="rooms-search">
+            <div class="search">
+                <label class="sr-only" for="q">{{ __('rooms.index.search') }}</label>
+                <x-icon.search />
+                <input id="q" type="search" name="q" class="input" value="{{ $filters['q'] ?? '' }}" maxlength="80"
+                       placeholder="{{ __('rooms.index.search_placeholder') }}" enterkeyhint="search" autocomplete="off">
+            </div>
+            {{-- Phones: every filter except the sport lives in a sheet --}}
+            <button type="button" class="rooms-filter-btn m-only" x-on:click="$dispatch('open-sheet', 'rooms-filters')"
+                    aria-label="{{ __('rooms.index.filters_button') }}@if ($activeFilters) ({{ $activeFilters }})@endif">
+                <x-icon.sliders-horizontal />
+                @if ($activeFilters)<span class="rooms-filter-btn__count" aria-hidden="true">{{ $activeFilters }}</span>@endif
+            </button>
         </div>
     </form>
 
     <div class="rooms-filters">
-        <nav class="chips" aria-label="{{ __('rooms.index.filters') }}">
+        <nav class="chips rooms-filters__sports" aria-label="{{ __('rooms.index.sports') }}">
+            <x-chip :href="$url(['sport' => null])" :active="! $sportSlug" x-on:click="loading = true">{{ __('rooms.index.all_sports') }}</x-chip>
+            @foreach ($sports as $sport)
+                <x-chip :href="$url(['sport' => $sportSlug === $sport->slug ? null : $sport->slug])" :sport="$sport"
+                        :active="$sportSlug === $sport->slug" x-on:click="loading = true">
+                    {{ $sport->label() }}
+                </x-chip>
+            @endforeach
+        </nav>
+
+        <x-sheet name="rooms-filters" :title="__('rooms.index.filters_title')" inline-desktop>
+        <div class="rooms-sheet__city m-only">
+            <x-dropdown align="start" :label="__('rooms.index.city')" :current="$cityCurrent" :items="$cityItems" />
+        </div>
+
+        <nav class="chips rooms-filters__when" aria-label="{{ __('rooms.index.filters') }}">
             <x-chip :href="$url(['date' => null, 'venue' => null, 'free' => null, 'when' => null, 'price' => null])" :active="! $date && ! $venue && ! $free && ! $weekend && ! $gratis" x-on:click="loading = true">
                 {{ __('rooms.index.all') }}
             </x-chip>
@@ -126,16 +181,6 @@
             </x-chip>
         </nav>
 
-        <nav class="chips" aria-label="{{ __('rooms.index.sports') }}">
-            <x-chip :href="$url(['sport' => null])" :active="! $sportSlug" x-on:click="loading = true">{{ __('rooms.index.all_sports') }}</x-chip>
-            @foreach ($sports as $sport)
-                <x-chip :href="$url(['sport' => $sportSlug === $sport->slug ? null : $sport->slug])" :sport="$sport"
-                        :active="$sportSlug === $sport->slug" x-on:click="loading = true">
-                    {{ $sport->label() }}
-                </x-chip>
-            @endforeach
-        </nav>
-
         {{-- Less common filters stay one tap away, out of the main row --}}
         <details class="more-filters" @if (! empty($filters['time']) || ($date && ! in_array($date, [$today, $tomorrow], true))) open @endif>
             <summary><x-icon.chevron-right /> {{ __('rooms.index.more_filters') }}</summary>
@@ -145,6 +190,7 @@
                         <input type="hidden" name="{{ $keep }}" value="{{ $filters[$keep] }}">
                     @endif
                 @endforeach
+                @if ($view === 'map')<input type="hidden" name="view" value="map">@endif
                 <x-field name="date" type="date" :label="__('rooms.index.date')" :value="$date" :min="$today" />
                 <x-field name="time" type="time" :label="__('rooms.index.from_time')" :value="$filters['time'] ?? null" step="1800" />
                 <div class="more-filters__actions">
@@ -155,9 +201,20 @@
                 </div>
             </form>
         </details>
+        </x-sheet>
     </div>
 
-    <div class="rooms-results">
+    {{-- Phones: list or map --}}
+    <nav class="segmented rooms-view m-only" aria-label="{{ __('rooms.index.view_label') }}">
+        <a href="{{ $url(['view' => null]) }}" @if ($view === 'list') aria-current="page" @endif><x-icon.list /> <span>{{ __('rooms.index.view_list') }}</span></a>
+        <a href="{{ $url(['view' => 'map']) }}" @if ($view === 'map') aria-current="page" @endif><x-icon.map /> <span>{{ __('rooms.index.view_map') }}</span></a>
+    </nav>
+
+    @if ($view === 'map')
+        <div id="rooms-map" class="rooms-map m-only"></div>
+    @endif
+
+    <div @class(['rooms-results', 'd-only' => $view === 'map'])>
         {{-- Shown while the next page of results loads (filters reload the page) --}}
         <x-skeleton variant="match-card" :count="3" class="match-list" x-show="loading" x-cloak />
 
@@ -165,9 +222,14 @@
             @forelse ($groups as $day => $dayRooms)
                 <section class="day-group" aria-labelledby="day-{{ $day }}">
                     <h2 id="day-{{ $day }}" class="t-title2">{{ $dayLabel($day) }}</h2>
-                    <div class="match-list">
+                    <div class="match-list d-only">
                         @foreach ($dayRooms as $room)
                             <x-match-card :room="$room" />
+                        @endforeach
+                    </div>
+                    <div class="match-rows m-only">
+                        @foreach ($dayRooms as $room)
+                            <x-match-row :room="$room" />
                         @endforeach
                     </div>
                 </section>
