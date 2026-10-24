@@ -102,3 +102,14 @@ it('keeps the list/map choice in filter links', function () {
 
     $this->get('/rooms')->assertDontSee('id="rooms-map"', false);
 });
+
+it('configures the map with the filtered data url, without the city, only in map view', function () {
+    listRoom();
+
+    $html = $this->get('/rooms?view=map&city=chisinau&sport=fotbal')->assertOk()->getContent();
+
+    expect($html)->toContain('roomsMap(')
+        ->toContain('data-url="'.e(route('rooms.map', ['sport' => 'fotbal'])).'"')
+        ->toContain('rooms-map.js');
+    expect($this->get('/rooms')->getContent())->not->toContain('roomsMap(')->not->toContain('rooms-map.js');
+});

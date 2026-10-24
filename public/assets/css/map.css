@@ -1,0 +1,42 @@
+/* Sport.md — harta meciurilor pe telefon (/rooms?view=map). Tokens only.
+   Logic: public/assets/js/rooms-map.js · Markup: resources/views/rooms/index.blade.php */
+
+.rooms-map {
+    position: relative; margin-top: var(--space-3);
+    height: calc(100dvh - 350px); min-height: 360px;   /* above the tab bar on a 390×800 phone */
+    border-radius: var(--radius-card); overflow: hidden; background: var(--bg-subtle);
+}
+.rooms-map__canvas { position: absolute; inset: 0; z-index: 0; }
+.rooms-map__loading { position: absolute; inset: 0; z-index: 1; border-radius: 0; height: auto; }
+.rooms-map__msg {
+    position: absolute; inset: auto var(--space-3) var(--space-3); z-index: 3;
+    display: grid; justify-items: start; gap: var(--space-2);
+    padding: var(--space-4); border-radius: var(--radius-card); background: var(--bg); box-shadow: var(--shadow-1);
+}
+.rooms-map__locate { position: absolute; top: var(--space-3); right: var(--space-3); z-index: 3; box-shadow: var(--shadow-1); }
+.rooms-map__locate:disabled { color: var(--text-2); }
+.rooms-map__toast {
+    position: absolute; top: var(--space-3); left: var(--space-3); right: calc(var(--tap) + 2 * var(--space-3)); z-index: 3;
+    padding: var(--space-2) var(--space-3); border-radius: var(--radius-control); background: var(--bg); box-shadow: var(--shadow-1);
+}
+.rooms-map__peek { position: absolute; inset: auto var(--space-2) var(--space-2); z-index: 3; }
+.rooms-map__peek .match-row { box-shadow: 0 4px 16px rgba(0, 0, 0, .12); }
+
+/* Pins: sport icon on the sport colour + the time; almost full = warning outline; tapped = dark */
+.map-pin {
+    display: inline-flex; align-items: center; gap: 6px; transform: translate(-50%, -50%);
+    padding: 3px var(--space-2) 3px 3px; border: 2px solid var(--bg); border-radius: var(--radius-pill);
+    background: var(--bg); color: var(--text); white-space: nowrap;
+    font: var(--fw-bold) var(--fs-footnote)/1 var(--font); box-shadow: 0 1px 4px rgba(0, 0, 0, .25);
+}
+.map-pin__icon { display: grid; place-items: center; width: 26px; height: 26px; border-radius: var(--radius-pill); background: var(--c); }
+.map-pin__icon .icon { width: 16px; height: 16px; color: var(--text); }
+.map-pin--almost { border-color: var(--warning); }
+.map-pin.is-active { background: var(--text); color: var(--bg); border-color: var(--text); }
+.map-cluster {
+    display: grid; place-items: center; width: 44px; height: 44px; border-radius: var(--radius-pill);
+    background: var(--brand); color: var(--on-brand); border: 3px solid var(--bg);
+    font: var(--fw-bold) var(--fs-callout)/1 var(--font); box-shadow: 0 1px 4px rgba(0, 0, 0, .25);
+}
+.map-me { fill: var(--brand); }
+.leaflet-container { font-family: var(--font); }

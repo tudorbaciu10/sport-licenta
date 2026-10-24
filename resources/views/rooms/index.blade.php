@@ -211,7 +211,69 @@
     </nav>
 
     @if ($view === 'map')
-        <div id="rooms-map" class="rooms-map m-only"></div>
+        @php
+            $mapConfig = [
+                'center' => $cities->firstWhere('slug', $filters['city'] ?? null)?->center() ?? \App\Models\City::CENTERS['chisinau'],
+                'icons' => $sports->mapWithKeys(fn ($s) => [$s->slug => \Illuminate\Support\Facades\Blade::render('<x-dynamic-component :component="$c" class="icon" />', ['c' => $s->icon()])]),
+                't' => [
+                    'price' => __('match.price.amount'),
+                    'free' => __('match.price.free'),
+                    'spots' => collect(range(1, 50))->mapWithKeys(fn ($n) => [$n => trans_choice('components.match.spots_left', $n, ['count' => $n])]),
+                ],
+            ];
+        @endphp
+        @push('styles')
+            <link rel="stylesheet" href="{{ \App\Support\Asset::url('assets/css/map.css') }}">
+        @endpush
+        @push('scripts')
+            <script src="{{ \App\Support\Asset::url('assets/js/rooms-map.js') }}"></script>
+        @endpush
+        {{-- Every open match that still needs players, from the whole country; the city filter does not apply here --}}
+        <section id="rooms-map" class="rooms-map m-only" aria-label="{{ __('rooms.index.map_label') }}"
+                 x-data="roomsMap(@js($mapConfig))" data-url="{{ route('rooms.map', array_filter(array_diff_key($filters, ['city' => true]), fn ($v) => $v !== null && $v !== '')) }}">
+            <div class="rooms-map__canvas" x-ref="canvas"></div>
+            <x-skeleton class="rooms-map__loading" x-show="state === 'loading'" />
+
+            <div class="rooms-map__msg" x-show="state === 'empty'" x-cloak role="status">
+                <p class="t-headline">{{ __('rooms.index.map_empty') }}</p>
+                <p class="t-footnote t-secondary">{{ __('rooms.index.map_empty_hint') }}</p>
+            </div>
+            <div class="rooms-map__msg" x-show="state === 'error'" x-cloak role="alert">
+                <p class="t-headline">{{ __('rooms.index.map_error') }}</p>
+                <x-button variant="secondary" size="sm" x-on:click="load()">{{ __('rooms.index.map_retry') }}</x-button>
+            </div>
+
+            <button type="button" class="icon-btn rooms-map__locate" x-on:click="locate()" :disabled="locating"
+                    aria-label="{{ __('rooms.index.map_near') }}" title="{{ __('rooms.index.map_near') }}"><x-icon.locate /></button>
+            <p class="rooms-map__toast t-footnote" x-show="geoError" x-cloak role="status">{{ __('rooms.index.map_geo_denied') }}</p>
+            <p class="rooms-map__toast t-footnote" x-show="truncated && !peek && !geoError" x-cloak>{{ __('rooms.index.map_truncated') }}</p>
+
+            {{-- The tapped pin's match, as the same compact row as the list --}}
+            <div class="rooms-map__peek" x-ref="peek" x-show="peek" x-cloak>
+                <template x-if="peek">
+                    <a class="match-row" :href="peek.url" :style="`--c: var(${peek.sport.var})`">
+                        <span class="match-row__square" aria-hidden="true">
+                            <span class="match-row__day" x-text="peek.day.split(',')[0].replace('.', '').toUpperCase()"></span>
+                            <span class="match-row__big tabular" x-text="peek.time"></span>
+                        </span>
+                        <span class="match-row__body">
+                            <span class="match-row__title" x-text="peek.title"></span>
+                            <span class="match-row__meta">
+                                <span class="sport-icon sport-icon--xs" :style="`--c: var(${peek.sport.var}); --on: var(--on-${peek.sport.var.slice(2)})`" x-html="icon(peek)" aria-hidden="true"></span>
+                                <span x-text="peek.sport.name"></span>
+                                <span aria-hidden="true">·</span>
+                                <span class="match-row__place" data-distance :data-lat="peek.lat" :data-lng="peek.lng" x-text="peek.city"></span>
+                            </span>
+                            <span class="match-row__tags">
+                                <span class="match-row__price" x-text="price(peek)"></span>
+                                <span class="badge" :class="'badge--' + peek.availability"><span class="badge__dot" aria-hidden="true"></span><span x-text="spots(peek)"></span></span>
+                            </span>
+                        </span>
+                        <span class="match-row__end"><x-icon.chevron-right class="icon match-row__chevron" /></span>
+                    </a>
+                </template>
+            </div>
+        </section>
     @endif
 
     <div @class(['rooms-results', 'd-only' => $view === 'map'])>
