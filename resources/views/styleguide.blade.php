@@ -307,6 +307,11 @@
         </section>
     @endif
 
+    <section class="sg-section" aria-labelledby="sg-c-week">
+        <h2 id="sg-c-week" class="t-title2">{{ __('styleguide.c_week_strip') }} <code class="t-footnote t-secondary">&lt;x-week-strip&gt;</code></h2>
+        <x-week-strip mode="count" city="chisinau" style="margin-top: var(--space-4); max-width: 420px" />
+    </section>
+
     <section class="sg-section" aria-labelledby="sg-c-sheet">
         <h2 id="sg-c-sheet" class="t-title2">{{ __('styleguide.c_sheet') }} <code class="t-footnote t-secondary">&lt;x-sheet&gt;</code></h2>
         <div class="sg-row" style="margin-top: var(--space-4)">

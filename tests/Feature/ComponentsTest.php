@@ -136,3 +136,11 @@ it('renders the phone action bar with its summary and actions', function () {
     $html = Blade::render('<x-action-bar><x-slot:summary>50 lei</x-slot:summary><x-slot:actions><button>Go</button></x-slot:actions></x-action-bar>');
     expect($html)->toContain('action-bar-m')->toContain('action-bar-m__summary')->toContain('50 lei')->toContain('<button>Go</button>');
 });
+
+it('renders the week strip with its data url and mode', function () {
+    $html = Blade::render('<x-week-strip mode="dots" mine />');
+
+    expect($html)->toContain('weekStrip(')
+        ->toContain('data-url="'.e(route('calendar.days')).'"')
+        ->toContain('\u0022mode\u0022:\u0022dots\u0022');   // @js output
+});

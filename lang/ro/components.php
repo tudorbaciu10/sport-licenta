@@ -27,6 +27,11 @@ return [
         'back' => 'Înapoi',
         'next' => 'Continuă',
     ],
+    'week' => [
+        'prev' => 'Săptămâna trecută',
+        'next' => 'Săptămâna viitoare',
+        'label' => 'Alege ziua',
+    ],
     'sheet' => [
         'close' => 'Închide',
     ],

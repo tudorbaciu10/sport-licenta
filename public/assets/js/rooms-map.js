@@ -44,8 +44,10 @@ document.addEventListener('alpine:init', () => {
         _cluster: null,
         _me: null,
         _active: null,
+        _url: '',
 
         async init() {
+            this._url = this.$el.dataset.url;   // $el later is the clicked button (retry), not this root
             try {
                 const L = await loadMapLibs();
                 this._map = L.map(this.$refs.canvas, { zoomControl: false, attributionControl: true })
@@ -67,7 +69,7 @@ document.addEventListener('alpine:init', () => {
             this.state = 'loading';
             this.close();
             try {
-                const res = await fetch(this.$el.dataset.url, { headers: { Accept: 'application/json' } });
+                const res = await fetch(this._url, { headers: { Accept: 'application/json' } });
                 if (!res.ok) throw new Error(res.status);
                 const data = await res.json();
                 this.truncated = data.truncated;

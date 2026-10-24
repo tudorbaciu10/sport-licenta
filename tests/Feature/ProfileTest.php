@@ -135,3 +135,38 @@ it('offers the language switch on login and register for guests', function () {
     $this->get('/login')->assertOk()->assertSee('auth-locale', false);
     $this->get('/register')->assertOk()->assertSee('auth-locale', false);
 });
+
+it('lists my matches as rows with my role and unread counts only for open chats', function () {
+    $me = User::factory()->create();
+    $organizer = User::factory()->create();
+    $membership = app(RoomMembership::class);
+
+    $a = profileRoom($organizer, ['title' => 'Cu chat']);
+    $membership->join($a, $me);
+    \App\Models\Message::forceCreate(['room_id' => $a->id, 'user_id' => $organizer->id, 'body' => 'unu']);
+    \App\Models\Message::forceCreate(['room_id' => $a->id, 'user_id' => $organizer->id, 'body' => 'doi']);
+
+    $b = profileRoom($organizer, ['title' => 'Doar interesat']);
+    $membership->join($b, User::factory()->create());
+    $membership->markInterested($b, $me);
+    \App\Models\Message::forceCreate(['room_id' => $b->id, 'user_id' => $organizer->id, 'body' => 'nu e pentru mine']);
+
+    $html = $this->actingAs($me)->get('/my-matches')->assertOk()->getContent();
+
+    expect($html)->toContain('match-row__role--joined')
+        ->toContain('match-row__role--interested')
+        ->toContain('match-row__unread">2<')
+        ->and(substr_count($html, 'match-row__unread"'))->toBe(1);
+});
+
+it('shows the upcoming count only on the open tab, the week strip and the organise banner', function () {
+    $me = User::factory()->create();
+    profileRoom($me);
+
+    $this->actingAs($me)->get('/my-matches')->assertOk()
+        ->assertSee('mm-count">(1)<', false)
+        ->assertSee('weekStrip(', false)
+        ->assertSee('id="sheet-my-calendar"', false)
+        ->assertSee('my-banner', false);
+    $this->actingAs($me)->get('/my-matches?tab=past')->assertOk()->assertDontSee('mm-count', false);
+});

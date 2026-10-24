@@ -32,7 +32,7 @@
     @endpush
 @endonce
 
-<section {{ $attributes->class(['cal', 'cal--personal' => $personal]) }} x-data="sportCalendar(@js($config))"
+<section {{ $attributes->class(['cal', 'cal--personal' => $personal]) }} x-data="sportCalendar(@js($config))" x-on:calendar-open-day.window="openDay($event.detail.date)"
          aria-labelledby="{{ $uid }}-month" :style="`--cal-ms: ${transitionMs}ms`">
 
     {{-- Antet: luna, navigare, „Azi” --}}

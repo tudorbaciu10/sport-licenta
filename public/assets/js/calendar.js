@@ -192,6 +192,13 @@ document.addEventListener('alpine:init', () => {
         },
 
         // ---------- Selectarea unei zile ----------
+        // From outside (the week strip on "Meciurile mele"): jump to that day's month and open the day.
+        openDay(iso) {
+            if (!iso || iso < this.today) return;
+            const [y, m] = iso.split('-').map(Number);
+            if (this.year !== y || this.month !== m - 1) { this.year = y; this.month = m - 1; this.days = {}; this.loadMonth(); }
+            this.select(iso);
+        },
         select(iso) {
             if (iso < this.today) return;           // zilele trecute nu se pot alege
             this.selected = iso;

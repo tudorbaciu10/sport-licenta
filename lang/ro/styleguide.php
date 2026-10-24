@@ -79,5 +79,6 @@ return [
     'c_match_row' => 'Rând compact de meci',
     'c_sheet' => 'Foaie de jos',
     'c_action_bar' => 'Bară de acțiune (telefon)',
+    'c_week_strip' => 'Banda săptămânii',
     'sheet_open' => 'Deschide foaia',
 ];

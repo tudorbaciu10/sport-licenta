@@ -478,3 +478,30 @@ body.sheet-open { overflow: hidden; }
     .match-card--hero .match-card__body { padding: var(--space-3) var(--space-4) 0; }
     .match-card--hero .match-card__spots { padding: var(--space-3) var(--space-4) var(--space-4); }
 }
+
+/* ---------- Week strip (Figma "Date Strip") ---------- */
+.week-strip { display: grid; gap: var(--space-2); }
+.week-strip__head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.week-strip__nav { display: flex; gap: var(--space-1); }
+.week-strip__btn { display: inline-grid; place-items: center; width: var(--tap); height: var(--tap); border: 0; border-radius: var(--radius-pill); background: none; color: var(--text); }
+.week-strip__btn:hover:not(:disabled) { background: var(--bg-subtle); }
+.week-strip__btn:disabled { color: var(--separator); }
+.week-strip__btn .icon { width: 18px; height: 18px; }
+.week-strip__days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: var(--space-1); }
+.week-strip__day {
+    display: grid; justify-items: center; align-content: center; gap: 2px; min-height: 64px; padding: var(--space-1) 0;
+    border: 1px solid var(--separator); border-radius: var(--radius-control); background: var(--bg); color: var(--text);
+    transition: background-color var(--duration) var(--ease);
+}
+.week-strip__day:hover:not(:disabled) { background: var(--bg-subtle); }
+.week-strip__day:disabled { color: var(--text-2); background: var(--bg-subtle); border-color: var(--bg-subtle); }
+.week-strip__day.is-today .week-strip__num { color: var(--brand); }
+.week-strip__day.is-selected, .week-strip__day.is-selected:hover { background: var(--text); border-color: var(--text); color: var(--bg); }
+.week-strip__day.is-selected .week-strip__num, .week-strip__day.is-selected .week-strip__wd { color: var(--bg); }
+.week-strip__wd { font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--text-2); }
+.week-strip__num { font-size: var(--fs-headline); line-height: var(--lh-headline); font-weight: var(--fw-bold); }
+.week-strip__marks { display: grid; place-items: center; min-height: 10px; }
+.week-strip__dots { display: flex; gap: 2px; }
+.week-strip__dots i { width: 6px; height: 6px; border-radius: var(--radius-pill); }
+.week-strip__count { font-size: var(--fs-caption); line-height: 1; font-weight: var(--fw-semibold); color: var(--text-2); }
+.week-strip__day.is-selected .week-strip__count { color: var(--bg); }
