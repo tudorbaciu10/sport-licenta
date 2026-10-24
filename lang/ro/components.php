@@ -27,4 +27,7 @@ return [
         'back' => 'Înapoi',
         'next' => 'Continuă',
     ],
+    'sheet' => [
+        'close' => 'Închide',
+    ],
 ];

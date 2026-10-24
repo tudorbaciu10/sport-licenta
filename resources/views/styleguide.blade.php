@@ -287,6 +287,38 @@
         </section>
     @endif
 
+    @if ($samples)
+        <section class="sg-section" aria-labelledby="sg-c-match-row">
+            <h2 id="sg-c-match-row" class="t-title2">{{ __('styleguide.c_match_row') }} <code class="t-footnote t-secondary">&lt;x-match-row&gt;</code></h2>
+            <div class="match-rows" style="margin-top: var(--space-4); max-width: 420px">
+                <x-match-row :room="$samples[0]" />
+                <x-match-row :room="(clone $samples[0])->forceFill(['title' => str_repeat('Turneu amical de minifotbal ', 3)])" />
+                <x-match-row :room="$samples[1]" square="date" role="organizer" :unread="2" />
+                <x-match-row :room="$samples[2]" square="date" role="interested" />
+            </div>
+        </section>
+
+        <section class="sg-section" aria-labelledby="sg-c-action-bar">
+            <h2 id="sg-c-action-bar" class="t-title2">{{ __('styleguide.c_action_bar') }} <code class="t-footnote t-secondary">&lt;x-action-bar&gt;</code></h2>
+            <x-action-bar style="position: static; margin-top: var(--space-4); max-width: 420px">
+                <x-slot:summary><span class="t-footnote t-secondary">{{ __('match.show.price') }}</span> <strong class="t-title2">{{ __('match.price.amount', ['price' => 50]) }}</strong></x-slot:summary>
+                <x-slot:actions><x-button>{{ __('match.show.join') }}</x-button></x-slot:actions>
+            </x-action-bar>
+        </section>
+    @endif
+
+    <section class="sg-section" aria-labelledby="sg-c-sheet">
+        <h2 id="sg-c-sheet" class="t-title2">{{ __('styleguide.c_sheet') }} <code class="t-footnote t-secondary">&lt;x-sheet&gt;</code></h2>
+        <div class="sg-row" style="margin-top: var(--space-4)">
+            <x-button variant="secondary" x-data x-on:click="$dispatch('open-sheet', 'sg-demo')">{{ __('styleguide.sheet_open') }}</x-button>
+        </div>
+        <x-sheet name="sg-demo" :title="__('styleguide.c_sheet')">
+            <div class="chips" style="flex-wrap: wrap; margin: 0; padding: 0">
+                <x-chip>{{ __('rooms.index.today') }}</x-chip> <x-chip active>{{ __('rooms.index.weekend') }}</x-chip> <x-chip>{{ __('rooms.index.indoor') }}</x-chip>
+            </div>
+        </x-sheet>
+    </section>
+
     <section class="sg-section" aria-labelledby="sg-c-badge">
         <h2 id="sg-c-badge" class="t-title2">{{ __('styleguide.c_badge') }} <code class="t-footnote t-secondary">&lt;x-badge&gt;</code></h2>
         <div class="sg-row" style="margin-top: var(--space-4)">

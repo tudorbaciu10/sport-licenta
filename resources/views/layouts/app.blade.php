@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="{{ \App\Support\Asset::url('assets/css/base.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\Asset::url('assets/css/components.css') }}">
     @stack('styles')
+    <script src="{{ \App\Support\Asset::url('assets/js/distance.js') }}" defer></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
 </head>
 <body @hasSection('no_tabbar') class="no-tabbar" @endif>

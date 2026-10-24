@@ -351,3 +351,99 @@
     background: var(--brand); color: var(--on-brand);
     font-size: var(--fs-caption); line-height: 1; font-weight: var(--fw-bold); font-variant-numeric: tabular-nums;
 }
+
+/* ======================================================================
+   Phone layout after the Figma wireframes (< 1024px). docs/DESIGN.md §6.10
+   ====================================================================== */
+
+.sport-icon--xs { width: 20px; height: 20px; border-radius: 6px; }
+.sport-icon--xs .icon { width: 13px; height: 13px; }
+
+/* ---------- Compact match row (Figma "Venue Row") ---------- */
+.match-row {
+    display: flex; align-items: center; gap: var(--space-3);
+    padding: var(--space-3); border: 1px solid var(--separator); border-radius: var(--radius-card);
+    background: var(--bg); color: var(--text);
+    transition: background-color var(--duration) var(--ease);
+}
+.match-row:hover { text-decoration: none; background: var(--bg-subtle); }
+.match-row__square {
+    flex: none; display: grid; place-content: center; justify-items: center; gap: 2px;
+    width: 64px; height: 64px; border-radius: var(--radius-icon);
+    background: color-mix(in srgb, var(--c) 22%, var(--bg));
+}
+.match-row__day { font-size: var(--fs-caption); line-height: var(--lh-caption); font-weight: var(--fw-semibold); color: var(--text-2); letter-spacing: .02em; }
+.match-row__big { font-size: var(--fs-headline); line-height: var(--lh-headline); font-weight: var(--fw-bold); letter-spacing: var(--tracking-tight); }
+.match-row__body { flex: 1; min-width: 0; display: grid; gap: 3px; }
+.match-row__title {
+    font-size: var(--fs-headline); line-height: var(--lh-headline); font-weight: var(--fw-semibold);
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: anywhere;
+}
+.match-row__meta {
+    display: flex; align-items: center; gap: var(--space-1); white-space: nowrap; min-width: 0;
+    font-size: var(--fs-footnote); line-height: var(--lh-footnote); color: var(--text-2);
+}
+.match-row__meta .sport-icon { margin-right: 2px; }
+.match-row__place { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.match-row__price { font-size: var(--fs-footnote); line-height: var(--lh-footnote); color: var(--text); font-weight: var(--fw-semibold); }
+.match-row__tags { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); margin-top: 2px; }
+.match-row__tags .badge { font-size: var(--fs-caption); line-height: var(--lh-caption); }
+.match-row__role {
+    display: inline-flex; align-items: center; padding: 3px var(--space-2); border-radius: var(--radius-pill);
+    font-size: var(--fs-caption); line-height: var(--lh-caption); font-weight: var(--fw-bold);
+}
+.match-row__role--organizer { background: var(--text); color: var(--bg); }
+.match-row__role--joined { background: var(--bg-subtle); color: var(--text); }
+.match-row__role--interested { border: 1px dashed var(--text-2); color: var(--text); padding: 2px 7px; }
+.match-row__end { flex: none; display: grid; justify-items: center; gap: var(--space-1); }
+.match-row__unread {
+    min-width: 20px; height: 20px; padding: 0 6px; border-radius: var(--radius-pill);
+    display: grid; place-items: center; background: var(--brand); color: var(--on-brand);
+    font-size: var(--fs-caption); font-weight: var(--fw-bold);
+}
+.match-row__chevron { width: 20px; height: 20px; color: var(--text-2); }
+.match-rows { display: grid; gap: var(--space-3); }
+
+/* ---------- Bottom sheet ---------- */
+.sheet { display: none; }
+.sheet.is-open { display: block; position: fixed; inset: 0; z-index: 60; }
+.sheet__backdrop { position: absolute; inset: 0; background: rgba(0, 0, 0, .32); }
+.sheet__panel {
+    position: absolute; inset: auto 0 0; max-height: 88vh; overflow-y: auto; overscroll-behavior: contain;
+    margin-inline: auto; max-width: 640px;
+    padding: 0 var(--gutter) calc(var(--space-5) + env(safe-area-inset-bottom));
+    border-radius: var(--radius-card) var(--radius-card) 0 0; background: var(--bg);
+    animation: sheet-up var(--duration) var(--ease);
+}
+.sheet__panel:focus { outline: none; }
+.sheet__head {
+    position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+    min-height: 56px; padding-top: var(--space-2); background: var(--bg);
+}
+.sheet__close { display: inline-grid; place-items: center; width: var(--tap); height: var(--tap); margin-right: calc(-1 * var(--space-2)); border: 0; border-radius: var(--radius-pill); background: var(--bg-subtle); color: var(--text); }
+.sheet__close .icon { width: 20px; height: 20px; }
+body.sheet-open { overflow: hidden; }
+@keyframes sheet-up { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+@media (min-width: 1024px) {
+    /* inline-desktop: the wrapper disappears and its content sits in the page as before */
+    .sheet--inline-desktop, .sheet--inline-desktop .sheet__panel, .sheet--inline-desktop .sheet__body { display: contents; }
+    .sheet--inline-desktop .sheet__backdrop, .sheet--inline-desktop .sheet__head { display: none; }
+}
+
+/* ---------- Phone action bar (Figma "Bottom Bar") ---------- */
+.action-bar-m {
+    position: fixed; inset: auto 0 0; z-index: 40;
+    display: flex; align-items: center; gap: var(--space-3);
+    padding: var(--space-3) var(--gutter) calc(var(--space-3) + env(safe-area-inset-bottom));
+    background: var(--bg); border-top: 1px solid var(--separator);
+}
+.action-bar-m__summary { flex: 1; min-width: 0; display: grid; }
+.action-bar-m__actions { flex: 1; display: flex; gap: var(--space-2); }
+.action-bar-m__summary + .action-bar-m__actions { flex: none; }
+.action-bar-m__actions > *, .action-bar-m__actions > form > .btn { flex: 1; min-width: 0; }
+.action-bar-m__actions > form { display: flex; flex: 1; }
+.action-bar-m .btn { min-height: 52px; white-space: normal; text-align: center; line-height: var(--lh-callout); }
+@media (max-width: 1023px) {
+    body:has(.action-bar-m) .app-main { padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
+}

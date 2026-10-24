@@ -76,4 +76,8 @@ return [
     'f_where_ph' => 'Teren sintetic Botanica',
     'f_players' => 'Câți jucători, cu tine',
     'f_choose' => 'Alege',
+    'c_match_row' => 'Rând compact de meci',
+    'c_sheet' => 'Foaie de jos',
+    'c_action_bar' => 'Bară de acțiune (telefon)',
+    'sheet_open' => 'Deschide foaia',
 ];

@@ -99,3 +99,40 @@ it('wires field errors to the input for screen readers', function () {
         ->toContain('Scrie o adresă validă.')
         ->toContain('field--error');
 });
+
+it('renders a compact match row with sport icon and name, role and unread count', function () {
+    $room = demoRoom(3, 10);
+    $html = Blade::render('<x-match-row :room="$room" role="organizer" :unread="2" />', ['room' => $room]);
+
+    expect($html)->toContain('match-row')
+        ->toContain('sport-icon')
+        ->toContain($room->sport->label())
+        ->toContain('match-row__role--organizer')
+        ->toContain('match-row__unread">2<')
+        ->toContain(route('rooms.show', $room));
+});
+
+it('omits the distance hook for a match without a pin and adds it for one with a pin', function () {
+    $room = demoRoom(1, 10);
+    expect(Blade::render('<x-match-row :room="$room" />', ['room' => $room]))->not->toContain('data-distance');
+
+    $room->forceFill(['latitude' => 47.0105, 'longitude' => 28.8638])->save();
+    expect(Blade::render('<x-match-row :room="$room->fresh([\'sport\', \'city\'])" />', ['room' => $room]))
+        ->toContain('data-distance')->toContain('data-lat="47.0105"');
+});
+
+it('keeps a very long title inside the row', function () {
+    $room = demoRoom(1, 10);
+    $room->title = str_repeat('Turneu amical de minifotbal ', 4);
+    expect(Blade::render('<x-match-row :room="$room" />', ['room' => $room]))->toContain('class="match-row__title');
+});
+
+it('renders a sheet as an accessible dialog', function () {
+    $html = Blade::render('<x-sheet name="t" title="Filtre">x</x-sheet>');
+    expect($html)->toContain('role="dialog"')->toContain('aria-modal="true"')->toContain('aria-labelledby=')->toContain('open-sheet');
+});
+
+it('renders the phone action bar with its summary and actions', function () {
+    $html = Blade::render('<x-action-bar><x-slot:summary>50 lei</x-slot:summary><x-slot:actions><button>Go</button></x-slot:actions></x-action-bar>');
+    expect($html)->toContain('action-bar-m')->toContain('action-bar-m__summary')->toContain('50 lei')->toContain('<button>Go</button>');
+});
