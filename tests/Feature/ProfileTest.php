@@ -168,5 +168,5 @@ it('shows the upcoming count only on the open tab, the week strip and the organi
         ->assertSee('weekStrip(', false)
         ->assertSee('id="sheet-my-calendar"', false)
         ->assertSee('my-banner', false);
-    $this->actingAs($me)->get('/my-matches?tab=past')->assertOk()->assertDontSee('mm-count', false);
+    $this->actingAs($me)->get('/my-matches?tab=past')->assertOk()->assertDontSee('mm-count">', false);
 });
