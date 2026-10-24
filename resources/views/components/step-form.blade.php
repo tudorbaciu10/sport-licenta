@@ -47,7 +47,10 @@
     {{ $slot }}
 
     <div class="step-form__nav">
-        <x-button variant="ghost" icon="arrow-left" x-show="step > 1" x-cloak x-on:click="back()">{{ __('components.step.back') }}</x-button>
+        @isset($navSummary)
+            <div class="step-form__summary m-only">{{ $navSummary }}</div>
+        @endisset
+        <x-button variant="ghost" icon="arrow-left" x-show="step > 1" x-cloak x-on:click="back()"><span class="step-form__back-label">{{ __('components.step.back') }}</span></x-button>
         <x-button variant="primary" icon-right="arrow-right" x-show="step < total" x-cloak x-on:click="next()">{{ __('components.step.next') }}</x-button>
         <x-button variant="primary" type="submit" x-show="step === total" class="step-form__submit">{{ $submit }}</x-button>
     </div>

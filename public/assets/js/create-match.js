@@ -90,6 +90,7 @@ document.addEventListener('alpine:init', () => {
             this.loadMonth();
             this.loadDay();
             this.$watch('city', () => {
+                this.$dispatch('week-city', this.citySlug);   // the phone week strip counts this city's matches
                 this.loadMonth();
                 this.loadDay();
                 if (this._map && !this.hasPin) this._map.setView(this.center(), 13);
@@ -166,6 +167,7 @@ document.addEventListener('alpine:init', () => {
             if (d.getMonth() !== this.viewM) { this.viewY = d.getFullYear(); this.viewM = d.getMonth(); this.loadMonth(); }
             this.loadDay();
             this.touch();
+            this.$dispatch('date-picked', { date });   // the phone week strip follows
         },
 
         // Tastatura în grilă: săgeți (zi/săptămână), Home/End (săptămâna), PageUp/PageDown (luna).

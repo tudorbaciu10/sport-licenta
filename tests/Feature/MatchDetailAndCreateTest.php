@@ -272,3 +272,22 @@ it('puts the price in the bar for one action and among the chips for two', funct
     expect(phoneActionBar($html))->not->toContain('action-bar-m__summary')
         ->and($html)->toContain('m-chip--price');
 });
+
+it('keeps the desktop planner whole and gives phones a week strip, the slots and a summary bar', function () {
+    $html = $this->actingAs(User::factory()->create())->get('/rooms/create')->assertOk()->getContent();
+
+    expect($html)->toContain('weekStrip(')
+        ->toContain(str_replace('"', '\u0022', '"mode":"count"'))   // @js escapes the quotes
+        ->toContain('step-form__summary')
+        ->toContain('id="sheet-when-month"')
+        ->toContain('class="no-tabbar"')
+        ->and(substr_count($html, 'class="mcal"'))->toBe(2)            // laptop column + phone month sheet
+        ->and(substr_count($html, 'class="slots__grid"'))->toBe(2)     // laptop column + phone step 2
+        ->and(substr_count($html, 'class="when-picker"'))->toBe(1);    // the laptop column keeps the whole picker
+});
+
+it('still stores a match from the phone form', function () {
+    $this->actingAs(User::factory()->create())->post('/rooms', validPayload())
+        ->assertRedirect()->assertSessionHasNoErrors();
+    expect(Room::where('title', 'Fotbal joi')->exists())->toBeTrue();
+});

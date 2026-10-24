@@ -189,6 +189,28 @@
     .sport-pick { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 
+/* Phones and tablets (< 1024px), Figma "Select Date & Time": app bar, week strip + times, bottom bar with the choice */
+@media (max-width: 1023px) {
+    .sport-pick label .t-headline { overflow-wrap: break-word; }   /* long Russian names (Скалолазание) wrapped past the card at 360px */
+    .create-appbar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); margin-bottom: var(--space-3); }
+    .create-appbar h1 { flex: 1; text-align: center; }
+    .create-appbar__spacer { width: var(--tap); flex: none; }
+    .when-phone { display: grid; gap: var(--space-4); }
+    .when-phone__head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+    .when-phone .slots { margin-top: var(--space-1); }
+    .step-form__nav {
+        position: fixed; inset: auto 0 0; z-index: 40; align-items: center;
+        padding: var(--space-3) var(--gutter) calc(var(--space-3) + env(safe-area-inset-bottom));
+        background: var(--bg); border-top: 1px solid var(--separator);
+    }
+    .step-form__nav .btn { min-height: 52px; }
+    .step-form__nav .btn--ghost { width: 52px; padding: 0; justify-content: center; flex: none; }
+    .step-form__back-label { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .step-form__summary { flex: 1; min-width: 0; font-size: var(--fs-callout); line-height: var(--lh-callout); }
+    .step-form__when { display: grid; }
+    body:has(.step-form) .app-main { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .sport-pick label, .choices label, .mcal__day, .slot { transition: none; }
 }

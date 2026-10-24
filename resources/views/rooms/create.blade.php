@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', __('match.create.title'))
+@section('no_tabbar', true)
 
 @php
     // ?date=YYYY-MM-DD from the calendar pre-fills the day (18:00, change as needed)
@@ -44,7 +45,13 @@
 
 @section('content')
 <div class="create" x-data="createMatch(@js($init))" x-on:step-changed="current = $event.detail">
-    <header class="create-head">
+    {{-- Phones (Figma App Bar): back + title; the steps bar follows in the form --}}
+    <header class="create-appbar m-only">
+        <a class="icon-btn" href="{{ route('rooms.index') }}" aria-label="{{ __('match.show.back') }}"><x-icon.arrow-left /></a>
+        <h1 class="t-headline">{{ __('match.create.title') }}</h1>
+        <span class="create-appbar__spacer" aria-hidden="true"></span>
+    </header>
+    <header class="create-head d-only">
         <h1 class="t-large">{{ __('match.create.title') }}</h1>
         <p class="t-callout t-secondary">{{ __('match.create.intro') }}</p>
     </header>
@@ -90,9 +97,20 @@
                                 <span class="t-footnote t-secondary when-summary__hint">{{ __('match.create.when_hint_side') }}</span>
                             </span>
                         </div>
-                        {{-- Phones and tablets: the calendar right here --}}
-                        <div class="when-inline">
-                            @include('rooms.partials.when-picker', ['id' => 'inline'])
+                        {{-- Phones and tablets (Figma Select Date & Time): the week, then the times; the month opens in a sheet --}}
+                        <div class="when-inline when-phone">
+                            <div class="when-phone__head">
+                                <span class="t-headline">{{ __('match.create.day') }}</span>
+                                <button type="button" class="icon-btn" x-on:click="$dispatch('open-sheet', 'when-month')" aria-label="{{ __('match.create.month') }}"><x-icon.calendar-days /></button>
+                            </div>
+                            <x-week-strip mode="count" :city="$cities->firstWhere('id', (int) $init['city'])?->slug" :selected="$init['when'] ? substr($init['when'], 0, 10) : null"
+                                          x-on:week-day="pickDate($event.detail.date)" />
+                            @include('rooms.partials.when-slots', ['id' => 'inline'])
+                            <x-sheet name="when-month" :title="__('match.create.month')">
+                                <div x-on:date-picked.window="$dispatch('close-sheet')">
+                                    @include('rooms.partials.when-calendar', ['id' => 'sheet'])
+                                </div>
+                            </x-sheet>
                         </div>
                         @error('match_date_time')<p class="field__error"><x-icon.circle-alert /> <span>{{ $message }}</span></p>@enderror
                     </div>
@@ -212,6 +230,14 @@
                         @include('rooms.partials.preview', ['id' => 'inline'])
                     </div>
                 </x-step-form.step>
+
+                {{-- Phones: what was chosen, next to "Continuă" (step 2) --}}
+                <x-slot:navSummary>
+                    <span x-show="current === 2" class="step-form__when">
+                        <strong x-show="date" x-text="whenLabel"></strong>
+                        <span class="t-footnote t-secondary" x-show="!date">{{ __('match.create.when_none') }}</span>
+                    </span>
+                </x-slot:navSummary>
             </x-step-form>
         </div>
 

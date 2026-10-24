@@ -91,6 +91,8 @@ return array (
     'preview' => 'Așa va arăta meciul în listă',
     'submit' => 'Publică meciul',
     'when_hint_side' => 'Alege ziua și ora în calendarul din dreapta.',
+    'day' => 'Ziua',
+    'month' => 'Alege din toată luna',
     'when_none' => 'Nu ai ales încă ziua și ora',
     'calendar' => 'Calendar',
     'time' => 'Ora',
